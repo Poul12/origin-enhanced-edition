@@ -11,7 +11,7 @@ Severity guide:
 
 ## Confirmed findings
 
-### BUG-001 — Temporary buff expiry uses two incompatible clocks
+### BUG-001 — Temporary buff restore uses two incompatible clocks and has no live call site
 **Severity:** P1  
 **File:** `www/live/js/skills-combat.js`  
 **Locations:** `addTemporaryBuff()` ~1061; `restoreBuffsAfterReload()` ~1138.
@@ -91,7 +91,7 @@ Each call to `initTooltipSystem()` attaches a new document click listener. No gu
 
 **Fix proposal:** define intended boot behavior for browser vs Capacitor. Initialize once before code/assets that depend on cache; handle online/offline result explicitly. Do not simply uncomment without checking the loader UI and first-install flow.
 
-### RISK-002 — Skill cooldown restore appears not to be called
+### RISK-002 — Buff and skill cooldown restore functions appear not to be called
 **Severity:** P1/P2  
 **File:** `www/live/js/skills-combat.js`.
 
