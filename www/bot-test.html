@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8" />
+<title>Combat Bot Test</title>
+<link rel="stylesheet" href="css/bot-test.css" />
+<link rel="stylesheet" href="css/combat-balance.css" />
+
+</head>
+
+<body>
+  Combat Bot – Human Simulation
+
+   <!-- COMBAT FEEDBACK ZONE -->
+<div id="combat-feedback">
+
+  <!-- OUTCOME (PERFECT / MISS / DODGE) -->
+  <div id="combat-outcome" class="combat-msg outcome">
+    <div class="main"></div>
+  </div>
+
+  <!-- REWARDS (max 2) -->
+  <div id="combat-rewards">
+    <!-- reward chips are injected here -->
+  </div>
+
+</div>
+    
+
+<div id="controls">
+  <select id="enemy-select"></select>
+  <button id="start-sim">START</button>
+  <button id="stop-sim">STOP</button>
+</div>
+
+<div id="combat-area">
+  <div id="enemy-ui">
+    <div class="label" id="enemy-name"></div>
+    <div class="cooldown-bar">
+      <div id="enemy-cd-fill"></div>
+    </div>
+    <div class="stats">
+      <div id="enemy-hp"></div>
+      <div id="enemy-dmg"></div>
+      <div id="enemy-def"></div>
+    </div>
+  </div>
+
+  <div id="player-ui">
+    <div class="label">PLAYER (BOT)</div>
+    <div class="cooldown-bar">
+      <div id="player-cd-fill"></div>
+    </div>
+    <div class="stats">
+      <div id="player-hp"></div>
+      <div id="player-dmg"></div>
+      <div id="player-def"></div>
+    </div>
+        
+     
+<!-- PERFECT BLOCK BAR -->
+<div id="perfect-block-wrapper">
+  <div class="perfect-block-bar hidden">
+    <div class="miss-window"></div>
+    <div class="normal-window"></div>
+    <div class="perfect-window"></div>
+    <div class="time-indicator"></div>
+  </div>
+</div>
+
+    
+   
+  </div>
+
+  <div class="buttons">
+    <button class="button" id="clear-log">🧹 Wyczyść log</button>
+    <button class="button" id="simulate-1000">🤖 1000 walk</button>
+    <button class="button" id="open-summary">📊 Statystyki</button> 
+  </div> 
+  <div id="log"></div>
+  
+  
+  <div id="summary-modal" class="modal hidden">
+  <div class="modal-content">
+    <h2>📊 Podsumowanie uczenia bota</h2>
+
+    <table class="summary-table">
+      <tr>
+        <th>Metryka</th>
+        <th>Wartość</th>
+      </tr>
+      <tr>
+        <td>Win rate</td>
+        <td id="sum-winrate"></td>
+      </tr>
+      <tr>
+        <td>Perfect block rate</td>
+        <td id="sum-perfect"></td>
+      </tr>
+      <tr>
+        <td>Miss rate</td>
+        <td id="sum-miss"></td>
+      </tr>
+      <tr>
+        <td>Średnie HP po walce</td>
+        <td id="sum-hp"></td>
+      </tr>
+      <tr>
+        <td>Średni czas walki</td>
+        <td id="sum-time"></td>
+      </tr>
+    </table>
+
+    <button id="close-summary">Zamknij</button>
+  </div>
+</div>  
+  
+</div>
+ 
+ <script src="js/localization.js"></script> 
+ <script src="js/gameState.js"></script> 
+ <script src="live/js/skills-database.js"></script>
+ <script src="live/js/skills.js"></script>
+ <script src="js/global-states.js"></script> 
+ <script src="live/js/item.js"></script>
+ <script src="live/js/item-utility.js"></script>
+ <script src="live/js/store-items.js"></script>
+ <script src="live/js/quests-assets.js"></script> 
+ <script src="live/js/quests-database.js"></script> 
+ <script src="js/index.js"></script>
+ <script src="live/js/combat-utility.js"></script> 
+ <script src="live/js/combat.js"></script>
+ <script src="live/js/combat-animations.js"></script> 
+ <script src="live/js/location.js"></script>
+ <script src="live/js/battle.js"></script>
+ <script src="js/config.js"></script>
+ <script src="live/js/store.js"></script>
+ <script src="js/test.js"></script>
+ <script src="live/js/skills-combat.js"></script> 
+ <script src="js/shared.js"></script>
+ <script src="live/js/inventory.js"></script>
+ <script src="live/js/character.js"></script>
+  <script src="live/js/enemy-database.js"></script>
+  <script src="live/js/enemy.js"></script>
+  <script src="js/combat-types.js"></script>
+  <script src="js/bot-test.js"></script>
+</body>
+</html>
