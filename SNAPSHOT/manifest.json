@@ -1,0 +1,2572 @@
+{
+  "source": {
+    "repository": "Poul12/RpgLooter",
+    "branch": "develop",
+    "commit": "6bc141117907f445da53d62e99b32680400ef28f"
+  },
+  "destination": {
+    "repository": "Poul12/origin-enhanced-edition",
+    "branch": "snapshot/origin-develop-6bc1411"
+  },
+  "counts": {
+    "source_tracked_files": 319,
+    "node_modules_excluded": 153,
+    "non_dependency_source_files": 166,
+    "copied": 162,
+    "omitted_large_binary": 4
+  },
+  "files": [
+    {
+      "path": ".github/workflows/build-apk.yml",
+      "mode": "100644",
+      "size_bytes": 3170,
+      "source_blob_sha": "22b613260f8657ad5050d0a9f03a2282753642c7",
+      "status": "copied",
+      "destination_blob_sha": "22b613260f8657ad5050d0a9f03a2282753642c7"
+    },
+    {
+      "path": "android/.gitignore",
+      "mode": "100644",
+      "size_bytes": 1824,
+      "source_blob_sha": "48354a3dfc4ad41c5c7af1451315d335cda7d611",
+      "status": "copied",
+      "destination_blob_sha": "48354a3dfc4ad41c5c7af1451315d335cda7d611"
+    },
+    {
+      "path": "android/app/.gitignore",
+      "mode": "100644",
+      "size_bytes": 26,
+      "source_blob_sha": "043df802a29f1f386a23cba600c84be8eee2a0c6",
+      "status": "copied",
+      "destination_blob_sha": "043df802a29f1f386a23cba600c84be8eee2a0c6"
+    },
+    {
+      "path": "android/app/build.gradle",
+      "mode": "100644",
+      "size_bytes": 2134,
+      "source_blob_sha": "9fb6e88bf9af0b9c67d6babe49931d8552a18356",
+      "status": "copied",
+      "destination_blob_sha": "9fb6e88bf9af0b9c67d6babe49931d8552a18356"
+    },
+    {
+      "path": "android/app/capacitor.build.gradle",
+      "mode": "100644",
+      "size_bytes": 421,
+      "source_blob_sha": "73ddc711924437a17e71c25777ef10f267fa4a03",
+      "status": "copied",
+      "destination_blob_sha": "73ddc711924437a17e71c25777ef10f267fa4a03"
+    },
+    {
+      "path": "android/app/proguard-rules.pro",
+      "mode": "100644",
+      "size_bytes": 751,
+      "source_blob_sha": "f1b424510da51fd82143bc74a0a801ae5a1e2fcd",
+      "status": "copied",
+      "destination_blob_sha": "f1b424510da51fd82143bc74a0a801ae5a1e2fcd"
+    },
+    {
+      "path": "android/app/src/androidTest/java/com/getcapacitor/myapp/ExampleInstrumentedTest.java",
+      "mode": "100644",
+      "size_bytes": 774,
+      "source_blob_sha": "f2c2217efa5a746f23ea722450a40fe0ca3db099",
+      "status": "copied",
+      "destination_blob_sha": "f2c2217efa5a746f23ea722450a40fe0ca3db099"
+    },
+    {
+      "path": "android/app/src/main/AndroidManifest.xml",
+      "mode": "100644",
+      "size_bytes": 1529,
+      "source_blob_sha": "340e7df83159f7aff8cd2541a2f0657cb8b6e733",
+      "status": "copied",
+      "destination_blob_sha": "340e7df83159f7aff8cd2541a2f0657cb8b6e733"
+    },
+    {
+      "path": "android/app/src/main/java/com/poul12/rpglooter/MainActivity.java",
+      "mode": "100644",
+      "size_bytes": 124,
+      "source_blob_sha": "3592de630c6576c5bc1f3aca3587aa9e21731f4b",
+      "status": "copied",
+      "destination_blob_sha": "3592de630c6576c5bc1f3aca3587aa9e21731f4b"
+    },
+    {
+      "path": "android/app/src/main/res/drawable-land-hdpi/splash.png",
+      "mode": "100644",
+      "size_bytes": 7705,
+      "source_blob_sha": "e31573b4fc93e60d171f4046c0220e1463075d9e",
+      "status": "copied",
+      "destination_blob_sha": "e31573b4fc93e60d171f4046c0220e1463075d9e"
+    },
+    {
+      "path": "android/app/src/main/res/drawable-land-mdpi/splash.png",
+      "mode": "100644",
+      "size_bytes": 4040,
+      "source_blob_sha": "f7a64923ea1a0565d25fa139c176d6bf42184e48",
+      "status": "copied",
+      "destination_blob_sha": "f7a64923ea1a0565d25fa139c176d6bf42184e48"
+    },
+    {
+      "path": "android/app/src/main/res/drawable-land-xhdpi/splash.png",
+      "mode": "100644",
+      "size_bytes": 9251,
+      "source_blob_sha": "807725501bdd92e94e51e7b2b0006f69e0083a0b",
+      "status": "copied",
+      "destination_blob_sha": "807725501bdd92e94e51e7b2b0006f69e0083a0b"
+    },
+    {
+      "path": "android/app/src/main/res/drawable-land-xxhdpi/splash.png",
+      "mode": "100644",
+      "size_bytes": 13984,
+      "source_blob_sha": "14c6c8fe39fcd51a0414866ad28cbe8ff3acb060",
+      "status": "copied",
+      "destination_blob_sha": "14c6c8fe39fcd51a0414866ad28cbe8ff3acb060"
+    },
+    {
+      "path": "android/app/src/main/res/drawable-land-xxxhdpi/splash.png",
+      "mode": "100644",
+      "size_bytes": 17683,
+      "source_blob_sha": "244ca2506dbe0fd8f6a05520ac7d1a629ea81438",
+      "status": "copied",
+      "destination_blob_sha": "244ca2506dbe0fd8f6a05520ac7d1a629ea81438"
+    },
+    {
+      "path": "android/app/src/main/res/drawable-port-hdpi/splash.png",
+      "mode": "100644",
+      "size_bytes": 7934,
+      "source_blob_sha": "74faaa583c8221c27a8cb822c3fbe218bafa3299",
+      "status": "copied",
+      "destination_blob_sha": "74faaa583c8221c27a8cb822c3fbe218bafa3299"
+    },
+    {
+      "path": "android/app/src/main/res/drawable-port-mdpi/splash.png",
+      "mode": "100644",
+      "size_bytes": 4096,
+      "source_blob_sha": "e944f4ad4e1ca1c8cf9a87b366acc01c4e5c1616",
+      "status": "copied",
+      "destination_blob_sha": "e944f4ad4e1ca1c8cf9a87b366acc01c4e5c1616"
+    },
+    {
+      "path": "android/app/src/main/res/drawable-port-xhdpi/splash.png",
+      "mode": "100644",
+      "size_bytes": 9875,
+      "source_blob_sha": "564a82ff954aec267492467c0169a270c4e8fea9",
+      "status": "copied",
+      "destination_blob_sha": "564a82ff954aec267492467c0169a270c4e8fea9"
+    },
+    {
+      "path": "android/app/src/main/res/drawable-port-xxhdpi/splash.png",
+      "mode": "100644",
+      "size_bytes": 13346,
+      "source_blob_sha": "bfabe6871a17a5e95b78fb30d49b7d2b4d2fe4c0",
+      "status": "copied",
+      "destination_blob_sha": "bfabe6871a17a5e95b78fb30d49b7d2b4d2fe4c0"
+    },
+    {
+      "path": "android/app/src/main/res/drawable-port-xxxhdpi/splash.png",
+      "mode": "100644",
+      "size_bytes": 17489,
+      "source_blob_sha": "6929071268eb03ee0f088142b6523566b78550e2",
+      "status": "copied",
+      "destination_blob_sha": "6929071268eb03ee0f088142b6523566b78550e2"
+    },
+    {
+      "path": "android/app/src/main/res/drawable-v24/ic_launcher_foreground.xml",
+      "mode": "100644",
+      "size_bytes": 1880,
+      "source_blob_sha": "c7bd21dbd86990cde81fea8abd3bf904b4546749",
+      "status": "copied",
+      "destination_blob_sha": "c7bd21dbd86990cde81fea8abd3bf904b4546749"
+    },
+    {
+      "path": "android/app/src/main/res/drawable/ic_launcher_background.xml",
+      "mode": "100644",
+      "size_bytes": 5606,
+      "source_blob_sha": "d5fccc538c179838bfdce779c26eebb4fa0b5ce9",
+      "status": "copied",
+      "destination_blob_sha": "d5fccc538c179838bfdce779c26eebb4fa0b5ce9"
+    },
+    {
+      "path": "android/app/src/main/res/drawable/splash.png",
+      "mode": "100644",
+      "size_bytes": 4040,
+      "source_blob_sha": "f7a64923ea1a0565d25fa139c176d6bf42184e48",
+      "status": "copied",
+      "destination_blob_sha": "f7a64923ea1a0565d25fa139c176d6bf42184e48"
+    },
+    {
+      "path": "android/app/src/main/res/layout/activity_main.xml",
+      "mode": "100644",
+      "size_bytes": 535,
+      "source_blob_sha": "b5ad1387011da0894cc1d91f44f3bd77f5403f5d",
+      "status": "copied",
+      "destination_blob_sha": "b5ad1387011da0894cc1d91f44f3bd77f5403f5d"
+    },
+    {
+      "path": "android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml",
+      "mode": "100644",
+      "size_bytes": 265,
+      "source_blob_sha": "036d09bc5fd523323794379703c4a111d1e28a04",
+      "status": "copied",
+      "destination_blob_sha": "036d09bc5fd523323794379703c4a111d1e28a04"
+    },
+    {
+      "path": "android/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml",
+      "mode": "100644",
+      "size_bytes": 265,
+      "source_blob_sha": "036d09bc5fd523323794379703c4a111d1e28a04",
+      "status": "copied",
+      "destination_blob_sha": "036d09bc5fd523323794379703c4a111d1e28a04"
+    },
+    {
+      "path": "android/app/src/main/res/mipmap-hdpi/ic_launcher.png",
+      "mode": "100644",
+      "size_bytes": 2786,
+      "source_blob_sha": "c023e50595074292c7361183a64de08cf9686c9c",
+      "status": "copied",
+      "destination_blob_sha": "c023e50595074292c7361183a64de08cf9686c9c"
+    },
+    {
+      "path": "android/app/src/main/res/mipmap-hdpi/ic_launcher_foreground.png",
+      "mode": "100644",
+      "size_bytes": 3450,
+      "source_blob_sha": "2127973b2d318df7085734d236d0ec649a2b0292",
+      "status": "copied",
+      "destination_blob_sha": "2127973b2d318df7085734d236d0ec649a2b0292"
+    },
+    {
+      "path": "android/app/src/main/res/mipmap-hdpi/ic_launcher_round.png",
+      "mode": "100644",
+      "size_bytes": 4341,
+      "source_blob_sha": "b441f37d6a2a58cfdda841fbc8148a474a4ece3f",
+      "status": "copied",
+      "destination_blob_sha": "b441f37d6a2a58cfdda841fbc8148a474a4ece3f"
+    },
+    {
+      "path": "android/app/src/main/res/mipmap-mdpi/ic_launcher.png",
+      "mode": "100644",
+      "size_bytes": 1869,
+      "source_blob_sha": "72905b854cb4d39e8717090424302e370239a08e",
+      "status": "copied",
+      "destination_blob_sha": "72905b854cb4d39e8717090424302e370239a08e"
+    },
+    {
+      "path": "android/app/src/main/res/mipmap-mdpi/ic_launcher_foreground.png",
+      "mode": "100644",
+      "size_bytes": 2110,
+      "source_blob_sha": "8ed0605c27c764f865674ab0b14c859a1ba29ce6",
+      "status": "copied",
+      "destination_blob_sha": "8ed0605c27c764f865674ab0b14c859a1ba29ce6"
+    },
+    {
+      "path": "android/app/src/main/res/mipmap-mdpi/ic_launcher_round.png",
+      "mode": "100644",
+      "size_bytes": 2725,
+      "source_blob_sha": "9502e47a2c575c50c925b987f397bc5244c57b90",
+      "status": "copied",
+      "destination_blob_sha": "9502e47a2c575c50c925b987f397bc5244c57b90"
+    },
+    {
+      "path": "android/app/src/main/res/mipmap-xhdpi/ic_launcher.png",
+      "mode": "100644",
+      "size_bytes": 3981,
+      "source_blob_sha": "4d1e077104cd61e6a4c3707e87363b523077245a",
+      "status": "copied",
+      "destination_blob_sha": "4d1e077104cd61e6a4c3707e87363b523077245a"
+    },
+    {
+      "path": "android/app/src/main/res/mipmap-xhdpi/ic_launcher_foreground.png",
+      "mode": "100644",
+      "size_bytes": 5036,
+      "source_blob_sha": "df0f15880bee46332dfc6622583215194f948b0f",
+      "status": "copied",
+      "destination_blob_sha": "df0f15880bee46332dfc6622583215194f948b0f"
+    },
+    {
+      "path": "android/app/src/main/res/mipmap-xhdpi/ic_launcher_round.png",
+      "mode": "100644",
+      "size_bytes": 6593,
+      "source_blob_sha": "853db043d8a21a3f2429bb521e373e8b1d39cacd",
+      "status": "copied",
+      "destination_blob_sha": "853db043d8a21a3f2429bb521e373e8b1d39cacd"
+    },
+    {
+      "path": "android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png",
+      "mode": "100644",
+      "size_bytes": 6644,
+      "source_blob_sha": "6cdf97c1196d48e9833487ff6de7c4cfc4e1232d",
+      "status": "copied",
+      "destination_blob_sha": "6cdf97c1196d48e9833487ff6de7c4cfc4e1232d"
+    },
+    {
+      "path": "android/app/src/main/res/mipmap-xxhdpi/ic_launcher_foreground.png",
+      "mode": "100644",
+      "size_bytes": 9793,
+      "source_blob_sha": "2960cbb6104b915c84760f889deed9bff2b3e17a",
+      "status": "copied",
+      "destination_blob_sha": "2960cbb6104b915c84760f889deed9bff2b3e17a"
+    },
+    {
+      "path": "android/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png",
+      "mode": "100644",
+      "size_bytes": 10455,
+      "source_blob_sha": "8e3093a86fffb4d02383785a46189822142d5607",
+      "status": "copied",
+      "destination_blob_sha": "8e3093a86fffb4d02383785a46189822142d5607"
+    },
+    {
+      "path": "android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png",
+      "mode": "100644",
+      "size_bytes": 9441,
+      "source_blob_sha": "46de6e255a95abb68a915d7cb45776d890768922",
+      "status": "copied",
+      "destination_blob_sha": "46de6e255a95abb68a915d7cb45776d890768922"
+    },
+    {
+      "path": "android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_foreground.png",
+      "mode": "100644",
+      "size_bytes": 15529,
+      "source_blob_sha": "d2ea9abed395c5fb38369a54896c51c8e8bdff72",
+      "status": "copied",
+      "destination_blob_sha": "d2ea9abed395c5fb38369a54896c51c8e8bdff72"
+    },
+    {
+      "path": "android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png",
+      "mode": "100644",
+      "size_bytes": 15916,
+      "source_blob_sha": "a40d73e9c68ea638c28c7b13e4bcd1e179a3a102",
+      "status": "copied",
+      "destination_blob_sha": "a40d73e9c68ea638c28c7b13e4bcd1e179a3a102"
+    },
+    {
+      "path": "android/app/src/main/res/values/ic_launcher_background.xml",
+      "mode": "100644",
+      "size_bytes": 120,
+      "source_blob_sha": "c5d5899fdf0a1b144bf341b29e0c66ba50bbcedd",
+      "status": "copied",
+      "destination_blob_sha": "c5d5899fdf0a1b144bf341b29e0c66ba50bbcedd"
+    },
+    {
+      "path": "android/app/src/main/res/values/strings.xml",
+      "mode": "100644",
+      "size_bytes": 292,
+      "source_blob_sha": "7a54a4795a91afb9c50564d68d44e5f34ecc1f67",
+      "status": "copied",
+      "destination_blob_sha": "7a54a4795a91afb9c50564d68d44e5f34ecc1f67"
+    },
+    {
+      "path": "android/app/src/main/res/values/styles.xml",
+      "mode": "100644",
+      "size_bytes": 823,
+      "source_blob_sha": "be874e54a4a64059503427dbefeabcee2989549d",
+      "status": "copied",
+      "destination_blob_sha": "be874e54a4a64059503427dbefeabcee2989549d"
+    },
+    {
+      "path": "android/app/src/main/res/xml/file_paths.xml",
+      "mode": "100644",
+      "size_bytes": 213,
+      "source_blob_sha": "bd0c4d80d0473953333d5adb0d38ac713d0d648b",
+      "status": "copied",
+      "destination_blob_sha": "bd0c4d80d0473953333d5adb0d38ac713d0d648b"
+    },
+    {
+      "path": "android/app/src/test/java/com/getcapacitor/myapp/ExampleUnitTest.java",
+      "mode": "100644",
+      "size_bytes": 402,
+      "source_blob_sha": "0297327842dfa194b316aec9730bb3c7349b7282",
+      "status": "copied",
+      "destination_blob_sha": "0297327842dfa194b316aec9730bb3c7349b7282"
+    },
+    {
+      "path": "android/build.gradle",
+      "mode": "100644",
+      "size_bytes": 636,
+      "source_blob_sha": "f1b3b0e51e8d4b72a1be15ba722507fe70929732",
+      "status": "copied",
+      "destination_blob_sha": "f1b3b0e51e8d4b72a1be15ba722507fe70929732"
+    },
+    {
+      "path": "android/capacitor.settings.gradle",
+      "mode": "100644",
+      "size_bytes": 344,
+      "source_blob_sha": "42955854a0bc5ab62970a13240b946c5ba9eb762",
+      "status": "copied",
+      "destination_blob_sha": "42955854a0bc5ab62970a13240b946c5ba9eb762"
+    },
+    {
+      "path": "android/gradle.properties",
+      "mode": "100644",
+      "size_bytes": 987,
+      "source_blob_sha": "2e87c52f83c298527b1d1c747d496227dc0c6e71",
+      "status": "copied",
+      "destination_blob_sha": "2e87c52f83c298527b1d1c747d496227dc0c6e71"
+    },
+    {
+      "path": "android/gradle/wrapper/gradle-wrapper.jar",
+      "mode": "100644",
+      "size_bytes": 43583,
+      "source_blob_sha": "a4b76b9530d66f5e68d973ea569d8e19de379189",
+      "status": "copied",
+      "destination_blob_sha": "a4b76b9530d66f5e68d973ea569d8e19de379189"
+    },
+    {
+      "path": "android/gradle/wrapper/gradle-wrapper.properties",
+      "mode": "100644",
+      "size_bytes": 253,
+      "source_blob_sha": "c1d5e0185987c556421e0c62058c16ab636e7940",
+      "status": "copied",
+      "destination_blob_sha": "c1d5e0185987c556421e0c62058c16ab636e7940"
+    },
+    {
+      "path": "android/gradlew",
+      "mode": "100644",
+      "size_bytes": 8762,
+      "source_blob_sha": "f5feea6d6b116baaca5a2642d4d9fa1f47d574a7",
+      "status": "copied",
+      "destination_blob_sha": "f5feea6d6b116baaca5a2642d4d9fa1f47d574a7"
+    },
+    {
+      "path": "android/gradlew.bat",
+      "mode": "100644",
+      "size_bytes": 2966,
+      "source_blob_sha": "9b42019c7915b971238526075306ffba3b666dd5",
+      "status": "copied",
+      "destination_blob_sha": "9b42019c7915b971238526075306ffba3b666dd5"
+    },
+    {
+      "path": "android/settings.gradle",
+      "mode": "100644",
+      "size_bytes": 208,
+      "source_blob_sha": "3b4431d7724bd82d1aeb2ce59e7a0504b8869f81",
+      "status": "copied",
+      "destination_blob_sha": "3b4431d7724bd82d1aeb2ce59e7a0504b8869f81"
+    },
+    {
+      "path": "android/variables.gradle",
+      "mode": "100644",
+      "size_bytes": 497,
+      "source_blob_sha": "2c8e4083f67110c1eebf64291d6774481e1e5806",
+      "status": "copied",
+      "destination_blob_sha": "2c8e4083f67110c1eebf64291d6774481e1e5806"
+    },
+    {
+      "path": "capacitor.config.json",
+      "mode": "100644",
+      "size_bytes": 80,
+      "source_blob_sha": "76f1d9bbf2f123bd8ce0c6108408f3826292a130",
+      "status": "copied",
+      "destination_blob_sha": "76f1d9bbf2f123bd8ce0c6108408f3826292a130"
+    },
+    {
+      "path": "codemagic.yaml",
+      "mode": "100644",
+      "size_bytes": 1911,
+      "source_blob_sha": "c0f4609d120a3a9909b59940d039e2000c663ef9",
+      "status": "copied",
+      "destination_blob_sha": "c0f4609d120a3a9909b59940d039e2000c663ef9"
+    },
+    {
+      "path": "config.xml",
+      "mode": "100644",
+      "size_bytes": 649,
+      "source_blob_sha": "e142a81535b904f69d63a000f9d0efaffd53715a",
+      "status": "copied",
+      "destination_blob_sha": "e142a81535b904f69d63a000f9d0efaffd53715a"
+    },
+    {
+      "path": "node_modules/.package-lock.json",
+      "mode": "100644",
+      "size_bytes": 1891,
+      "source_blob_sha": "0ed0333d2ce04d6bc36c67c913b68903a88ac9bd",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/LICENSE",
+      "mode": "100644",
+      "size_bytes": 1075,
+      "source_blob_sha": "c3e903bdded1959466a54a74dd3e9361481f8144",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/build.gradle",
+      "mode": "100644",
+      "size_bytes": 4039,
+      "source_blob_sha": "6ece3eda05e25df4b597be28f28c64f896397f50",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/lint-baseline.xml",
+      "mode": "100644",
+      "size_bytes": 6278,
+      "source_blob_sha": "c1ed9ccbdf4aaa005ac6a3af232d2f9ec8c439e7",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/lint.xml",
+      "mode": "100644",
+      "size_bytes": 360,
+      "source_blob_sha": "b00604bac056d7be964fad73f5747610d741833d",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/proguard-rules.pro",
+      "mode": "100644",
+      "size_bytes": 1014,
+      "source_blob_sha": "96db065b39f4750953b6f5e30aa64009459415a6",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/src/main/AndroidManifest.xml",
+      "mode": "100644",
+      "size_bytes": 120,
+      "source_blob_sha": "74b7379f7323517096397e25f2ba6727537d4882",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/src/main/assets/native-bridge.js",
+      "mode": "100644",
+      "size_bytes": 53467,
+      "source_blob_sha": "f5e7cc44039848f413137b40157eb3624c32d652",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/AndroidProtocolHandler.java",
+      "mode": "100644",
+      "size_bytes": 3723,
+      "source_blob_sha": "df893c7f57f36a9ffaf5d776e8efc2368f62235c",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/App.java",
+      "mode": "100644",
+      "size_bytes": 1525,
+      "source_blob_sha": "f46b6332b611fe974c310ef8790ed2f92bd12fe7",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/AppUUID.java",
+      "mode": "100644",
+      "size_bytes": 2346,
+      "source_blob_sha": "3c1b1db60547eda0992ab306632653c89a2b8bdc",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/Bridge.java",
+      "mode": "100644",
+      "size_bytes": 59522,
+      "source_blob_sha": "d4995fbbc9e4d3f0db7ac0330ef78e2f3547b055",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/BridgeActivity.java",
+      "mode": "100644",
+      "size_bytes": 6664,
+      "source_blob_sha": "bfd532c4d269b83c2de6d8ed3cb15f69ea87727d",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/BridgeWebChromeClient.java",
+      "mode": "100644",
+      "size_bytes": 17689,
+      "source_blob_sha": "6ca1c8a8381484f5e5a897387debd548f7496cff",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/BridgeWebViewClient.java",
+      "mode": "100644",
+      "size_bytes": 3896,
+      "source_blob_sha": "f9df97b5717cb062b0f66138a55af90b2c9f3b2f",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/CapConfig.java",
+      "mode": "100644",
+      "size_bytes": 25220,
+      "source_blob_sha": "b20799ba35346800cfc210e820e0156f0b8c980f",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/CapacitorWebView.java",
+      "mode": "100644",
+      "size_bytes": 1789,
+      "source_blob_sha": "22f6f9729bb43e7df7e911527bc7f8bc201ad60d",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/FileUtils.java",
+      "mode": "100644",
+      "size_bytes": 11587,
+      "source_blob_sha": "ce09e7c2f0150f26f2d44261879daba02db109c6",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/InvalidPluginException.java",
+      "mode": "100644",
+      "size_bytes": 149,
+      "source_blob_sha": "1757e326406d99eb5b64a40bc53a4ffb573d3f02",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/InvalidPluginMethodException.java",
+      "mode": "100644",
+      "size_bytes": 334,
+      "source_blob_sha": "94be491e3bee6262d4176fb3bd3714c321c241bd",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/JSArray.java",
+      "mode": "100644",
+      "size_bytes": 1212,
+      "source_blob_sha": "06b7f4ddd05923564685421d0e6b993c87df1df9",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/JSExport.java",
+      "mode": "100644",
+      "size_bytes": 7561,
+      "source_blob_sha": "2083c2c945484dda6b7f2408d7bdfbcfe0d01294",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/JSExportException.java",
+      "mode": "100644",
+      "size_bytes": 297,
+      "source_blob_sha": "14b6043a5206a389c77d7f9aadbeede6c7579d77",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/JSInjector.java",
+      "mode": "100644",
+      "size_bytes": 3932,
+      "source_blob_sha": "1ee6aa17584b90a63622273ded68a0cb230e64dd",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/JSObject.java",
+      "mode": "100644",
+      "size_bytes": 4203,
+      "source_blob_sha": "0e98707627fef51e561910950a911b7a42860490",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/JSValue.java",
+      "mode": "100644",
+      "size_bytes": 1997,
+      "source_blob_sha": "d97ba91bf93c6b242a2483576094ac7dfb64cacd",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/Logger.java",
+      "mode": "100644",
+      "size_bytes": 2273,
+      "source_blob_sha": "9d24fedd4aeab50f691e503df15ef8c7a22786fe",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/MessageHandler.java",
+      "mode": "100644",
+      "size_bytes": 6347,
+      "source_blob_sha": "dc91c9b01e74b315d1f290daa86d831fae839f8f",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/NativePlugin.java",
+      "mode": "100644",
+      "size_bytes": 980,
+      "source_blob_sha": "c430762406eb3a3d97a36cb2fb7ef71ac55a3ae5",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/PermissionState.java",
+      "mode": "100644",
+      "size_bytes": 606,
+      "source_blob_sha": "382cff712e7384187fa2227ab3367c30f650d3c1",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/Plugin.java",
+      "mode": "100644",
+      "size_bytes": 38581,
+      "source_blob_sha": "19c8b8b3a61dbd214c1f24f2f3650157d014a211",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/PluginCall.java",
+      "mode": "100644",
+      "size_bytes": 10474,
+      "source_blob_sha": "7308f071280075fabb997c19ecd427a644d6f7e2",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/PluginConfig.java",
+      "mode": "100644",
+      "size_bytes": 3788,
+      "source_blob_sha": "0f00fc530fb1a04aa930d3ae83888f2a281b7b51",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/PluginHandle.java",
+      "mode": "100644",
+      "size_bytes": 5320,
+      "source_blob_sha": "bfdd922857208da0484dffabdef3e59a85ec0bab",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/PluginInvocationException.java",
+      "mode": "100644",
+      "size_bytes": 322,
+      "source_blob_sha": "ae6b0eb830d0de498b73cea942116cac1bd2c9e5",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/PluginLoadException.java",
+      "mode": "100644",
+      "size_bytes": 358,
+      "source_blob_sha": "8d81a38223b3227291d0614ce48be73aec06c723",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/PluginManager.java",
+      "mode": "100644",
+      "size_bytes": 2123,
+      "source_blob_sha": "540bc9122d8df2b7bdf947c21336ead41493e050",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/PluginMethod.java",
+      "mode": "100644",
+      "size_bytes": 347,
+      "source_blob_sha": "856630431a7647c82a2c7ff048d9be4e73017055",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/PluginMethodHandle.java",
+      "mode": "100644",
+      "size_bytes": 735,
+      "source_blob_sha": "a728c1f1d0043b566bc51507ce3e2860ca8d684c",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/PluginResult.java",
+      "mode": "100644",
+      "size_bytes": 2392,
+      "source_blob_sha": "cdc169e0c594ac6b444eca848d05ec2463bc5049",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/ProcessedRoute.java",
+      "mode": "100644",
+      "size_bytes": 723,
+      "source_blob_sha": "eb3d7b0deb23d940d76f20674787eedea79085ab",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/RouteProcessor.java",
+      "mode": "100644",
+      "size_bytes": 178,
+      "source_blob_sha": "670c8bc6bdad4b067fbb0527ef609bba2aecb736",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/ServerPath.java",
+      "mode": "100644",
+      "size_bytes": 421,
+      "source_blob_sha": "5b34b460ccdfdbee81919f9e234be603f60efdc2",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/UriMatcher.java",
+      "mode": "100644",
+      "size_bytes": 6049,
+      "source_blob_sha": "3a77a05fd44be67b451d451bf4820e94fe9379ec",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/WebViewListener.java",
+      "mode": "100644",
+      "size_bytes": 1987,
+      "source_blob_sha": "6031344f2e6ed3b721c5adc4914f967f6b5c166c",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/WebViewLocalServer.java",
+      "mode": "100644",
+      "size_bytes": 30499,
+      "source_blob_sha": "a39483de91b4c4dbd67081ae78754084d09bc4ba",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/annotation/ActivityCallback.java",
+      "mode": "100644",
+      "size_bytes": 302,
+      "source_blob_sha": "b8112f187442d939f2cc9635409146b5da7a5701",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/annotation/CapacitorPlugin.java",
+      "mode": "100644",
+      "size_bytes": 1134,
+      "source_blob_sha": "903378db10ae2034e2f58b9a9f7b243ae9895d67",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/annotation/Permission.java",
+      "mode": "100644",
+      "size_bytes": 590,
+      "source_blob_sha": "3511437082e55ab01de99f6ad42411f4937545fa",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/annotation/PermissionCallback.java",
+      "mode": "100644",
+      "size_bytes": 304,
+      "source_blob_sha": "1b81ee01dadceb34d20ea9cc8b12cae00443e9ec",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/cordova/CapacitorCordovaCookieManager.java",
+      "mode": "100644",
+      "size_bytes": 1067,
+      "source_blob_sha": "72ac4ee7992c794e9b80879bd4a850009630dde4",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/cordova/MockCordovaInterfaceImpl.java",
+      "mode": "100644",
+      "size_bytes": 1405,
+      "source_blob_sha": "7e8358da5e34db5b5ddfc1bbe1b182558313aa93",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/cordova/MockCordovaWebViewImpl.java",
+      "mode": "100644",
+      "size_bytes": 7753,
+      "source_blob_sha": "1115429d7bbc478f98faf1447d7d288f080580f8",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/plugin/CapacitorCookieManager.java",
+      "mode": "100644",
+      "size_bytes": 8981,
+      "source_blob_sha": "cf4ab63266f4db812ecde5c787be62aba04495cf",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/plugin/CapacitorCookies.java",
+      "mode": "100644",
+      "size_bytes": 3997,
+      "source_blob_sha": "6ba4605f34b54cbde7788c4b9c65e27acf2052a4",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/plugin/CapacitorHttp.java",
+      "mode": "100644",
+      "size_bytes": 3830,
+      "source_blob_sha": "46bc17417ffa51e8c839b6bd375b4fc8cb7fa984",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/plugin/SystemBars.java",
+      "mode": "100644",
+      "size_bytes": 13664,
+      "source_blob_sha": "b335b4b1cf105a757bbb26e2aed546dcf37b1049",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/plugin/WebView.java",
+      "mode": "100644",
+      "size_bytes": 1497,
+      "source_blob_sha": "096d62a5d0d23fe94b83fa65b89c87e0d5cfafd5",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/plugin/util/AssetUtil.java",
+      "mode": "100644",
+      "size_bytes": 10148,
+      "source_blob_sha": "3a7043bb5b517e373ddb28a425dde08bf289d339",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/plugin/util/CapacitorHttpUrlConnection.java",
+      "mode": "100644",
+      "size_bytes": 20096,
+      "source_blob_sha": "6180d64200a1b325604ff8a497b600e82744fdd6",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/plugin/util/HttpRequestHandler.java",
+      "mode": "100644",
+      "size_bytes": 18181,
+      "source_blob_sha": "b47d57cf1015925f792454e30535961d0d2bbd33",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/plugin/util/ICapacitorHttpUrlConnection.java",
+      "mode": "100644",
+      "size_bytes": 384,
+      "source_blob_sha": "4ed8881acb7ac8e900073e0f8435c565dc9b32ab",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/plugin/util/MimeType.java",
+      "mode": "100644",
+      "size_bytes": 358,
+      "source_blob_sha": "cfc90f824ae350a24e52894727bacaf1acffb4d9",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/util/HostMask.java",
+      "mode": "100644",
+      "size_bytes": 3400,
+      "source_blob_sha": "486d0fd0505dff73d410d366c5f8c02b19dc54d9",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/util/InternalUtils.java",
+      "mode": "100644",
+      "size_bytes": 1051,
+      "source_blob_sha": "b7354159058a52a954bcf11da0f705471af69ff3",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/util/JSONUtils.java",
+      "mode": "100644",
+      "size_bytes": 5087,
+      "source_blob_sha": "1d2fc20785429283fdbe11c7fda6dd9d93817f12",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/util/PermissionHelper.java",
+      "mode": "100644",
+      "size_bytes": 4396,
+      "source_blob_sha": "e7b83321047c4f44df90ded4cfeef1d1a747f4c6",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/util/WebColor.java",
+      "mode": "100644",
+      "size_bytes": 1135,
+      "source_blob_sha": "e055021e7101693dce41eab79f4d31017e5bf28f",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/src/main/res/layout/capacitor_bridge_layout_main.xml",
+      "mode": "100644",
+      "size_bytes": 617,
+      "source_blob_sha": "12f0b8fc8802a40b3646b0b7caa69d751d8fc3b2",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/src/main/res/layout/no_webview.xml",
+      "mode": "100644",
+      "size_bytes": 488,
+      "source_blob_sha": "7228cc2fc62f9179315c0f9a1e2450e27df7d408",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/src/main/res/values/colors.xml",
+      "mode": "100644",
+      "size_bytes": 348,
+      "source_blob_sha": "347d60885c8217dd3ab7c7bce5261f9766081b67",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/src/main/res/values/strings.xml",
+      "mode": "100644",
+      "size_bytes": 105,
+      "source_blob_sha": "2db1111db82d52a5cd7432c410707d262389731c",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/capacitor/src/main/res/values/styles.xml",
+      "mode": "100644",
+      "size_bytes": 212,
+      "source_blob_sha": "d3268920dd128c604f07f1c28a90002517f5bdb7",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/android/package.json",
+      "mode": "100644",
+      "size_bytes": 811,
+      "source_blob_sha": "8ae93f3f2bddc5a2c8604d3f5ce67034f7684d3d",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/core/LICENSE",
+      "mode": "100644",
+      "size_bytes": 1075,
+      "source_blob_sha": "c3e903bdded1959466a54a74dd3e9361481f8144",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/core/README.md",
+      "mode": "100644",
+      "size_bytes": 96,
+      "source_blob_sha": "e877ef3aee222dee5061d8e449e32afc7c4cfd16",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/core/cookies.md",
+      "mode": "100644",
+      "size_bytes": 6221,
+      "source_blob_sha": "a1d237ee4ebfaa292af6eeaa76fef29069092841",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/core/cordova.js",
+      "mode": "100644",
+      "size_bytes": 52045,
+      "source_blob_sha": "b0219ff5a5fe3b9ccbc017ea36ba27617e79253a",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/core/dist/capacitor.js",
+      "mode": "100644",
+      "size_bytes": 8718,
+      "source_blob_sha": "64722c380cc74919b897720808c3b1aa3249e0b4",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/core/dist/capacitor.js.map",
+      "mode": "100644",
+      "size_bytes": 37677,
+      "source_blob_sha": "a498f662a97bcfd7abb7410fcfec2cbc4784ac61",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/core/dist/index.cjs.js",
+      "mode": "100644",
+      "size_bytes": 24451,
+      "source_blob_sha": "e48348ec638146c2d71f65a4c3533341eecc7dc7",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/core/dist/index.cjs.js.map",
+      "mode": "100644",
+      "size_bytes": 47325,
+      "source_blob_sha": "92ca85b4ef790aadee923ccca812609f26cec476",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/core/dist/index.js",
+      "mode": "100644",
+      "size_bytes": 24096,
+      "source_blob_sha": "2509854d0f9c2b2e280243df14bdbb7c1021b171",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/core/dist/index.js.map",
+      "mode": "100644",
+      "size_bytes": 47250,
+      "source_blob_sha": "1ef043776f040fb627577d9a981a0506b620b803",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/core/http.md",
+      "mode": "100644",
+      "size_bytes": 89742,
+      "source_blob_sha": "f459597c1f109191a4f90208c02d5373e8fe0b93",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/core/package.json",
+      "mode": "100644",
+      "size_bytes": 1953,
+      "source_blob_sha": "eef113a50a650d2a6a0cb3d1cc7144d705f28369",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/core/system-bars.md",
+      "mode": "100644",
+      "size_bytes": 10986,
+      "source_blob_sha": "67275077af9694a82bcd3e4540b236aa52c80174",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/core/types/core-plugins.d.ts",
+      "mode": "100644",
+      "size_bytes": 10924,
+      "source_blob_sha": "f865b8b4732c3f9fa30752889a050bcd5d8f72e4",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/core/types/definitions-internal.d.ts",
+      "mode": "100644",
+      "size_bytes": 5287,
+      "source_blob_sha": "9fd775464f0f7df091a583363c1d7473be9e8678",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/core/types/definitions.d.ts",
+      "mode": "100644",
+      "size_bytes": 2790,
+      "source_blob_sha": "ef071b48a2b701d880aaa63f5e127b873ba5b07d",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/core/types/global.d.ts",
+      "mode": "100644",
+      "size_bytes": 150,
+      "source_blob_sha": "bc46e04eade923877910f9a9428b52cb8a950642",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/core/types/index.d.ts",
+      "mode": "100644",
+      "size_bytes": 760,
+      "source_blob_sha": "e2967d7a0e0dca0f6e5daa529564b1c10cb4dee7",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/core/types/runtime.d.ts",
+      "mode": "100644",
+      "size_bytes": 427,
+      "source_blob_sha": "969ee48718dfb4571f9a0da7630fdef66b17bd7a",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/core/types/util.d.ts",
+      "mode": "100644",
+      "size_bytes": 974,
+      "source_blob_sha": "5b9647c687832d1adfd4bd8ddc1dbd7be662d327",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/core/types/web-plugin.d.ts",
+      "mode": "100644",
+      "size_bytes": 1351,
+      "source_blob_sha": "d822b451de2515fcc53e5eb0dbd100c5549268ae",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/filesystem/CapacitorFilesystem.podspec",
+      "mode": "100644",
+      "size_bytes": 601,
+      "source_blob_sha": "57bda93cb4233e93d774c6216217fcc29c3a9f3a",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/filesystem/LICENSE",
+      "mode": "100644",
+      "size_bytes": 1062,
+      "source_blob_sha": "774efa0d4c1123a999a4f2f20808a421bcbf37df",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/filesystem/Package.swift",
+      "mode": "100644",
+      "size_bytes": 1048,
+      "source_blob_sha": "e0e9dc2a6087459bbd01daf02163876fccd39017",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/filesystem/README.md",
+      "mode": "100644",
+      "size_bytes": 44991,
+      "source_blob_sha": "90c91df2a655aff96fa9e705ef307345a461d7a5",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/filesystem/android/build.gradle",
+      "mode": "100644",
+      "size_bytes": 3325,
+      "source_blob_sha": "915b0dd83481a4b10082709ae949cc49ba7e1103",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/filesystem/android/src/main/AndroidManifest.xml",
+      "mode": "100644",
+      "size_bytes": 82,
+      "source_blob_sha": "a2f47b6057db70071e9080281db29d78ac165e66",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/filesystem/android/src/main/kotlin/com/capacitorjs/plugins/filesystem/FilesystemErrors.kt",
+      "mode": "100644",
+      "size_bytes": 4031,
+      "source_blob_sha": "6eff078fc2600ade40869342b79e6de641ed646f",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/filesystem/android/src/main/kotlin/com/capacitorjs/plugins/filesystem/FilesystemMethodOptions.kt",
+      "mode": "100644",
+      "size_bytes": 5533,
+      "source_blob_sha": "6abeb4613500c319c171289bc878f15c9a8e5155",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/filesystem/android/src/main/kotlin/com/capacitorjs/plugins/filesystem/FilesystemMethodResults.kt",
+      "mode": "100644",
+      "size_bytes": 2104,
+      "source_blob_sha": "b2c0c6a4178a85e1431915d478e09d559071fa5e",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/filesystem/android/src/main/kotlin/com/capacitorjs/plugins/filesystem/FilesystemPlugin.kt",
+      "mode": "100644",
+      "size_bytes": 16285,
+      "source_blob_sha": "fed6e14aca62eb0dd36a26b8cea5091474652252",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/filesystem/android/src/main/kotlin/com/capacitorjs/plugins/filesystem/LegacyFilesystemImplementation.kt",
+      "mode": "100644",
+      "size_bytes": 5613,
+      "source_blob_sha": "cfe09ec10920133fd07eeb9bc2aa1a8ee4ab87d9",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/filesystem/android/src/main/kotlin/com/capacitorjs/plugins/filesystem/PluginResultExtensions.kt",
+      "mode": "100644",
+      "size_bytes": 839,
+      "source_blob_sha": "7ca43b07c093dc2502dbb75e8dae70cc99be1fbf",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/filesystem/dist/docs.json",
+      "mode": "100644",
+      "size_bytes": 40815,
+      "source_blob_sha": "4b397ea9bb7d478e387d0606e8eacbb393ce9b0b",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/filesystem/dist/esm/definitions.d.ts",
+      "mode": "100644",
+      "size_bytes": 17469,
+      "source_blob_sha": "5f45e42221ac2f3515ab2536342ecc835f114ec9",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/filesystem/dist/esm/definitions.js",
+      "mode": "100644",
+      "size_bytes": 4081,
+      "source_blob_sha": "bed6b1711e4444bfbfc952261e2b1c77cde19fcf",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/filesystem/dist/esm/definitions.js.map",
+      "mode": "100644",
+      "size_bytes": 17950,
+      "source_blob_sha": "d2eb73a82af3eae5cf1e533cb2ba3bd3fbbb14ea",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/filesystem/dist/esm/index.d.ts",
+      "mode": "100644",
+      "size_bytes": 153,
+      "source_blob_sha": "db60658f5a9ab11345c0ee5d3ecb771f995f32cc",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/filesystem/dist/esm/index.js",
+      "mode": "100644",
+      "size_bytes": 327,
+      "source_blob_sha": "ffc0972b926c9b998ea9a2082388aedff539b1b2",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/filesystem/dist/esm/index.js.map",
+      "mode": "100644",
+      "size_bytes": 844,
+      "source_blob_sha": "69606f5bc42012ec85b6d783a77a1601812ca46a",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/filesystem/dist/esm/web.d.ts",
+      "mode": "100644",
+      "size_bytes": 4410,
+      "source_blob_sha": "961674482f5faa662af25b8fb3fa42fbe71a7a20",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/filesystem/dist/esm/web.js",
+      "mode": "100644",
+      "size_bytes": 23426,
+      "source_blob_sha": "de518c35c74390c43aed8d2414b27e4b761c2019",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/filesystem/dist/esm/web.js.map",
+      "mode": "100644",
+      "size_bytes": 42810,
+      "source_blob_sha": "78b24f98dc9661afac61cf19cbec0232827035bd",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/filesystem/dist/plugin.cjs.js",
+      "mode": "100644",
+      "size_bytes": 27949,
+      "source_blob_sha": "1113e4393a2e5b3f2ee8ccb49487aa88c08d540a",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/filesystem/dist/plugin.cjs.js.map",
+      "mode": "100644",
+      "size_bytes": 50953,
+      "source_blob_sha": "5c8230ad5c709e255a87c16fdee24af5e98fab4f",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/filesystem/dist/plugin.js",
+      "mode": "100644",
+      "size_bytes": 30907,
+      "source_blob_sha": "94dddf98f451f8964a91e421eaa581222dc6aa6b",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/filesystem/dist/plugin.js.map",
+      "mode": "100644",
+      "size_bytes": 50953,
+      "source_blob_sha": "e3e72615692170157abf80ee7775e8344bd2114a",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/filesystem/ios/Sources/FilesystemPlugin/CAPPluginCall+Accelerators.swift",
+      "mode": "100644",
+      "size_bytes": 2485,
+      "source_blob_sha": "a942c95e9e79ea567d367ad77aeaec3b12e7ed02",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/filesystem/ios/Sources/FilesystemPlugin/FilesystemConstants.swift",
+      "mode": "100644",
+      "size_bytes": 1774,
+      "source_blob_sha": "9b3e3d2e689ded29af35eb59ab1cbb48683c20c2",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/filesystem/ios/Sources/FilesystemPlugin/FilesystemError.swift",
+      "mode": "100644",
+      "size_bytes": 2166,
+      "source_blob_sha": "030e3369d83aa91f6c856a216cb0f25bc50b89f1",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/filesystem/ios/Sources/FilesystemPlugin/FilesystemLocationResolver.swift",
+      "mode": "100644",
+      "size_bytes": 1625,
+      "source_blob_sha": "c96f69e72bfe79f82594ca0e20f989f2681e49f8",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/filesystem/ios/Sources/FilesystemPlugin/FilesystemOperation.swift",
+      "mode": "100644",
+      "size_bytes": 822,
+      "source_blob_sha": "cba3570ae5dbfbbaa136735050c140e8d7dfea92",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/filesystem/ios/Sources/FilesystemPlugin/FilesystemOperationExecutor.swift",
+      "mode": "100644",
+      "size_bytes": 6329,
+      "source_blob_sha": "c5eea30f0d6a0773ef12037ff3f01d6de79dc093",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/filesystem/ios/Sources/FilesystemPlugin/FilesystemPlugin.swift",
+      "mode": "100644",
+      "size_bytes": 8233,
+      "source_blob_sha": "c7435100de26da4c704b01f253df3b8281df3e08",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/filesystem/ios/Sources/FilesystemPlugin/IONFileStructures+Converters.swift",
+      "mode": "100644",
+      "size_bytes": 2112,
+      "source_blob_sha": "ce2ed24d4b95e49205e2765886204d7f7ccbcaa3",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/filesystem/ios/Sources/FilesystemPlugin/LegacyFilesystemImplementation.swift",
+      "mode": "100644",
+      "size_bytes": 8197,
+      "source_blob_sha": "b9dad01e125067b352f509d031bcab68467b723c",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/filesystem/ios/Tests/FilesystemPluginTests/FilesystemPluginTests.swift",
+      "mode": "100644",
+      "size_bytes": 375,
+      "source_blob_sha": "a625af95808843ac794ae7ae05ee07820bf9f620",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/filesystem/package.json",
+      "mode": "100644",
+      "size_bytes": 2949,
+      "source_blob_sha": "fbbacf4eaccf0875b7d165fa522c72f15cf21070",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/synapse/LICENSE.md",
+      "mode": "100644",
+      "size_bytes": 1062,
+      "source_blob_sha": "774efa0d4c1123a999a4f2f20808a421bcbf37df",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/synapse/README.md",
+      "mode": "100644",
+      "size_bytes": 1661,
+      "source_blob_sha": "657fb33e69140f83859dd1193cc05bd439086a9e",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/synapse/dist/index.d.ts",
+      "mode": "100644",
+      "size_bytes": 492,
+      "source_blob_sha": "efe9c35bb1b4d1b93fa77d3a16aed641f1f2ddff",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/synapse/dist/synapse.cjs",
+      "mode": "100644",
+      "size_bytes": 734,
+      "source_blob_sha": "f7c3b15673917b69b0afcbb6b6261de088416ded",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/synapse/dist/synapse.js",
+      "mode": "100644",
+      "size_bytes": 944,
+      "source_blob_sha": "e0554012b5c3067901ea752f0a2ad49f3af8975e",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/synapse/dist/synapse.mjs",
+      "mode": "100644",
+      "size_bytes": 1169,
+      "source_blob_sha": "1fc232843811f3be95b238fdc298e851f74dbbfd",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/@capacitor/synapse/package.json",
+      "mode": "100644",
+      "size_bytes": 1080,
+      "source_blob_sha": "886f5306547b1cf0453d1ab6c7a33ccb67e99637",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/tslib/CopyrightNotice.txt",
+      "mode": "100644",
+      "size_bytes": 822,
+      "source_blob_sha": "0e42542369729ec05635e54491d177e86ccea100",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/tslib/LICENSE.txt",
+      "mode": "100644",
+      "size_bytes": 655,
+      "source_blob_sha": "bfe6430cb0d83f34f5ed859d118dd3dc8ec1f7e8",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/tslib/README.md",
+      "mode": "100644",
+      "size_bytes": 4033,
+      "source_blob_sha": "290cc618fba09dc5e93cb6c6b2364835d474f205",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/tslib/SECURITY.md",
+      "mode": "100644",
+      "size_bytes": 2757,
+      "source_blob_sha": "869fdfe2b246991a053fab9cfec1bed3ab532ab1",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/tslib/modules/index.d.ts",
+      "mode": "100644",
+      "size_bytes": 801,
+      "source_blob_sha": "3244fabeec060d55c47f0a981adb9d629fd0678f",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/tslib/modules/index.js",
+      "mode": "100644",
+      "size_bytes": 1416,
+      "source_blob_sha": "c91f61864fead99b3085eed82ae0aa8a098d83a8",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/tslib/modules/package.json",
+      "mode": "100644",
+      "size_bytes": 26,
+      "source_blob_sha": "aafa0e4b45ab8f65ed28c0d0b389ae9587aa3d80",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/tslib/package.json",
+      "mode": "100644",
+      "size_bytes": 1219,
+      "source_blob_sha": "57d05787665b23adae49ad9d1c4fcc1b183481e6",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/tslib/tslib.d.ts",
+      "mode": "100644",
+      "size_bytes": 18317,
+      "source_blob_sha": "f23df5596e4c82c702ef1fcf8f8be68d650e3988",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/tslib/tslib.es6.html",
+      "mode": "100644",
+      "size_bytes": 36,
+      "source_blob_sha": "b122e41b06af8034aca824c9563053cf501eba2a",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/tslib/tslib.es6.js",
+      "mode": "100644",
+      "size_bytes": 19215,
+      "source_blob_sha": "6c1739b34112104923fb7f1f1f119da40ef38ba9",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/tslib/tslib.es6.mjs",
+      "mode": "100644",
+      "size_bytes": 17648,
+      "source_blob_sha": "c17990a13acce3c462871f37caae96b112850771",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/tslib/tslib.html",
+      "mode": "100644",
+      "size_bytes": 32,
+      "source_blob_sha": "44c9ba51e3547ad1b7a9244f14703ab681519619",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "node_modules/tslib/tslib.js",
+      "mode": "100644",
+      "size_bytes": 23382,
+      "source_blob_sha": "5e12ace6db8ac89cf15b3106d8d6ab8271ffd3a4",
+      "status": "excluded_node_modules",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "package-lock.json",
+      "mode": "100644",
+      "size_bytes": 2019,
+      "source_blob_sha": "563500a9511a5c81492e86a1a7d24f542bed9663",
+      "status": "copied",
+      "destination_blob_sha": "563500a9511a5c81492e86a1a7d24f542bed9663"
+    },
+    {
+      "path": "package.json",
+      "mode": "100644",
+      "size_bytes": 102,
+      "source_blob_sha": "6b3d70b8cb85f8d12cce3f622ef080988eb02e35",
+      "status": "copied",
+      "destination_blob_sha": "6b3d70b8cb85f8d12cce3f622ef080988eb02e35"
+    },
+    {
+      "path": "resources/icon-only.png",
+      "mode": "100644",
+      "size_bytes": 186966,
+      "source_blob_sha": "512139c4368f1d658d03b7459a71d586a6cbbec9",
+      "status": "copied",
+      "destination_blob_sha": "512139c4368f1d658d03b7459a71d586a6cbbec9"
+    },
+    {
+      "path": "www/assets/bootstrap/img/backgrounds/button-texture.png",
+      "mode": "100644",
+      "size_bytes": 321828,
+      "source_blob_sha": "542bdc10ad522a0835b1bc5acc392299a7c10991",
+      "status": "copied",
+      "destination_blob_sha": "542bdc10ad522a0835b1bc5acc392299a7c10991"
+    },
+    {
+      "path": "www/assets/bootstrap/img/classes/rogue-avatar-placeholder.png",
+      "mode": "100644",
+      "size_bytes": 86954,
+      "source_blob_sha": "f4befd60401722c085a54832f1f6b136af50ceaf",
+      "status": "copied",
+      "destination_blob_sha": "f4befd60401722c085a54832f1f6b136af50ceaf"
+    },
+    {
+      "path": "www/assets/bootstrap/img/classes/warrior-avatar.png",
+      "mode": "100644",
+      "size_bytes": 726231,
+      "source_blob_sha": "cdbf67b2aca8d236f965646292afb504c8fc9a9e",
+      "status": "copied",
+      "destination_blob_sha": "cdbf67b2aca8d236f965646292afb504c8fc9a9e"
+    },
+    {
+      "path": "www/assets/bootstrap/img/icons/expedition-impulse-icon.png",
+      "mode": "100644",
+      "size_bytes": 184802,
+      "source_blob_sha": "0f1066c38591525b7557624948b259f71ea350cf",
+      "status": "copied",
+      "destination_blob_sha": "0f1066c38591525b7557624948b259f71ea350cf"
+    },
+    {
+      "path": "www/assets/bootstrap/img/icons/language_flag_en_icon.png",
+      "mode": "100644",
+      "size_bytes": 429069,
+      "source_blob_sha": "a8bb47d4020b3e3a6e661ac7c8caf21318334b90",
+      "status": "copied",
+      "destination_blob_sha": "a8bb47d4020b3e3a6e661ac7c8caf21318334b90"
+    },
+    {
+      "path": "www/assets/bootstrap/img/icons/language_flag_pl_icon.png",
+      "mode": "100644",
+      "size_bytes": 411018,
+      "source_blob_sha": "8b6e009f794bb7d02f9adaeb3a9cd99cf4774d6c",
+      "status": "copied",
+      "destination_blob_sha": "8b6e009f794bb7d02f9adaeb3a9cd99cf4774d6c"
+    },
+    {
+      "path": "www/assets/bootstrap/img/icons/menu-energy-icon.png",
+      "mode": "100644",
+      "size_bytes": 430901,
+      "source_blob_sha": "588bec8e75dfdfd277dbc4552eb3c43d9c86b43c",
+      "status": "copied",
+      "destination_blob_sha": "588bec8e75dfdfd277dbc4552eb3c43d9c86b43c"
+    },
+    {
+      "path": "www/assets/bootstrap/img/icons/volume-mute-icon.png",
+      "mode": "100644",
+      "size_bytes": 43582,
+      "source_blob_sha": "5713a5092562364bce69617c45c2c593e1d061c8",
+      "status": "copied",
+      "destination_blob_sha": "5713a5092562364bce69617c45c2c593e1d061c8"
+    },
+    {
+      "path": "www/assets/bootstrap/img/icons/volume-on-icon.png",
+      "mode": "100644",
+      "size_bytes": 47723,
+      "source_blob_sha": "6072b818d221afe3630fea5fd498ca6be71f9f43",
+      "status": "copied",
+      "destination_blob_sha": "6072b818d221afe3630fea5fd498ca6be71f9f43"
+    },
+    {
+      "path": "www/assets/bootstrap/img/loadings/hero-story-loading.png",
+      "mode": "100644",
+      "size_bytes": 3004427,
+      "source_blob_sha": "f020481994a8015af897472113ec9b27cf20d597",
+      "status": "omitted_large_binary",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "www/assets/bootstrap/img/loadings/land-story-loading.png",
+      "mode": "100644",
+      "size_bytes": 2301446,
+      "source_blob_sha": "cf24e4b503478d3fcbf6686ddff7d3d8feaf1acd",
+      "status": "omitted_large_binary",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "www/assets/bootstrap/img/loadings/port-story-loading.png",
+      "mode": "100644",
+      "size_bytes": 2280061,
+      "source_blob_sha": "f10e19950ce6299c4c77b35cfbf943d5bdb38ae2",
+      "status": "omitted_large_binary",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "www/assets/bootstrap/img/loadings/storm-story-loading.png",
+      "mode": "100644",
+      "size_bytes": 2422782,
+      "source_blob_sha": "fd5eef623bda8ad97dab7f69f03d433d0dc96b37",
+      "status": "omitted_large_binary",
+      "destination_blob_sha": null
+    },
+    {
+      "path": "www/assets/bootstrap/img/logo/background.png",
+      "mode": "100644",
+      "size_bytes": 475403,
+      "source_blob_sha": "03eb3149427021d42df2dbc2214cfb5429155738",
+      "status": "copied",
+      "destination_blob_sha": "03eb3149427021d42df2dbc2214cfb5429155738"
+    },
+    {
+      "path": "www/assets/bootstrap/img/logo/game-logo.png",
+      "mode": "100644",
+      "size_bytes": 541958,
+      "source_blob_sha": "631416f22268c4ed63c7557f0ca94dfa2770ebc1",
+      "status": "copied",
+      "destination_blob_sha": "631416f22268c4ed63c7557f0ca94dfa2770ebc1"
+    },
+    {
+      "path": "www/assets/bootstrap/img/logo/mini-logo.png",
+      "mode": "100644",
+      "size_bytes": 388839,
+      "source_blob_sha": "cee73983ba0455f57cdf5b3a5fa21c3f00fa3672",
+      "status": "copied",
+      "destination_blob_sha": "cee73983ba0455f57cdf5b3a5fa21c3f00fa3672"
+    },
+    {
+      "path": "www/assets/bootstrap/img/logo/portal.png",
+      "mode": "100644",
+      "size_bytes": 256410,
+      "source_blob_sha": "96831a8b8f7cf9db092cdbc5c3ca57279757f9f7",
+      "status": "copied",
+      "destination_blob_sha": "96831a8b8f7cf9db092cdbc5c3ca57279757f9f7"
+    },
+    {
+      "path": "www/assets/bootstrap/img/logo/rigin-title.png",
+      "mode": "100644",
+      "size_bytes": 271878,
+      "source_blob_sha": "ad4ba8cae6cf78e72be2e260f8dc0d9d1c8df6fe",
+      "status": "copied",
+      "destination_blob_sha": "ad4ba8cae6cf78e72be2e260f8dc0d9d1c8df6fe"
+    },
+    {
+      "path": "www/assets/bootstrap/sounds/menu-sound2.mp3",
+      "mode": "100644",
+      "size_bytes": 13209,
+      "source_blob_sha": "b3b06f88aa1b437229ab78616696d4c691b81c02",
+      "status": "copied",
+      "destination_blob_sha": "b3b06f88aa1b437229ab78616696d4c691b81c02"
+    },
+    {
+      "path": "www/bot-test.html",
+      "mode": "100644",
+      "size_bytes": 3895,
+      "source_blob_sha": "0f3d321d06d061eccfe5c1120684c3ded56ede42",
+      "status": "copied",
+      "destination_blob_sha": "0f3d321d06d061eccfe5c1120684c3ded56ede42"
+    },
+    {
+      "path": "www/combat-balance.html",
+      "mode": "100644",
+      "size_bytes": 3818,
+      "source_blob_sha": "9457e2631b3de7f44e638530abe38c3bf6d500f8",
+      "status": "copied",
+      "destination_blob_sha": "9457e2631b3de7f44e638530abe38c3bf6d500f8"
+    },
+    {
+      "path": "www/config.xml",
+      "mode": "100644",
+      "size_bytes": 649,
+      "source_blob_sha": "e142a81535b904f69d63a000f9d0efaffd53715a",
+      "status": "copied",
+      "destination_blob_sha": "e142a81535b904f69d63a000f9d0efaffd53715a"
+    },
+    {
+      "path": "www/css/.hidden",
+      "mode": "100644",
+      "size_bytes": 0,
+      "source_blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "status": "copied",
+      "destination_blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "www/css/bot-test.css",
+      "mode": "100644",
+      "size_bytes": 4808,
+      "source_blob_sha": "d7813ea42e644cedc64945e83a6dec876bcbc51b",
+      "status": "copied",
+      "destination_blob_sha": "d7813ea42e644cedc64945e83a6dec876bcbc51b"
+    },
+    {
+      "path": "www/css/combat-balance.css",
+      "mode": "100644",
+      "size_bytes": 876,
+      "source_blob_sha": "6d90a5f7f4b63898036b20d1b515e18336087d38",
+      "status": "copied",
+      "destination_blob_sha": "6d90a5f7f4b63898036b20d1b515e18336087d38"
+    },
+    {
+      "path": "www/css/main.css",
+      "mode": "100644",
+      "size_bytes": 31276,
+      "source_blob_sha": "6a974e89d3fd93cd9c7aef3df426a37c38df8682",
+      "status": "copied",
+      "destination_blob_sha": "6a974e89d3fd93cd9c7aef3df426a37c38df8682"
+    },
+    {
+      "path": "www/css/menu.css",
+      "mode": "100644",
+      "size_bytes": 24643,
+      "source_blob_sha": "c3c999c5275c43e190e79f5dc070377e8e0d43bb",
+      "status": "copied",
+      "destination_blob_sha": "c3c999c5275c43e190e79f5dc070377e8e0d43bb"
+    },
+    {
+      "path": "www/ekwipunek.html",
+      "mode": "100644",
+      "size_bytes": 4189,
+      "source_blob_sha": "08a24d42bf5f7b2eab8baa1b04e4cc6ef3aac4a5",
+      "status": "copied",
+      "destination_blob_sha": "08a24d42bf5f7b2eab8baa1b04e4cc6ef3aac4a5"
+    },
+    {
+      "path": "www/index.html",
+      "mode": "100644",
+      "size_bytes": 12978,
+      "source_blob_sha": "fc856822a4041e0ab1b704bd140ffcffd3ebd129",
+      "status": "copied",
+      "destination_blob_sha": "fc856822a4041e0ab1b704bd140ffcffd3ebd129"
+    },
+    {
+      "path": "www/item-generator-tests.html",
+      "mode": "100644",
+      "size_bytes": 7303,
+      "source_blob_sha": "34a272c57b7e2bf1370ae9e9cb6adbaf8779ce31",
+      "status": "copied",
+      "destination_blob_sha": "34a272c57b7e2bf1370ae9e9cb6adbaf8779ce31"
+    },
+    {
+      "path": "www/js/analytics.js",
+      "mode": "100644",
+      "size_bytes": 2130,
+      "source_blob_sha": "39ffcf6c47e11a2605f02e3ce9c9fc5b85323170",
+      "status": "copied",
+      "destination_blob_sha": "39ffcf6c47e11a2605f02e3ce9c9fc5b85323170"
+    },
+    {
+      "path": "www/js/app.js",
+      "mode": "100644",
+      "size_bytes": 3004,
+      "source_blob_sha": "6ba80ffbf365817e4b5ad91812276aa5bbad353d",
+      "status": "copied",
+      "destination_blob_sha": "6ba80ffbf365817e4b5ad91812276aa5bbad353d"
+    },
+    {
+      "path": "www/js/asset-manager.js",
+      "mode": "100644",
+      "size_bytes": 43537,
+      "source_blob_sha": "5fe325a0ae030db577f9dbd66fa3bc14ba8bd14e",
+      "status": "copied",
+      "destination_blob_sha": "5fe325a0ae030db577f9dbd66fa3bc14ba8bd14e"
+    },
+    {
+      "path": "www/js/assetBundles.js",
+      "mode": "100644",
+      "size_bytes": 23610,
+      "source_blob_sha": "c1f0fd81027bfbaf163679bade134fc366c71616",
+      "status": "copied",
+      "destination_blob_sha": "c1f0fd81027bfbaf163679bade134fc366c71616"
+    },
+    {
+      "path": "www/js/bot-test.js",
+      "mode": "100644",
+      "size_bytes": 19332,
+      "source_blob_sha": "2625fd84494340b6059100e584d5bdde82fef057",
+      "status": "copied",
+      "destination_blob_sha": "2625fd84494340b6059100e584d5bdde82fef057"
+    },
+    {
+      "path": "www/js/combat-balance.js",
+      "mode": "100644",
+      "size_bytes": 6329,
+      "source_blob_sha": "d9a7b344c22a4faab9a0f129950bc597b7bcf461",
+      "status": "copied",
+      "destination_blob_sha": "d9a7b344c22a4faab9a0f129950bc597b7bcf461"
+    },
+    {
+      "path": "www/js/config.js",
+      "mode": "100644",
+      "size_bytes": 303,
+      "source_blob_sha": "ad9921029e1bde58b626e82bcc217ea574ba8b2a",
+      "status": "copied",
+      "destination_blob_sha": "ad9921029e1bde58b626e82bcc217ea574ba8b2a"
+    },
+    {
+      "path": "www/js/gameState.js",
+      "mode": "100644",
+      "size_bytes": 19362,
+      "source_blob_sha": "e3659b653a5cae2a13eed8e452828a32e5033758",
+      "status": "copied",
+      "destination_blob_sha": "e3659b653a5cae2a13eed8e452828a32e5033758"
+    },
+    {
+      "path": "www/js/global-states.js",
+      "mode": "100644",
+      "size_bytes": 21416,
+      "source_blob_sha": "7e0552a563b3063d3edccbe574328b6dcb6fdb3e",
+      "status": "copied",
+      "destination_blob_sha": "7e0552a563b3063d3edccbe574328b6dcb6fdb3e"
+    },
+    {
+      "path": "www/js/localization-ui.js",
+      "mode": "100644",
+      "size_bytes": 30149,
+      "source_blob_sha": "2088b841f140d009f99014763ba83dd5aba5b45c",
+      "status": "copied",
+      "destination_blob_sha": "2088b841f140d009f99014763ba83dd5aba5b45c"
+    },
+    {
+      "path": "www/js/localization.js",
+      "mode": "100644",
+      "size_bytes": 982,
+      "source_blob_sha": "f8c0a24d0541e7470ecebccd4b12530fdc7f580e",
+      "status": "copied",
+      "destination_blob_sha": "f8c0a24d0541e7470ecebccd4b12530fdc7f580e"
+    },
+    {
+      "path": "www/js/menu.js",
+      "mode": "100644",
+      "size_bytes": 35815,
+      "source_blob_sha": "da8745723ed0419a971688e1d95d939480fd6f6d",
+      "status": "copied",
+      "destination_blob_sha": "da8745723ed0419a971688e1d95d939480fd6f6d"
+    },
+    {
+      "path": "www/js/router.js",
+      "mode": "100644",
+      "size_bytes": 1458,
+      "source_blob_sha": "2093cb59879189da46381da5eefbe97d979d1968",
+      "status": "copied",
+      "destination_blob_sha": "2093cb59879189da46381da5eefbe97d979d1968"
+    },
+    {
+      "path": "www/js/shared.js",
+      "mode": "100644",
+      "size_bytes": 75244,
+      "source_blob_sha": "3792b8ea7c58dc34e67eea7017961756702110c9",
+      "status": "copied",
+      "destination_blob_sha": "3792b8ea7c58dc34e67eea7017961756702110c9"
+    },
+    {
+      "path": "www/js/shop2.js",
+      "mode": "100644",
+      "size_bytes": 6884,
+      "source_blob_sha": "7c82b9856bcefd946427a4b4af60d0dec8fb65fd",
+      "status": "copied",
+      "destination_blob_sha": "7c82b9856bcefd946427a4b4af60d0dec8fb65fd"
+    },
+    {
+      "path": "www/js/sound-database.js",
+      "mode": "100644",
+      "size_bytes": 3491,
+      "source_blob_sha": "648698d754b60f59814667fc2b91877afe381f1f",
+      "status": "copied",
+      "destination_blob_sha": "648698d754b60f59814667fc2b91877afe381f1f"
+    },
+    {
+      "path": "www/js/sound.js",
+      "mode": "100644",
+      "size_bytes": 13940,
+      "source_blob_sha": "7bd5c8d298eff7dca147a9a01a8393ff54278eeb",
+      "status": "copied",
+      "destination_blob_sha": "7bd5c8d298eff7dca147a9a01a8393ff54278eeb"
+    },
+    {
+      "path": "www/js/test.js",
+      "mode": "100644",
+      "size_bytes": 1640,
+      "source_blob_sha": "4fc6d35d23aeac2166e602f304a01e2e259483e5",
+      "status": "copied",
+      "destination_blob_sha": "4fc6d35d23aeac2166e602f304a01e2e259483e5"
+    },
+    {
+      "path": "www/js/views/menuView.js",
+      "mode": "100644",
+      "size_bytes": 27600,
+      "source_blob_sha": "b5f81116c3d08dc56ad1f51f1793d123a417b638",
+      "status": "copied",
+      "destination_blob_sha": "b5f81116c3d08dc56ad1f51f1793d123a417b638"
+    },
+    {
+      "path": "www/live/css/battle.css",
+      "mode": "100644",
+      "size_bytes": 64421,
+      "source_blob_sha": "f97e72ddd8aa5726be2dd64a590151a261070166",
+      "status": "copied",
+      "destination_blob_sha": "f97e72ddd8aa5726be2dd64a590151a261070166"
+    },
+    {
+      "path": "www/live/css/character.css",
+      "mode": "100644",
+      "size_bytes": 54422,
+      "source_blob_sha": "fb955a6b97ae3b4b38a5b49d83abab58114d8e0d",
+      "status": "copied",
+      "destination_blob_sha": "fb955a6b97ae3b4b38a5b49d83abab58114d8e0d"
+    },
+    {
+      "path": "www/live/css/explore.css",
+      "mode": "100644",
+      "size_bytes": 66718,
+      "source_blob_sha": "764d15b4e1ad933985eaec321a52678957ccaf4c",
+      "status": "copied",
+      "destination_blob_sha": "764d15b4e1ad933985eaec321a52678957ccaf4c"
+    },
+    {
+      "path": "www/live/css/inventory.css",
+      "mode": "100644",
+      "size_bytes": 44024,
+      "source_blob_sha": "619957d271a53acb2d14a9ddea0e451ce86528d1",
+      "status": "copied",
+      "destination_blob_sha": "619957d271a53acb2d14a9ddea0e451ce86528d1"
+    },
+    {
+      "path": "www/live/css/map.css",
+      "mode": "100644",
+      "size_bytes": 44802,
+      "source_blob_sha": "e2d6425ae679f6aab06b3ea15d987fea247d9951",
+      "status": "copied",
+      "destination_blob_sha": "e2d6425ae679f6aab06b3ea15d987fea247d9951"
+    },
+    {
+      "path": "www/live/css/skills.css",
+      "mode": "100644",
+      "size_bytes": 32596,
+      "source_blob_sha": "e534e5871e524c15ed974924e72f38408ec40804",
+      "status": "copied",
+      "destination_blob_sha": "e534e5871e524c15ed974924e72f38408ec40804"
+    },
+    {
+      "path": "www/live/css/store.css",
+      "mode": "100644",
+      "size_bytes": 33949,
+      "source_blob_sha": "86fec21e1c5ecc6f22c20c72aacca8f09203dbcb",
+      "status": "copied",
+      "destination_blob_sha": "86fec21e1c5ecc6f22c20c72aacca8f09203dbcb"
+    },
+    {
+      "path": "www/live/js/battle.js",
+      "mode": "100644",
+      "size_bytes": 51416,
+      "source_blob_sha": "2ab8e52eef58f4a712dcc7f75391a601910a34d9",
+      "status": "copied",
+      "destination_blob_sha": "2ab8e52eef58f4a712dcc7f75391a601910a34d9"
+    },
+    {
+      "path": "www/live/js/character.js",
+      "mode": "100644",
+      "size_bytes": 40254,
+      "source_blob_sha": "571fe0c84f0ff643b0ed53fad2f6f10cc61945cf",
+      "status": "copied",
+      "destination_blob_sha": "571fe0c84f0ff643b0ed53fad2f6f10cc61945cf"
+    },
+    {
+      "path": "www/live/js/combat-animations.js",
+      "mode": "100644",
+      "size_bytes": 54945,
+      "source_blob_sha": "8c18aae9413d1f71e680c99fa3f448b8b5510916",
+      "status": "copied",
+      "destination_blob_sha": "8c18aae9413d1f71e680c99fa3f448b8b5510916"
+    },
+    {
+      "path": "www/live/js/combat-resolve.js",
+      "mode": "100644",
+      "size_bytes": 46115,
+      "source_blob_sha": "1644054daffcabf228dbc5fe5d095eceee9e7a82",
+      "status": "copied",
+      "destination_blob_sha": "1644054daffcabf228dbc5fe5d095eceee9e7a82"
+    },
+    {
+      "path": "www/live/js/combat-style.js",
+      "mode": "100644",
+      "size_bytes": 46241,
+      "source_blob_sha": "40b229331bc4b5e9467146c745404ec235ca2f9f",
+      "status": "copied",
+      "destination_blob_sha": "40b229331bc4b5e9467146c745404ec235ca2f9f"
+    },
+    {
+      "path": "www/live/js/combat-utility.js",
+      "mode": "100644",
+      "size_bytes": 46122,
+      "source_blob_sha": "3cd704258e1a960f29e3414f8810ffff665df528",
+      "status": "copied",
+      "destination_blob_sha": "3cd704258e1a960f29e3414f8810ffff665df528"
+    },
+    {
+      "path": "www/live/js/combat.js",
+      "mode": "100644",
+      "size_bytes": 70153,
+      "source_blob_sha": "db5eaa6a8ec09cadbccddc3ca2cbdd294b89cbaf",
+      "status": "copied",
+      "destination_blob_sha": "db5eaa6a8ec09cadbccddc3ca2cbdd294b89cbaf"
+    },
+    {
+      "path": "www/live/js/enemy-database.js",
+      "mode": "100644",
+      "size_bytes": 22395,
+      "source_blob_sha": "512e0524f19c71cffbd692602baac5c953df9062",
+      "status": "copied",
+      "destination_blob_sha": "512e0524f19c71cffbd692602baac5c953df9062"
+    },
+    {
+      "path": "www/live/js/enemy-skills.js",
+      "mode": "100644",
+      "size_bytes": 11132,
+      "source_blob_sha": "0277f9cc7f9cc8e15d34b06c235a114f7accde6d",
+      "status": "copied",
+      "destination_blob_sha": "0277f9cc7f9cc8e15d34b06c235a114f7accde6d"
+    },
+    {
+      "path": "www/live/js/enemy.js",
+      "mode": "100644",
+      "size_bytes": 68883,
+      "source_blob_sha": "1968d5ae01719c80d7ffa2935bfb0a33f18a739c",
+      "status": "copied",
+      "destination_blob_sha": "1968d5ae01719c80d7ffa2935bfb0a33f18a739c"
+    },
+    {
+      "path": "www/live/js/expedition-config.js",
+      "mode": "100644",
+      "size_bytes": 5863,
+      "source_blob_sha": "b544141b6fe757f7bdc074a6775f35419519d21e",
+      "status": "copied",
+      "destination_blob_sha": "b544141b6fe757f7bdc074a6775f35419519d21e"
+    },
+    {
+      "path": "www/live/js/exploring-utility.js",
+      "mode": "100644",
+      "size_bytes": 24222,
+      "source_blob_sha": "a7d84454971ee5ec7d09f76d3c47add68d68828a",
+      "status": "copied",
+      "destination_blob_sha": "a7d84454971ee5ec7d09f76d3c47add68d68828a"
+    },
+    {
+      "path": "www/live/js/game-guide.js",
+      "mode": "100644",
+      "size_bytes": 28645,
+      "source_blob_sha": "768d83e2de6811401222c832e440714262d3c473",
+      "status": "copied",
+      "destination_blob_sha": "768d83e2de6811401222c832e440714262d3c473"
+    },
+    {
+      "path": "www/live/js/inventory.js",
+      "mode": "100644",
+      "size_bytes": 50276,
+      "source_blob_sha": "5a575b7843b997dc81be622dfb091eeb43f179b5",
+      "status": "copied",
+      "destination_blob_sha": "5a575b7843b997dc81be622dfb091eeb43f179b5"
+    },
+    {
+      "path": "www/live/js/item-utility.js",
+      "mode": "100644",
+      "size_bytes": 42419,
+      "source_blob_sha": "66913d209c117e021c6b97e75f781f9abc6e239b",
+      "status": "copied",
+      "destination_blob_sha": "66913d209c117e021c6b97e75f781f9abc6e239b"
+    },
+    {
+      "path": "www/live/js/item.js",
+      "mode": "100644",
+      "size_bytes": 50144,
+      "source_blob_sha": "f6d661a591663c9f069fde9a5f2555a6aa1c872c",
+      "status": "copied",
+      "destination_blob_sha": "f6d661a591663c9f069fde9a5f2555a6aa1c872c"
+    },
+    {
+      "path": "www/live/js/localization-dialogues.js",
+      "mode": "100644",
+      "size_bytes": 23370,
+      "source_blob_sha": "179192a4fe1f6f942c9e94b763ffee880452f03b",
+      "status": "copied",
+      "destination_blob_sha": "179192a4fe1f6f942c9e94b763ffee880452f03b"
+    },
+    {
+      "path": "www/live/js/localization-guide.js",
+      "mode": "100644",
+      "size_bytes": 71830,
+      "source_blob_sha": "ae2d13c17b7e19813e0d1248a109f59dce998255",
+      "status": "copied",
+      "destination_blob_sha": "ae2d13c17b7e19813e0d1248a109f59dce998255"
+    },
+    {
+      "path": "www/live/js/localization-items.js",
+      "mode": "100644",
+      "size_bytes": 45411,
+      "source_blob_sha": "cca923e44164b04baca89b09a343a4f3a01d4ec7",
+      "status": "copied",
+      "destination_blob_sha": "cca923e44164b04baca89b09a343a4f3a01d4ec7"
+    },
+    {
+      "path": "www/live/js/localization-locations.js",
+      "mode": "100644",
+      "size_bytes": 7825,
+      "source_blob_sha": "f2822576c46f262eee044477bef02923a3819bd6",
+      "status": "copied",
+      "destination_blob_sha": "f2822576c46f262eee044477bef02923a3819bd6"
+    },
+    {
+      "path": "www/live/js/localization-quests.js",
+      "mode": "100644",
+      "size_bytes": 63030,
+      "source_blob_sha": "6f70ba003d8abbf2dbacea2c06b9cb3a55c48df4",
+      "status": "copied",
+      "destination_blob_sha": "6f70ba003d8abbf2dbacea2c06b9cb3a55c48df4"
+    },
+    {
+      "path": "www/live/js/localization-skills.js",
+      "mode": "100644",
+      "size_bytes": 25464,
+      "source_blob_sha": "1f0be16229963a4ddf4c0f27dfbda7a1b6029e20",
+      "status": "copied",
+      "destination_blob_sha": "1f0be16229963a4ddf4c0f27dfbda7a1b6029e20"
+    },
+    {
+      "path": "www/live/js/localization-tooltips.js",
+      "mode": "100644",
+      "size_bytes": 23559,
+      "source_blob_sha": "5dd12fc391cbcb1a55261491d4a00646e09545a8",
+      "status": "copied",
+      "destination_blob_sha": "5dd12fc391cbcb1a55261491d4a00646e09545a8"
+    },
+    {
+      "path": "www/live/js/location.js",
+      "mode": "100644",
+      "size_bytes": 49621,
+      "source_blob_sha": "149cbc923a3a28b335965f08eafb607053dcdd07",
+      "status": "copied",
+      "destination_blob_sha": "149cbc923a3a28b335965f08eafb607053dcdd07"
+    },
+    {
+      "path": "www/live/js/map.js",
+      "mode": "100644",
+      "size_bytes": 36750,
+      "source_blob_sha": "169e4be2669205859537d2f3ca8247c28ed8ca8c",
+      "status": "copied",
+      "destination_blob_sha": "169e4be2669205859537d2f3ca8247c28ed8ca8c"
+    },
+    {
+      "path": "www/live/js/quests-assets.js",
+      "mode": "100644",
+      "size_bytes": 12153,
+      "source_blob_sha": "b5feb9d71974e44afd81eac9d9be1e349f1474f9",
+      "status": "copied",
+      "destination_blob_sha": "b5feb9d71974e44afd81eac9d9be1e349f1474f9"
+    },
+    {
+      "path": "www/live/js/quests-database.js",
+      "mode": "100644",
+      "size_bytes": 20003,
+      "source_blob_sha": "846b0e2dd8446d6eb91f0d42ed5b9e2345291f26",
+      "status": "copied",
+      "destination_blob_sha": "846b0e2dd8446d6eb91f0d42ed5b9e2345291f26"
+    },
+    {
+      "path": "www/live/js/quests.js",
+      "mode": "100644",
+      "size_bytes": 38051,
+      "source_blob_sha": "4cbf578f4023d3a2681ddbdb1d6b3a6224754132",
+      "status": "copied",
+      "destination_blob_sha": "4cbf578f4023d3a2681ddbdb1d6b3a6224754132"
+    },
+    {
+      "path": "www/live/js/shrine-chest-database.js",
+      "mode": "100644",
+      "size_bytes": 5052,
+      "source_blob_sha": "aa8185a36c6efe1a7db01329a5cd06fa09356e3c",
+      "status": "copied",
+      "destination_blob_sha": "aa8185a36c6efe1a7db01329a5cd06fa09356e3c"
+    },
+    {
+      "path": "www/live/js/shrine-chest.js",
+      "mode": "100644",
+      "size_bytes": 31337,
+      "source_blob_sha": "e297e7a351368c97f14a73985ca4150e3ab5dbec",
+      "status": "copied",
+      "destination_blob_sha": "e297e7a351368c97f14a73985ca4150e3ab5dbec"
+    },
+    {
+      "path": "www/live/js/skills-combat.js",
+      "mode": "100644",
+      "size_bytes": 79056,
+      "source_blob_sha": "4603af03781c46c94bad3b06cebd405a5ac0bf0f",
+      "status": "copied",
+      "destination_blob_sha": "4603af03781c46c94bad3b06cebd405a5ac0bf0f"
+    },
+    {
+      "path": "www/live/js/skills-database.js",
+      "mode": "100644",
+      "size_bytes": 41526,
+      "source_blob_sha": "92ac242944e9826de5024a3ebdd2b7bee685c221",
+      "status": "copied",
+      "destination_blob_sha": "92ac242944e9826de5024a3ebdd2b7bee685c221"
+    },
+    {
+      "path": "www/live/js/skills.js",
+      "mode": "100644",
+      "size_bytes": 58326,
+      "source_blob_sha": "e7f0cd99fa1dbdd79cc334cf0338b3c502661299",
+      "status": "copied",
+      "destination_blob_sha": "e7f0cd99fa1dbdd79cc334cf0338b3c502661299"
+    },
+    {
+      "path": "www/live/js/store-items.js",
+      "mode": "100644",
+      "size_bytes": 7985,
+      "source_blob_sha": "5bc9ef2c31c876093cbeeb00e7a5b2cfc05a1ff3",
+      "status": "copied",
+      "destination_blob_sha": "5bc9ef2c31c876093cbeeb00e7a5b2cfc05a1ff3"
+    },
+    {
+      "path": "www/live/js/store.js",
+      "mode": "100644",
+      "size_bytes": 38998,
+      "source_blob_sha": "5b4334e3816d971dce1c2a5f45c437ca6fea903a",
+      "status": "copied",
+      "destination_blob_sha": "5b4334e3816d971dce1c2a5f45c437ca6fea903a"
+    },
+    {
+      "path": "www/live/js/views/battleView.js",
+      "mode": "100644",
+      "size_bytes": 27634,
+      "source_blob_sha": "ddbb13bfb192cae5b4ac75888524e5acbdaeedff",
+      "status": "copied",
+      "destination_blob_sha": "ddbb13bfb192cae5b4ac75888524e5acbdaeedff"
+    },
+    {
+      "path": "www/live/js/views/characterView.js",
+      "mode": "100644",
+      "size_bytes": 11832,
+      "source_blob_sha": "6800f06f17e599234f6240f09c36aeb38d536281",
+      "status": "copied",
+      "destination_blob_sha": "6800f06f17e599234f6240f09c36aeb38d536281"
+    },
+    {
+      "path": "www/live/js/views/inventoryView.js",
+      "mode": "100644",
+      "size_bytes": 6868,
+      "source_blob_sha": "1f3ebe8c9efded42583c2247c7e789596111c6af",
+      "status": "copied",
+      "destination_blob_sha": "1f3ebe8c9efded42583c2247c7e789596111c6af"
+    },
+    {
+      "path": "www/live/js/views/mapView.js",
+      "mode": "100644",
+      "size_bytes": 25207,
+      "source_blob_sha": "79d98fdb2ee71e65cd4965ac939953cbafe26040",
+      "status": "copied",
+      "destination_blob_sha": "79d98fdb2ee71e65cd4965ac939953cbafe26040"
+    },
+    {
+      "path": "www/live/js/views/skillsView.js",
+      "mode": "100644",
+      "size_bytes": 16818,
+      "source_blob_sha": "99c90ae7fc3602015705cb5c16e07bf27167658a",
+      "status": "copied",
+      "destination_blob_sha": "99c90ae7fc3602015705cb5c16e07bf27167658a"
+    },
+    {
+      "path": "www/live/js/views/storeView.js",
+      "mode": "100644",
+      "size_bytes": 5837,
+      "source_blob_sha": "1b3501720bb6f16eacef029550eec03bbfaf7115",
+      "status": "copied",
+      "destination_blob_sha": "1b3501720bb6f16eacef029550eec03bbfaf7115"
+    },
+    {
+      "path": "www/map.html",
+      "mode": "100644",
+      "size_bytes": 11638,
+      "source_blob_sha": "f748db28a3d33a4747f335fa1a090cc8f2e6659c",
+      "status": "copied",
+      "destination_blob_sha": "f748db28a3d33a4747f335fa1a090cc8f2e6659c"
+    },
+    {
+      "path": "www/mapa.html",
+      "mode": "100644",
+      "size_bytes": 6579,
+      "source_blob_sha": "1d4628ff6afc55438a9354ea19feee06f5d6a699",
+      "status": "copied",
+      "destination_blob_sha": "1d4628ff6afc55438a9354ea19feee06f5d6a699"
+    },
+    {
+      "path": "www/package.json",
+      "mode": "100644",
+      "size_bytes": 207,
+      "source_blob_sha": "a27b5703830756fe01b60936ac7356d983f0f184",
+      "status": "copied",
+      "destination_blob_sha": "a27b5703830756fe01b60936ac7356d983f0f184"
+    },
+    {
+      "path": "www/postac.html",
+      "mode": "100644",
+      "size_bytes": 6763,
+      "source_blob_sha": "7a61136bf8dd5050190acfecc87d975692bf27d3",
+      "status": "copied",
+      "destination_blob_sha": "7a61136bf8dd5050190acfecc87d975692bf27d3"
+    },
+    {
+      "path": "www/sklep.html",
+      "mode": "100644",
+      "size_bytes": 3290,
+      "source_blob_sha": "2efbddca593fa5521f8d2fe1e910c72d45935d96",
+      "status": "copied",
+      "destination_blob_sha": "2efbddca593fa5521f8d2fe1e910c72d45935d96"
+    },
+    {
+      "path": "www/sw.js",
+      "mode": "100644",
+      "size_bytes": 532,
+      "source_blob_sha": "bf69e1af529ebd8c7b4ad9a2c97a080191aa3a50",
+      "status": "copied",
+      "destination_blob_sha": "bf69e1af529ebd8c7b4ad9a2c97a080191aa3a50"
+    },
+    {
+      "path": "www/test-generator.html",
+      "mode": "100644",
+      "size_bytes": 3612,
+      "source_blob_sha": "13a515df6d622853b83c99503f300ba4f7e21f88",
+      "status": "copied",
+      "destination_blob_sha": "13a515df6d622853b83c99503f300ba4f7e21f88"
+    },
+    {
+      "path": "www/umiejetnosci.html",
+      "mode": "100644",
+      "size_bytes": 8022,
+      "source_blob_sha": "925361869072d8cdaeb8fe9299002b24c10e3c70",
+      "status": "copied",
+      "destination_blob_sha": "925361869072d8cdaeb8fe9299002b24c10e3c70"
+    },
+    {
+      "path": "www/walka.html",
+      "mode": "100644",
+      "size_bytes": 7554,
+      "source_blob_sha": "b7f6dae2d9c37a9c886c0f9ddd46d53785812a8e",
+      "status": "copied",
+      "destination_blob_sha": "b7f6dae2d9c37a9c886c0f9ddd46d53785812a8e"
+    }
+  ]
+}
