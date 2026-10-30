@@ -1,0 +1,170 @@
+<div class="view" id="character-view">
+  
+  
+  
+
+
+<div class="page-background" id="page-bg">
+  <!-- cała zawartość strony -->
+   
+  <div style="font-size: 24px; text-align:center; margin-top: 10px">Wojownik</div>
+   <div style="font-size: 14px">Poziom <span id="level">1</span></div>
+  <br>
+  
+    <div class="character-wrapper">
+     <img data-src= "img/backgrounds/warrior.png" alt="Postać" class="character-bg" />
+     <!--<img data-src="img/frames/frame1.png" id="character-frame" alt="Ramka" class="character-frame" /> -->
+     <div id="equipment-slots"></div>
+      
+     <button class="item-button" id="attr-btn" onclick="showAttributesPopup()">ATRYBUTY</button>
+  
+     <button class="item-button" id="stats-btn" onclick="showStatsPopup()">STATYSTYKI</button>
+      
+          
+     <div class="shield-mode-toggle hidden">
+       <label class="shield-toggle">
+         <input type="checkbox" id="block-mode-toggle">
+         <span class="toggle-box"></span>
+         <span class="toggle-text">Blok Taktyczny</span>
+       </label>
+     </div>
+         
+    </div>
+  
+<div id="item-popup" class="popup hidden">
+  <div class="popup-content">
+    <div id="popup-content"></div>
+    <!--   <img data-src="img/frames/frame1.png" alt="Ramka" class="item-frame" />--> 
+      
+  </div>
+</div>
+  
+<div class="test-buttons">
+  <button onclick="generateAndEquipSet('unique')">🟡 Zestaw Unikalny</button>
+  <button onclick="generateAndEquipSet('epic')">🟣 Zestaw Epicki</button>
+  <button onclick="generateAndEquipSet('legendary')">🟠 Zestaw Legendarny</button>
+  <button onclick="generateAndEquipRandomSet('random')">🎲 Zestaw Losowy</button>
+</div>
+   
+<div id="stats-popup" class="popup hidden">
+  <div class="stats-popup-content">
+    <div id="stats-popup-content"></div>
+      
+    <div class="extra-stats-container">
+      <!-- <img data-src="img/frames/frame1.png" alt="Ramka" class="extra-stats-frame" /> -->
+         
+      <div class="extra-stat-block" data-stat="atkspd">⚡<span id="atkspd-value">0</span><span> Szybkość ataku</span></div>
+      <div class="extra-stat-block" data-stat="str">💪<span id="str-value">0</span><span> Siła</span></div>
+      <div class="extra-stat-block" data-stat="dodge">💨<span id="dodge-value">0%</span><span>Unik</span></div>
+      <div class="extra-stat-block" data-stat="agi">🏹<span id="agi-value">0</span><span>Zręczność</span></div>  
+      <div class="extra-stat-block" data-stat="block">🛡️<span id="block-value">0%</span><span>Siła Bloku</span></div>
+      <div class="extra-stat-block" data-stat="vit">❤️<span id="vit-value">0</span><span>Witalność</span></div>
+      <div class="extra-stat-block" data-stat="crit">🎯<span id="crit-value">0%</span><span>Krytyczny atak</span></div>
+      <div class="extra-stat-block" data-stat="regen">✨<span id="lifeRegen-value">0%</span><span>Regeneracji Życia/sek.</span></div>
+      <div class="extra-stat-block" data-stat="critdmg">🔥<span id="critdmg-value">0%</span><span>Obr. krytyczne</span></div>    
+      <div class="extra-stat-block" data-stat="fire">🔥<span id="fireRes-value">0</span><span>Odp. na Ogień</span></div>
+      <div class="extra-stat-block" data-stat="onhit">❄️<span id="lifeOnHit-value">0</span><span>Życia za Trafienie</span></div>
+      <div class="extra-stat-block" data-stat="cold">❄️<span id="coldRes-value">0</span><span>Odp. na Zimno</span></div>
+      <div class="extra-stat-block" data-stat="mf">✨<span id="magicfind-value">0%</span><span>Znajdowanie mag. przedm.</span></div>
+      <div class="extra-stat-block" data-stat="poison">🧪<span id="poisonRes-value">0</span><span>Odp. na Truciznę</span></div>
+      <div class="extra-stat-block" data-stat="gf">💰<span id="goldfind-value">0%</span><span>Premii do Złota</span></div>
+      <div class="extra-stat-block" data-stat="magic">✨<span id="magicRes-value">0</span><span>Odp. na Magię</span></div>        
+      
+    </div>
+
+    <div class="close-btn-wrapper" id="stats-close-wrapper">
+      <button class="close-button" id="stats-close-btn" onclick="closeStatsPopup()"></button>
+      <img data-src="img/buttons/close-btn.png" alt="Zamknij" class="close-btn-frame" />
+    </div> 
+   
+  </div>
+</div>
+  
+<div id="attributes-popup" class="npc-popup hidden">
+  <div class="popup-content">
+    <div id="popup-content">
+  
+    <!-- TYTUŁ -->
+    <h2 class="popup-title stone-title">Rozwój Postaci</h2>
+
+    <!-- DOSTĘPNE PUNKTY -->
+    <div class="attribute-points">
+      Dostępne punkty: <span id="available-attr-points">5</span>
+    </div>
+
+    <!-- ATRUBUTY -->
+    <div class="attributes-grid">
+ 
+     <div class="attribute-row" data-attr="strength">
+       <div class="attr-left">
+         <div class="attr-header">
+           <span class="attr-icon">❤️</span>
+           <span class="attr-name">Witalność</span>
+         </div> 
+         <span class="attr-desc">Więcej życia i odporność</span>
+       </div>
+
+       <div class="attr-controls">
+         <button class="attr-minus">−</button>
+         <span class="attr-value">0</span>
+         <button class="attr-plus">+</button>
+       </div>
+     </div>
+      
+     <div class="attribute-row" data-attr="vitality">
+       <div class="attr-left">
+         <div class="attr-header">
+           <span class="attr-icon">🗡️</span>
+           <span class="attr-name">Siła</span>
+         </div> 
+         <span class="attr-desc">Większe Obrażenia</span>
+       </div>
+
+       <div class="attr-controls">
+         <button class="attr-minus">−</button>
+         <span class="attr-value">0</span>
+         <button class="attr-plus">+</button>
+       </div>
+     </div>
+      
+     <div class="attribute-row" data-attr="dexterity">
+       <div class="attr-left">
+         <div class="attr-header">
+           <span class="attr-icon">🛡️</span>
+           <span class="attr-name">Zręczność</span>
+         </div>  
+         <span class="attr-desc">Timing, blok, kontrola</span>
+       </div>
+       
+       <div class="attr-controls">
+         <button class="attr-minus">−</button>
+         <span class="attr-value">0</span>
+         <button class="attr-plus">+</button>
+       </div>
+     </div>
+      
+    </div>
+
+    <!-- PRZYCISK -->
+    <button id="confirm-attributes" class="item-button locked" disabled>
+      ZATWIERDŹ ROZWÓJ
+    </button>
+
+    <div class="close-btn-wrapper" id="attr-close-wrapper">
+      <button class="close-button" id="attr-close-btn" onclick="closeAttributesPopup()"></button>
+      <img data-src="img/buttons/close-btn.png" alt="Zamknij" class="close-btn-frame" />
+    </div> 
+   
+    </div>
+  </div>
+</div>
+  
+    
+  <div id="custom-alert-container"></div>
+  
+</div> <!-- koniec page-background -->
+  
+
+
+
+</div>

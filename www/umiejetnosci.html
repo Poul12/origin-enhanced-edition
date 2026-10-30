@@ -1,0 +1,141 @@
+  
+ <div class="view" id="skills-view">
+  
+   
+   
+   <div id="skill-tree-container">
+     
+     
+     <div class="left-skill-container rare oval">
+       <div class="level-text common circle" id="char-level"></div>
+     </div> 
+     
+     <div class="right-skill-container set oval">
+       <div class="skill-points-text common circle" id="skill-points"></div>
+     </div>
+     
+     
+     <div id="skill-info-popup" class="skill-popup">
+      <div class="popup-content">
+        <!--<img data-src="img/frames/frame1.png" alt="Ramka" class="skill-popup-frame" /> -->
+        
+        <!--<div class="popup-bg"></div>-->
+         
+       <div id="popup-content">
+        
+        <div class="skill-left">
+        <div id="skill-name" class="skill-name"></div>
+        <div id="skill-req-level" class="skill-req"></div>
+        <div class="skill-cooldown-wrapper">
+          <img data-src="img/icons/skill-cooldown-icon.png" alt="Cooldown" class="skill-cooldown-icon" />
+          <div id="skill-cooldown" class="skill-cooldown"></div>
+          <img data-src="img/icons/stamina-cost-icon.png" alt="Cost" id="cost-icon" class="skill-cooldown-icon" />
+          <div id="skill-cost" class="skill-cooldown"></div>    
+        </div> 
+        <div class="item-separator"></div>
+        <div class="stat-category">EFEKTY</div>
+        <div id="skill-effect" class="skill-effect"></div>
+        <button id="upgrade-btn" class="item-button hidden">ULEPSZ</button>
+        <button id="activate-btn" class="item-button hidden">AKTYWUJ</button>
+      </div>
+        
+      <div class="skill-right" id="popup-right">
+        <div id="skill-desc" class="skill-desc"></div>
+        
+        <div class="skill-icons">
+          <div class="skill-upgrades">
+            <div class="mini-skill" id="upgrade-1">①
+              <span class="skill-level-badge" id="upgrade-level-1">0/3</span>
+            </div>
+            <div class="mini-skill" id="upgrade-2">②
+              <span class="skill-level-badge" id="upgrade-level-2">0/3</span>
+            </div>
+            <div class="mini-skill" id="upgrade-3">③
+              <span class="skill-level-badge" id="upgrade-level-3">0/3</span>
+            </div>
+          </div>
+          <div class="main-skill-icon" id="main-skill-icon"></div>
+          <span class="skill-level-badge main" id="skill-icon-level">0/10</span>
+        </div>
+
+        <button id="assign-btn" class="item-button hidden">PRZYPISZ</button>
+      </div>
+         
+      </div>
+        
+      <div class="close-btn-wrapper">
+        <button class="close-button" id="skill-close-btn" onclick="closeSkillPopup()"></button>
+        <img data-src="img/buttons/close-btn.png" alt="Zamknij" class="close-btn-frame" />
+      </div> 
+      
+     </div>
+    </div>
+     
+            
+     <!-- Nowy, pusty kontener na layout przypisywania skilli -->
+    <div id="assign-popup" class="assign-layout hidden"></div>
+         
+     
+    <svg class="connector" width="100%" height="100%">
+      <!-- <line id="line1" x1="40%" y1="58%" x2="40%" y2="63%" stroke="white" stroke-width="0" />
+      <line id="line2" x1="40%" y1="58%" x2="24%" y2="64%" stroke="white" stroke-width="0" />-->
+    </svg>  
+     
+    <!-- Główna umiejętność (ziemia) --> 
+    <div class="skill-node unlocked" id="slash" style="left: 50%; top: 57%; transform: translate(-50%, -50%)"></div>  
+    <!-- Korona (umiejętności aktywne) -->  
+    <div class="skill-node locked" id="double-attack" style="left: 50%; top: 47%; transform: translate(-50%, -50%)"></div>
+    
+    <div class="skill-node locked" id="charge" style="left: 33%; top: 37%; transform: translate(-50%, -50%)"></div>
+    <div class="skill-node locked" id="jump" style="left: 50%; top: 37%; transform: translate(-50%, -50%)"></div>
+    <div class="skill-node locked" id="warrior-shout" style="left: 66%; top: 37%; transform: translate(-50%, -50%)"></div>
+    
+    <div class="skill-node locked" id="skill-top-3.1" style="left: 15%; top: 35%; transform: translate(-50%, -50%)">3.1</div>
+    <div class="skill-node locked" id="skill-top-3.2" style="left: 23%; top: 27%; transform: translate(-50%, -50%)">3.2</div>
+    <div class="skill-node locked" id="skill-top-3.3" style="left: 40%; top: 26%; transform: translate(-50%, -50%)">3.3</div>
+    <div class="skill-node locked" id="skill-top-3.4" style="left: 57%; top: 26%; transform: translate(-50%, -50%)">3.4</div>
+    <div class="skill-node locked" id="skill-top-3.5" style="left: 76%; top: 29%; transform: translate(-50%, -50%)">3.5</div>
+    <div class="skill-node locked" id="skill-top-3.6" style="left: 83%; top: 37%; transform: translate(-50%, -50%)">3.6</div>
+    
+    <div class="skill-node locked" id="skill-top-4.1" style="left: 14%; top: 20%; transform: translate(-50%, -50%)">4.1</div>
+    <div class="skill-node locked" id="skill-top-4.2" style="left: 30%; top: 19%; transform: translate(-50%, -50%)">4.2</div>
+    <div class="skill-node locked" id="skill-top-4.3" style="left: 50%; top: 18%; transform: translate(-50%, -50%)">4.3</div>
+    <div class="skill-node locked" id="skill-top-4.4" style="left: 67%; top: 19%; transform: translate(-50%, -50%)">4.4</div>
+    <div class="skill-node locked" id="skill-top-4.5" style="left: 85%; top: 22%; transform: translate(-50%, -50%)">4.5</div>
+    
+    <div class="skill-node locked" id="skill-top-5.1" style="left: 28%; top: 10%; transform: translate(-50%, -50%)">5.1</div>
+    <div class="skill-node locked" id="skill-top-5.2" style="left: 50%; top: 8%; transform: translate(-50%, -50%)">5.2</div>
+    <div class="skill-node locked" id="skill-top-5.3" style="left: 70%; top: 10%; transform: translate(-50%, -50%)">5.3</div>
+      <!-- Korzenie (umiejętności pasywne) -->  
+    <div class="skill-node locked" id="extra-defense" style="left: 28%; top: 65%; transform: translate(-50%, -50%)"></div>
+    <div class="skill-node locked" id="extra-life" style="left: 54%; top: 66%; transform: translate(-50%, -50%)"></div>
+    <div class="skill-node locked" id="extra-damage" style="left: 74%; top: 65%; transform: translate(-50%, -50%)"></div>
+    
+    <div class="skill-node locked" id="max-defense" style="left: 8%; top: 65%; transform: translate(-50%, -50%)"></div>
+    <div class="skill-node locked" id="stack-defense" style="left: 9%; top: 73%; transform: translate(-50%, -50%)"></div>
+    <div class="skill-node locked" id="iron-defense" style="left: 20%; top: 78%; transform: translate(-50%, -50%)"></div>
+    <div class="skill-node locked" id="extra-energy" style="left: 33%; top: 75%; transform: translate(-50%, -50%)"></div>
+    <div class="skill-node locked" id="extra-stamina" style="left: 44%; top: 80%; transform: translate(-50%, -50%)"></div>
+    <div class="skill-node locked" id="hp-regen" style="left: 58%; top: 78%; transform: translate(-50%, -50%)"></div>
+    <div class="skill-node locked" id="extra-crit" style="left: 71%; top: 73%; transform: translate(-50%, -50%)"></div>
+    <div class="skill-node locked" id="atkspd-bonus" style="left: 89%; top: 71%; transform: translate(-50%, -50%)"></div>
+    
+    <div class="skill-node locked" id="energy-regen" style="left: 23%; top: 86%; transform: translate(-50%, -50%)"></div>
+    <div class="skill-node locked" id="stamina-regen" style="left: 36%; top: 90%; transform: translate(-50%, -50%)"></div>
+    <div class="skill-node locked" id="max-hp" style="left: 51%; top: 92%; transform: translate(-50%, -50%)"></div>
+    <div class="skill-node locked" id="hp-to-dmg" style="left: 66%; top: 92%; transform: translate(-50%, -50%)"></div>
+    <div class="skill-node locked" id="max-dmg" style="left: 78%; top: 86%; transform: translate(-50%, -50%)"></div>
+    <div class="skill-node locked" id="crit-damage-bonus" style="left: 88%; top: 80%; transform: translate(-50%, -50%)"></div>    
+        
+   </div>
+  
+  <div id="custom-alert-container"></div>
+  
+<div id="stat-tooltip" class="stat-tooltip hidden">
+  <div class="stat-tooltip-title"></div>
+  <div class="stat-tooltip-content"></div>
+</div>
+
+  
+ 
+</div>
