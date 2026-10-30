@@ -1,0 +1,807 @@
+/* =========================================
+   localization-ui.js
+   UI / MENU / ALERTY
+========================================= */
+
+Object.assign(LANG.en, {
+  menu_continue: "CONTINUE",
+  menu_newgame: "NEW GAME",
+  menu_gamemodes: "GAME MODES",
+  menu_options: "OPTIONS",
+  menu_about: "ABOUT",
+  menu_help: "HELP",
+  menu_resetgame: "RESET GAME",
+  menu_back: "BACK",
+  menu_sandbox: "COMING SOON",
+  menu_adventure: "ADVENTURE",
+  menu_expedition: "COMING SOON",
+  menu_exit: "EXIT",
+  menu_resume: "RESUME",
+  
+  launcher_entering_world: "ENTERING WORLD",
+  
+  launcher_check_updates: "Checking updates",
+  launcher_download: "Downloading",
+  launcher_data_synchro: "Synchronizing world data",
+  launcher_preparing: "Preparing game systems",
+  launcher_applying_patch: "Applying patch",
+  
+  loader_preparing_interface: "Preparing interface",
+  loader_loading_textures: "Loading textures",
+  loader_loading_environments: "Loading environments",
+  loader_sync_items: "Synchronizing items",
+  loader_preparing_audio: "Preparing audio",
+  loader_loading_combat_assets: "Loading combat assets",
+  loader_building_world_map: "Building world map",
+  loader_sync_game_data: "Synchronizing game data",
+  
+  option_music: "Music", 
+  option_sfx: "Effects", 
+  option_mute: "Mute", 
+
+  about_game: "About Game",
+  
+  world_map: "World Map",
+  show_levels: "Show Names",
+  enter_level: "ENTER",
+  
+  menu_map: "Map",
+  
+  reset_save: "Are you sure you want to reset ",
+  
+  adventure: "Adventure mode",
+  story: "Story mode",
+  
+  about_game: "About the Game",
+  about_game_title: "Origin Project",
+  about_game_description:"A tactical Action RPG focused on one-on-one combat, precise blocking and building unique combat styles. Read your opponent, find the right moment and exploit their weaknesses.",
+  about_tagline: "Master the timing. Define your style.",
+  about_game_info: "Information",
+  about_genre: "Genre",
+  about_mode: "Mode",
+  about_platform: "Platform",
+  about_version: "Version",
+  about_status: "Status",
+  about_creator: "Creator",
+  about_creator_description: "An independent project created out of a passion for RPGs and challenging combat.",
+  about_community: "Community",
+  about_community_description: "Have an idea, found a bug or want to share your feedback? Join the community.",
+  about_discord: "Discord",
+  about_youtube: "YouTube",
+  about_created_by: "Created by Poul12",
+  about_early_build: "Early Build",
+  about_single_player: "Single-player",
+  about_android: "Android",
+  about_action_rpg: "Action RPG",
+  about_bug_report: "You can report bugs and share suggestions through Discord. Your feedback helps shape the game.",
+  about_copyright: "© 2026 Poul12",
+  
+  about_ai: "Use of AI",
+  about_ai_description: "The graphics and sounds used in the game were created entirely with AI-based tools. The assets are then selected, edited and adapted to the needs of the project by the game's creator. The code, gameplay mechanics, game design and asset integration are created by the developer.",
+  
+  about_rights: "Copyright",
+  about_rights_description: "© 2026 Poul12. Origin Project, its code, design, content and materials are protected by copyright. Copying, distributing, modifying, reselling or using materials from the game without the creator's permission is prohibited.",
+  
+  succes_flee_info_app_kill: "Combat was interrupted, and You lost",
+  succes_flee_info1: "You managed to escape, but you lost ",
+  succes_flee_info2: " gold",
+  succes_flee_info3: " and You used ",
+  succes_flee_info4: "5 energy.",
+  succes_flee_info5: "Skills locked for ",
+  fail_flee_info: "The escape failed, but you avoided the counterattack!",
+  fail_flee_counterattack_info: "Escape failed! The enemy counterattacks!",
+  
+  flee_cost1: "Flee cost is ",
+  flee_cost2: " gold",
+  flee_cost3: " and ",
+  flee_cost4: "4 energy",
+  flee_cost5: " Are you sure you want to flee from the combat?",
+  
+  enemy_lvl_info: "Level",
+  
+  miss_outcome: "MISS",
+  dodge_outcome: "DODGE",
+  miss_failed_attack: "DODGE FAILED",
+  failed_attack_outcome: "ATTACK FAILED",
+  turtle_outcome: "DEFENSIVE STANCE",
+  perfect_outcome: "PRECISION",
+  good_outcome: "GOOD",
+  crit_outcome: "CRITICAL ATTACK!",
+  won_outcome: "YOU WON!",
+  exhausted_outcome: "EXHAUSTION!",
+  now_outcome: "NOW!",
+  counterattack_outcome: "COUNTERATTACK!",
+  tired_outcome: "FATIGUE",
+  survive_outcome: "YOU SURVIVE!",
+  loose_outcome: "YOU LOOSE!",
+  break_outcome: "BREAK!",
+  armor_break_outcome: "ARMOR BREAK!",
+  armor_scrape_outcome: "SCRATCH!",
+  control_outcome: "CONTROL!",
+  keep_outcome: "KEEP!",
+  lost_rythm_outcome: "LOSS OF RHYTHM!",
+  bleed_perfect_outcome: "BLOODY EXPLOSION!",
+  bleed_outcome: "BLEED!",
+  bleed_rage_outcome: "RAGE!",
+  bleed_miss_outcome: "MISS!",
+  ram_outcome: "RAM!",
+  attack_outcome: "ATTACK",
+  heavy_outcome: "HEAVY ATTACK!",
+  guard_outcome: "GUARD",
+  charge_outcome: "CHARGE!",
+  interrupt_outcome: "INTERRUPT!",
+  critical_state_outcome: "CRITICAL STATE!",
+  windup_outcome: "WIND-UP",
+  heavy_windup_outcome: "HEAVY WIND-UP!",
+  gurd_momentum_outcome: "MOMENTUM!",
+  windup_critical_outcome: "FINISHER!",
+  
+  stack_defense_reward: " The Unbreakable Wall ",
+  dmg_reduction_reward: " DMG Reduction ",
+  perfect_counterattack_reward: "  Perfect Counterattack ",
+  block_reward: " Perfect Block Reward ",
+  combo_reward: " Combo ",
+  pushback_reward: " Pushback",
+  perfect_riposte_reward: " Perfect Riposte",
+  break_defense_reward: "Broken Defense ",
+  dmg_reflect_reward: " DMG Reflect",
+  stun_enemy_reward: "sec. Enemy Stun",
+  next_crit_reward: "Guarantee Crit ",
+  to_energy_reward: " Energy",
+  last_stand_reward: " Last Stand",
+  bleed_reward: "Bleed",
+  control_reward: "Control",
+  next_strengthened_reward: "Strengthened Attack",
+  iron_defense_reward: "Iron Defense",
+  stack1_reward: "Stress",
+  stack2_reward: "Pressure",
+  stack3_reward: "Dominance",
+  low_stamina_reward: "Low Stamina!",
+  low_guard_reward: "Not enough Guard Stack!",
+  stamina_on_kill_reward: "Stamina",
+  dmg_per_control: "Damage",
+  slow_per_control: "Enemy Attack Speed",
+  crit_per_control: "Crit!",
+  remove_fatique_stack: "Energy Fatique",
+  armor_break_refreshed: "Refreshed Armor Break!",
+  
+  confirm_btn: "CONFIRM",
+  mission_btn: "MISSION",
+  end_mission_btn: "COMPLETE MISSION",
+  accept_btn: "ACCEPT",
+  close_btn: "CLOSE",
+  trade_btn: "TRADE",
+  
+  quest_book: "Quest Book",
+  quest_act: "Act",
+  no_quests_in_act: "No quests in this act",
+  show_quest_desc: "Show description",
+  quest_reward: "Reward ",
+  quest_accepted1: "Quest",
+  quest_accepted2: "accepted",
+  quest_already_active: "You already have this quest active!",
+  quest_completed: "Mission completed",
+  quest_failed: "Mission failed!",
+  quest_state_active: "ACTIVE ",
+  quest_state_completed: "COMPLETED",
+  quest_state_failed: "FAILED",
+
+  levelup_title: "LEVEL UP",
+  levelup_skill_point: "Skill Point",
+  levelup_attr_points: "Attributes Points",
+  continue_btn: "CONTINUE",
+  
+  death_title: "YOU LOOSE",
+  death_gold: "Gold",
+  death_tip: "TIP",
+  death_debuff: "DEBUFF",
+  death_penalty_text1: "Your stats are reduced by",
+  death_penalty_text2: "for the next",
+  death_penalty_text3: "combats",
+
+  gold: "Gold",
+  
+  inventory_title: "Inventory",
+  filter_rarity: "Rarity",
+  back_btn: "BACK",
+  equip_btn: "EQUIP",
+  unequip_btn: "UNEQUIP",
+  compare_btn: "COMPARE",
+  eat_btn: "EAT",
+  discover_btn: "DISCOVER",
+  
+  satiety_label: "Satiety",
+  pcs_label: "Pcs",
+  
+  equip_2h_alert: "You cannot equip a two-handed weapon while wearing a shield!",
+  equip_shield_alert: "You cannot equip a shield while wielding a two-handed weapon!",
+  equip_special_alert: "You cannot equip this item!",
+  equip_lowlvl_alert: "Your character is too low level to equip this item!",
+  no_space_potions_alert: "No more space for potions!",
+  no_equipped_item: "No item of this type equipped.",
+  unlock_new_combat_affixes: "You have unlocked a new Combat Affix! Check the Codex",
+  
+  sold_item_question: "Are You sure You want to sell this item?",
+  
+  confirm_yes: "Yes",
+  confirm_no: "No",
+  
+  
+  menu_character: "Character",
+  char_class_title: "Warrior",
+  char_class_level: "Level",
+  attributes_btn: "ATTRIBUTES",
+  stats_btn: "STATISTICS",
+  guide_btn: "GUIDE",
+  affixes_btn: "COMBAT AFFIXES",
+  tactical_block_toggle: "Tactical Block",
+  attack_spd_stat: "Attack speed",
+  strength_stat: "Strength",
+  dodge_stat: "Dodge",
+  agility_stat: "Agility",
+  powerblock_stat: "Block power",
+  vitality_stat: "Vitality",
+  crit_stat: "Critical attack",
+  hpregen_stat: "Life regen/sec.",
+  critdmg_stat: "Critical damage",
+  fire_resist_stat: "Fire resist",
+  life_onhit_stat: "Life On-hit",
+  cold_resist_stat: "Cold resist",
+  poison_resist_stat: "Poison resist",
+  magic_find_stat: "Magic find",
+  magic_resist_stat: "Magic resist",
+  gold_find_stat: "Gold find",
+
+  avaiable_attr_points: "Avaiable points",
+  char_attr_develop: "Character Development",
+  vit_points: "Vitality",
+  str_points: "Strength",
+  agi_points: "Agility",
+  vit_develop_desc: "More HP and resistance",
+  str_develop_desc: "More DMG",
+  agi_develop_desc: "Timing, block and control",
+  accept_develop: "ACCEPT",
+  
+  combat_codex_title: "Combat Affixes Codex",
+  
+  store_title: "Store",
+  buy_btn: "BUY",
+  weapons_tab: "Weapons",
+  armors_tab: "Armors",
+  other_tab: "Other",
+  special_tab: "Special",
+
+  
+  bulwark_mastery: "Bulwark",
+  duelist_mastery: "Duelist",
+  berserker_mastery: "Berserker",
+  warden_mastery: "Warden",
+  executioner_mastery: "Executioner",
+  juggernaut_mastery: "Juggernaut",
+
+  
+  restore_store_info: "Store refreshed",
+  cant_sell_item_info: "You cannot sell this item!",
+  sold_info: "Sold",
+  store_error_info: "Store error",
+  no_gold_enough_info: "You don't have enough gold!",
+  full_inventory_info: "Inventory is full!",
+  too_lowlvl_info: "Too low level!",
+  no_item_store_info: "No item!",
+  potions_out_of_stock_info: "Potions out of stock!",
+  bread_out_of_stock_info: "Bread out of stock!",
+  no_inventory_space_info: "There is no free space in inventory!",
+  no_space_for_potion_info: "There is no free space for new potion!",
+  
+  
+  menu_skills: "Skills",
+  resilience_style: "Resilience",
+  precision_style: "Precision",
+  brutality_style: "Brutality",
+  combat_style: "Specialization",
+  none_style: "No specialization",
+  turtle_style: "Unbroken",
+  timed_style: "Perfectionist",
+  poise_style: "Ruthless",
+  upgrade_btn: "UPGRADE",
+  activate_btn: "ACTIVATE",
+  assign_btn: "ASSIGN",
+  effects_affix: "EFFECTS",
+  skill_lvl_req: "Required level",
+  passive_skill: "Passive skill",
+  second_skill_effect: "sec",
+  points_skill_effect: "pts",
+
+  low_level_skill_info: "You do not meet the requirements to unlock this skill.",
+  no_skill_points_info: "No skill points avaiable!",
+  no_mastery_points_info: "No mastery points avaiable!",
+  pick_slot_info: "Pick your slot!.",
+  no_skill_selected_info: "None skill selected!",
+  skill_unlocked_info: "Skill unlocked",
+  already_assigned_info: "This skill is already assigned to another slot!",
+  
+  resilience_desc_warrior: "Defensive mastery focused on endurance and damage reduction.",
+  precision_desc_warrior: "Rewards perfect timing, counters and precise execution under pressure.",
+  brutality_desc_warrior: "Aggressive offensive combat centered around overwhelming force and relentless attacks.",
+
+  start_journey_btn: "START JOURNEY",
+  
+  menu_pause: "Pause",
+  
+  coming_soon: "Coming Soon",
+  combat_disciplines: "COMBAT DISCIPLINES",
+  char_selection_title: "CHOOSE YOUR HERO",
+  char_selection_subtitle: "Your journey begins here",
+
+  tap_continue: "TAP TO CONTINUE",
+  
+  alert_shop_refresh: "Shop refreshed",
+  alert_not_enough_gold: "Not enough gold",
+
+  loading_enter_world: "Entering the world...",
+  loading_story_1: "The sea was calm... until the storm came.",
+  
+
+  death_failed_block_1: "You failed to block the decisive strike.",
+  death_failed_block_2: "Your block was too late — the enemy showed no hesitation.",
+
+  death_no_potions_1: "You ran out of potions at the worst possible moment.",
+  death_no_potions_2: "You had nothing left to save your life.",
+
+  death_panic_1: "The pressure of battle became too much.",
+  death_panic_2: "A moment of hesitation cost you your life.",
+
+  death_exhaustion_1: "You were too exhausted to defend yourself.",
+  death_exhaustion_2: "Lack of strength sealed your defeat.",
+
+  death_overwhelmed_1: "The enemy proved too powerful.",
+  death_overwhelmed_2: "This battle was beyond your capabilities.",
+
+  death_tip_1: "Tactical Block can completely negate an attack if timed correctly.",
+  death_tip_2: "Potions can still be used even in critical condition.",
+  death_tip_3: "Sometimes escaping is wiser than fighting to the end.",
+  death_tip_4: "Watch the enemy's final swing — it is the key to survival.",
+  death_tip_5: "Managing energy is just as important as dealing damage.",
+
+  levelup_flavor_1: "You feel your experience beginning to pay off.",
+  levelup_flavor_2: "Every battle leaves a mark — this one made you stronger.",
+  levelup_flavor_3: "Your body and mind endure the hardships of combat better now.",
+  levelup_flavor_4: "You are beginning to understand how this world works.",
+  levelup_flavor_5: "It is not mastery yet — but you are closer than before.",
+  levelup_flavor_6: "Mistakes hurt less when you learn from them.",
+
+  intro_text_scene1: "The voyage was meant to be peaceful. But when night fell, the sky was torn apart by the fury of the storm. The wind forced the ship off course, and the waves swallowed the familiar route.",
+  intro_text_scene2: "At dawn, the storm finally passed. The battered ship drifted into a foreign harbor that did not exist on your maps. They called it Elmaris.",
+  intro_text_scene3: "You quickly learned that you had arrived in Rivenfell. A harsh land of ancient forts, wild forests, and forgotten roads. People here whispered about strange signs in the north.",
+  intro_text_scene4: "You were supposed to leave with the next tide. But when you looked toward the northern mountains, you felt a strange calling. As if fate had brought you here for a reason.",
+  
+  character_name_label: "Character Name",
+
+  character_name_placeholder: "Enter your name...",
+
+  character_name_hint: "Your name can contain up to 14 characters.",
+
+  warrior_class_description_title: "Warrior",
+
+  warrior_class_description: `
+    A fighter trained for direct combat.
+    Warriors rely on strength, endurance, and the effective use
+    of weapons and armor.
+  `,
+
+  warrior_class_specialization_title: "The Warrior's Path",
+
+  warrior_class_specialization_description: `
+    Throughout the journey, a warrior can develop different
+    specializations and combat styles, adapting them to personal
+    preferences and chosen equipment.
+  `,
+  
+  
+  
+});
+
+Object.assign(LANG.pl, {
+  menu_continue: "KONTYNUUJ",
+  menu_newgame: "NOWA GRA",
+  menu_gamemodes: "TRYBY GRY",
+  menu_options: "OPCJE",
+  menu_about: "O GRZE",
+  menu_help: "POMOC",
+  menu_resetgame: "RESET ZAPISU",
+  menu_back: "POWRÓT",
+  menu_sandbox: "WKRÓTCE",
+  menu_adventure: "WYPRAWA",
+  menu_expedition: "WKRÓTCE",
+  menu_exit: "WYJŚCIE",
+  menu_resume: "WZNÓW",
+  
+  launcher_entering_world: "WKRACZANIE DO ŚWIATA",
+
+  launcher_check_updates: "Sprawdzanie aktualizacji",
+  launcher_download: "Pobieranie danych",
+  launcher_data_synchro: "Synchronizacja danych świata",
+  launcher_preparing: "Przygotowywanie systemów gry",
+  launcher_applying_patch: "Instalowanie aktualizacji",
+  
+  loader_preparing_interface: "Przygotowywanie interfejsu",
+  loader_loading_textures: "Ładowanie tekstur",
+  loader_loading_environments: "Ładowanie lokacji",
+  loader_sync_items: "Synchronizacja przedmiotów",
+  loader_preparing_audio: "Przygotowywanie dźwięków",
+  loader_loading_combat_assets: "Ładowanie zasobów walki",
+  loader_building_world_map: "Tworzenie mapy świata",
+    
+  option_music: "Muzyka", 
+  option_sfx: "Efekty", 
+  option_mute: "Wyciszenie", 
+
+  about_game: "O grze",
+  
+  world_map: "Mapa Świata",
+  show_levels: "Pokaż Nazwy",
+  enter_level: "WEJDŹ",
+
+  
+  about_game: "O grze",
+  about_game_title: "Origin Project",
+  about_game_description: "Taktyczne Action RPG skupione na walce jeden na jednego, precyzyjnym blokowaniu i budowaniu unikalnych stylów walki. Obserwuj przeciwnika, wyczuj właściwy moment i wykorzystaj jego słabości.",
+  about_tagline: "Opanuj timing. Zdefiniuj swój styl.",
+  about_game_info: "Informacje",
+  about_genre: "Gatunek",
+  about_mode: "Tryb",
+  about_platform: "Platforma",
+  about_version: "Wersja",
+  about_status: "Status",
+  about_creator: "Twórca",
+  about_creator_description: "Niezależny projekt tworzony z pasji do gier RPG i wymagającej walki.",
+  about_community: "Społeczność",
+  about_community_description: "Masz pomysł, znalazłeś błąd lub chcesz podzielić się opinią? Dołącz do społeczności.",
+  about_discord: "Discord",
+  about_youtube: "YouTube",
+  about_created_by: "Stworzone przez Poul12",
+  about_early_build: "Wczesna wersja",
+  about_single_player: "Jeden gracz",
+  about_android: "Android",
+  about_action_rpg: "Action RPG",
+  about_bug_report: "Błędy i sugestie możesz zgłaszać przez Discord. Twój feedback pomaga rozwijać grę.",
+  about_copyright: "© 2026 Poul12",
+    
+  about_ai: "Wykorzystanie AI",
+  about_ai_description: "Grafiki i dźwięki wykorzystane w grze zostały w całości stworzone przy użyciu narzędzi opartych na sztucznej inteligencji. Materiały są następnie wybierane, edytowane i dostosowywane do potrzeb projektu przez twórcę gry. Kod, mechaniki, projekt rozgrywki i integracja assetów są tworzone przez twórcę.",
+  
+  about_rights: "Prawa autorskie",
+  about_rights_description: "© 2026 Poul12. Origin Project, jego kod, projekt, treści oraz materiały zawarte w grze są chronione prawem autorskim. Kopiowanie, rozpowszechnianie, modyfikowanie, odsprzedaż lub wykorzystywanie materiałów z gry bez zgody twórcy jest zabronione.",
+  
+  menu_map: "Mapa",
+  
+  reset_save: "Czy na pewno zresetować ",
+
+  adventure: "tryb Wyprawy",
+  story: "tryb Kampanii",
+
+  
+  succes_flee_info_app_kill: "Walka została przerwana, straciłeś",
+  succes_flee_info1: "Udało Ci się uciec, ale zgubiłeś ",
+  succes_flee_info2: " złota",
+  succes_flee_info3: " i zużyłeś ",
+  succes_flee_info4: "5 energii.",
+  succes_flee_info5: "Umiejętności zablokowane na ",
+  fail_flee_info: "Ucieczka nieudana, ale uniknąłeś kontrataku!",
+  succes_flee_info1: "Ucieczka nieudana! Wróg kontratakuje!",
+  flee_cost1: "Koszt ucieczki to ",
+  flee_cost2: " złota",
+  flee_cost3: " i ",
+  flee_cost4: "4 energii",
+  flee_cost5: " Czy na pewno chcesz uciec z walki?",
+
+  enemy_lvl_info: "Poziom",
+  miss_outcome: "SPÓŹNIONE",
+  dodge_outcome: "UNIK",
+  miss_failed_attack: "NIEUDANY UNIK",
+  failed_attack_outcome: "NIEUDANY ATAK",
+  turtle_outcome: "POSTAWA OBRONNA",
+  perfect_outcome: "PRECYZJA",
+  good_outcome: "DOBRZE",
+  crit_outcome: "ATAK KRYTYCZNY!",
+  won_outcome: "WYGRANA!",
+  exhausted_outcome: "WYCZERPANIE!",
+  now_outcome: "TERAZ!",
+  counterattack_outcome: "KONTRATAK!",
+  tired_outcome: "ZMĘCZENIE",
+  survive_outcome: "PRZEŻYŁEŚ!",
+  loose_outcome: "PRZEGRAŁEŚ!",
+  break_outcome: "BREAK!",
+  armor_break_outcome: "PRZEBICIE!",
+  armor_scrape_outcome: "DRAŚNIĘCIE!",
+  control_outcome: "KONTROLA!",
+  keep_outcome: "UTRZYMANIE!",
+  lost_rythm_outcome: "UTRATA RYTMU!",
+  bleed_perfect_outcome: "KRWAWY WYBUCH!",
+  bleed_outcome: "KRWAWIENIE!",
+  bleed_rage_outcome: "SZAŁ!",
+  bleed_miss_outcome: "NIETRAFIONY!",
+  ram_outcome: "TARAN!",
+  attack_outcome: "ATAK",
+  heavy_outcome: "CIĘŻKI ATAK!",
+  guard_outcome: "GARDA",
+  charge_outcome: "SZARŻA!",
+  interrupt_outcome: "PRZERWANY!",
+  critical_state_outcome: "STAN KRYTYCZNY!",
+  windup_outcome: "ZAMACH",
+  heavy_windup_outcome: "CIĘŻKI ZAMACH!",
+  gurd_momentum_outcome: "MOMENTUM!",
+  windup_critical_outcome: "CIOS OSTATECZNY!",
+
+  stack_defense_reward: " Niezłomny Mur ",
+  dmg_reduction_reward: " Redukcji Obrażeń",
+  perfect_counterattack_reward: "  Perfekcyjny Kontratak ",
+  block_reward: " Nagroda za Blok ",
+  combo_reward: " Seria ",
+  pushback_reward: " Odrzucenie",
+  perfect_riposte_reward: " Perfekcyjna Riposta",
+  break_defense_reward: "Złamana Obrona ",
+  dmg_reflect_reward: " Odbicie Obrażeń",
+  stun_enemy_reward: "sek. Ogłuszenie Wroga",
+  next_crit_reward: "Następny atak to kryt. ",
+  to_energy_reward: " do Energii",
+  last_stand_reward: " Ostania Wola",
+  bleed_reward: "Krwawienie",
+  control_reward: "Kontrola",
+  next_strengthened_reward: "Wzmocniony Atak",
+  iron_defense_reward: "Żelazna Postawa",
+  stack1_reward: "Napór",
+  stack2_reward: "Presja",
+  stack3_reward: "Przewaga",
+  low_stamina_reward: "Za mało Staminy!",
+  low_guard_reward: "Za mało Ładunków Obronnych!",
+  stamina_on_kill_reward: "Staminy",
+  dmg_per_control: "Obrażeń",
+  slow_per_control: "Szybkości Ataku Wroga",
+  crit_per_control: "Atak Kryt.!",
+  remove_fatique_stack: "Zmęczenia",
+  armor_break_refreshed: "Odświeżono Przełamanie!",
+  
+  
+  confirm_btn: "POTWIERDŹ",
+  mission_btn: "MISJA",
+  end_mission_btn: "ZAKOŃCZ MISJĘ",
+  accept_btn: "AKCEPTUJ",
+  close_btn: "ZAMKNIJ",
+  trade_btn: "HANDEL",
+  
+  quest_book: "Dziennik Misji",
+  quest_act: "Akt",
+  no_quests_in_act: "Brak misji w tym akcie",
+  show_quest_desc: "Pokaż opis",
+  quest_reward: "Nagroda ",
+  quest_accepted1: "Misja",
+  quest_accepted2: "zaakceptowana",
+  quest_already_active: "Masz już tę misję aktywną!",
+  quest_completed: "Misja zakończona",
+  quest_failed: "Misja nieudana!",
+  quest_state_active: "AKTYWNA ",
+  quest_state_completed: "ZAKOŃCZONA",
+  quest_state_failed: "NIEUDANA",
+  
+  levelup_title: "Awans",
+  levelup_skill_point: "Punkt Umiejętności",
+  levelup_attr_points: "Punktów Atrybutów",
+  continue_btn: "KONTYNUUJ",
+
+  death_title: "PRZEGRAŁEŚ",
+  death_gold: "Złoto",
+  death_tip: "WSKAZÓWKA",
+  death_debuff: "OSŁABIENIE",
+  death_penalty_text1: "Twoje statystyki są zmniejszone o",
+  death_penalty_text2: "przez kolejne",
+  death_penalty_text3: "walki",
+
+  gold: "Złota",
+  
+  inventory_title: "Ekwipunek",
+  filter_rarity: "Klasa",
+  back_btn: "POWRÓT",
+  equip_btn: "ZAŁÓŻ",
+  unequip_btn: "ZDEJMIJ",
+  compare_btn: "PORÓWNAJ",
+  eat_btn: "JEDZ",
+  discover_btn: "ODKRYJ",
+  
+  satiety_label: "Sytość",
+  pcs_label: "Szt",
+  
+  equip_2h_alert: "Nie możesz założyć broni dwuręcznej, mając założoną tarczę!",
+  equip_shield_alert: "Nie możesz założyć tarczy mając broń dwuręczną!",
+  equip_special_alert: "Nie możesz założyć tego przedmiotu!",
+  equip_lowlvl_alert: "Twoja postać ma za niski poziom, aby założyć ten przedmiot!",
+  no_space_potions_alert: "Brak miejsc na mikstury!",
+  no_equipped_item: "Brak założonego przedmiotu tego typu.",
+  unlock_new_combat_affixes: "Odblokowałeś nowy Bonus Stylów Walki! Sprawdź Kodeks",
+
+  
+  sold_item_question: "Czy na pewno chcesz sprzedać ten przedmiot?",
+
+  confirm_yes: "Tak",
+  confirm_no: "Nie",
+  
+  bulwark_mastery: "Obrońca",
+  duelist_mastery: "Fechmistrz",
+  berserker_mastery: "Berserker",
+  warden_mastery: "Strażnik",
+  executioner_mastery: "Egzekutor",
+  juggernaut_mastery: "Kolos",
+
+    
+  menu_character: "Postać",
+  char_class_title: "Wojownik",
+  char_class_level: "Poziom",
+  attributes_btn: "ATRYBUTY",
+  stats_btn: "STATYSTYKI",
+  guide_btn: "PRZEWODNIK",
+  affixes_btn: "BONUSY BOJOWE",
+  tactical_block_toggle: "Blok Taktyczny",
+  attack_spd_stat: "Szybkość ataku",
+  strength_stat: "Siła",
+  dodge_stat: "Unik",
+  agility_stat: "Zręczność",
+  powerblock_stat: "Siła bloku",
+  vitality_stat: "Witalność",
+  crit_stat: "Krytyczny atak",
+  hpregen_stat: "Regeneracji życia/sek.",
+  critdmg_stat: "Obr. krytyczne",
+  fire_resist_stat: "Odp. na Ogień",
+  life_onhit_stat: "Życia za Trafienie",
+  cold_resist_stat: "Odp. na Zimno",
+  poison_resist_stat: "Odp. na Truciznę",
+  magic_find_stat: "Znajdowanie mag. przedm.",
+  magic_resist_stat: "Odp. na Magię",
+  gold_find_stat: "Premii do Złota",
+
+  avaiable_attr_points: "Dostępne punkty",
+  char_attr_develop: "Rozwój Postaci",
+  vit_points: "Witalność",
+  str_points: "Siła",
+  agi_points: "Zwinność",
+  vit_develop_desc: "Więcej życia i odporność",
+  str_develop_desc: "Większe Obrażenia",
+  agi_develop_desc: "Timing, blok, kontrola",
+  accept_develop: "ZAAKCEPTUJ",
+  
+  
+  store_title: "Sklep",
+  buy_btn: "KUP",
+  weapons_tab: "Bronie",
+  armors_tab: "Zbroje",
+  other_tab: "Inne",
+  special_tab: "Specjalne",
+
+  combat_codex_title: "Kodeks Bojowy",
+  
+  restore_store_info: "Odświeżono sklep",
+  cant_sell_item_info: "Nie można sprzedać tego przedmiotu!",
+  sold_info: "Sprzedane",
+  store_error_info: "Błąd sklepu",
+  no_gold_enough_info: "Nie masz wystarczająco złota!",
+  full_inventory_info: "Ekwipunek jest pełny!",
+  too_lowlvl_info: "Za niski poziom!",
+  no_item_store_info: "Brak przedmiotu!",
+  potions_out_of_stock_info: "Brak mikstur!",
+  bread_out_of_stock_info: "Brak chleba!",
+  no_inventory_space_info: "Brak miejsca w ekwipunku!",
+  no_space_for_potion_info: "Nie ma miejsca na nową miksturę!",
+  
+  
+  menu_skills: "Umiejętności",
+  resilience_style: "Wytrzymałość",
+  precision_style: "Precyzja",
+  brutality_style: "Brutalność",
+  combat_style: "Specjalizacja",
+  none_style: "Brak specjalizacji",
+  turtle_style: "Niezłomny",
+  timed_style: "Perfekcjonista",
+  poise_style: "Bezwględny",
+  upgrade_btn: "ULEPSZ",
+  activate_btn: "AKTYWUJ",
+  assign_btn: "PRZYPISZ",
+  effects_affix: "EFEKTY",
+  skill_lvl_req: "Wymagany poziom",
+  passive_skill: "Umiejętność pasywna",
+  second_skill_effect: "sek",
+  points_skill_effect: "pkt",
+
+  
+  low_level_skill_info: "Nie spełniasz warunków, aby odblokować tą umiejętność.",
+  no_skill_points_info: "Brak punktów umiejętności!",
+  no_mastery_points_info: "Brak punktów mistrzostwa!",
+  pick_slot_info: "Wybierz slot!.",
+  no_skill_selected_info: "Nie wybrano umiejętności!",
+  skill_unlocked_info: "Umiejętność odblokowana",
+  already_assigned_info: "Ten skill jest już przypisany do innego slotu!",
+  
+  
+  resilience_desc_warrior: "Styl defensywny oparty na niezłomnej wytrzymałości i ograniczaniu otrzymywanych obrażeń.",
+  precision_desc_warrior: "Styl nagradzający perfekcyjny timing, skuteczne kontry i bezbłędne wykonanie.",
+  brutality_desc_warrior: "Styl ofensywny wykorzystujący przytłaczającą siłę i nieustanną presję na przeciwniku.",
+  
+  menu_pause: "Pauza",
+  
+  start_journey_btn: "ROZPOCZNIJ PRZYGODĘ",
+
+  coming_soon: "Wkrótce",
+  char_selection_title: "WYBIERZ BOHATERA",
+  char_selection_subtitle: "Twoja przygoda zaczyna się tutaj",
+  combat_disciplines: "STYLE WALKI",
+
+    
+  btn_back: "Powrót",
+  btn_equip: "Załóż",
+  btn_sell: "Sprzedaj",
+
+  tap_continue: "DOTKNIJ, ABY KONTYNUOWAĆ",
+  
+  alert_shop_refresh: "Odświeżono sklep",
+  alert_not_enough_gold: "Brak złota",
+
+  loading_enter_world: "Wkraczasz do świata...",
+  loading_story_1: "Morze było spokojne... aż nadeszła burza.",
+  
+  
+  death_failed_block_1: "Nie udało się zablokować decydującego ciosu.",
+  death_failed_block_2: "Twój blok był spóźniony – wróg nie zawahał się ani chwili.",
+
+  death_no_potions_1: "Zabrakło mikstur w decydującym momencie.",
+  death_no_potions_2: "Nie miałeś już czym ratować życia.",
+
+  death_panic_1: "Presja walki okazała się zbyt duża.",
+  death_panic_2: "Chwila zawahania kosztowała cię życie.",
+
+  death_exhaustion_1: "Byłeś zbyt wyczerpany, by się bronić.",
+  death_exhaustion_2: "Brak sił przesądził o porażce.",
+
+  death_overwhelmed_1: "Wróg okazał się zbyt silny.",
+  death_overwhelmed_2: "To starcie przerosło twoje możliwości.",
+
+  death_tip_1: "Blok taktyczny może całkowicie obronić Cię przed atakiem, jeśli trafisz w odpowiedni moment.",
+  death_tip_2: "Mikstury można używać nawet w stanie krytycznym.",
+  death_tip_3: "Czasem ucieczka to lepsza decyzja niż walka do końca.",
+  death_tip_4: "Obserwuj ostateczny zamach wroga – to klucz do przetrwania.",
+  death_tip_5: "Zarządzanie energią jest równie ważne jak zadawanie obrażeń.",
+
+  levelup_flavor_1: "Czujesz, że twoje doświadczenie zaczyna procentować.",
+  levelup_flavor_2: "Każda walka zostawia ślad — ten uczynił cię silniejszym.",
+  levelup_flavor_3: "Twoje ciało i umysł lepiej znoszą trudy walki.",
+  levelup_flavor_4: "Zaczynasz rozumieć, jak działa ten świat.",
+  levelup_flavor_5: "To jeszcze nie mistrzostwo — ale jesteś bliżej niż wcześniej.",
+  levelup_flavor_6: "Błędy bolą mniej, gdy wyciągasz z nich wnioski.",
+
+  
+  intro_text_scene1: "Rejs miał być spokojny. Lecz gdy zapadła noc, niebo rozdarł gniew żywiołu. Wiatr zmienił kurs statku, a fale pochłonęły znany szlak.",
+  intro_text_scene2: "O świcie burza ustała. Wyniszczony okręt dopłynął do obcego portu, którego nie było na twoich mapach. Nazywano go Elmaris.",
+  intro_text_scene3: "Szybko dowiedziałeś się, że trafiłeś do Rivenfell. Surowej ziemi starych fortów, dzikich lasów i zapomnianych dróg. Ludzie mówili tu szeptem o dziwnych znakach na północy.",
+  intro_text_scene4: "Miałeś odpłynąć wraz z następnym przypływem. Lecz gdy spojrzałeś ku północnym górom, poczułeś dziwne wezwanie. Jakby los sprowadził cię tu nie bez powodu.",
+    
+  
+  character_name_label: "Imię bohatera",
+
+  character_name_placeholder: "Wpisz imię...",
+
+  character_name_hint: "Imię może zawierać maksymalnie 14 znaków.",
+
+  warrior_class_description_title: "Wojownik",
+
+  warrior_class_description: `
+    Wojownik wyszkolony do walki w bezpośrednim starciu.
+    Polega na sile, wytrzymałości i umiejętnym wykorzystaniu
+    broni oraz pancerza.
+  `,
+
+  warrior_class_specialization_title: "Droga wojownika",
+
+  warrior_class_specialization_description: `
+    W trakcie swojej podróży wojownik może rozwijać różne
+    specjalizacje i style walki, dopasowując je do własnych
+    preferencji oraz wykorzystywanego uzbrojenia.
+  `,
+  
+});
