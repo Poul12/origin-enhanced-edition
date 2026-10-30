@@ -1,0 +1,74 @@
+workflows:
+  android-debug:
+    name: Android Debug Build
+    max_build_duration: 60
+
+    environment:
+      node: latest
+      java: 21
+
+      vars:
+        PACKAGE_NAME: "com.poul12.rpglooter"
+
+    cache:
+      cache_paths:
+        - $CM_BUILD_DIR/node_modules
+        - $CM_BUILD_DIR/android/.gradle
+        - $HOME/.gradle/caches
+        - $HOME/.gradle/wrapper
+
+    scripts:
+      - name: Install dependencies
+        script: |
+          npm install
+
+      - name: Install Capacitor CLI and assets
+        script: |
+          npm install @capacitor/cli @capacitor/core @capacitor/android
+          npm install -D @capacitor/assets
+
+      - name: Capacitor sync
+        script: |
+          npx cap sync android
+
+      - name: Generate Android icons
+        script: |
+          npx capacitor-assets generate --android
+ 
+      - name: Disable adaptive icons
+        script: |
+          rm -f android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
+          rm -f android/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml
+
+          echo "Adaptive icons removed."
+      
+      - name: Debug generated Android icons
+        script: |
+          echo "=== ICON FILES ==="
+          find android/app/src/main/res \
+            \( -iname "*icon*" -o -iname "*launcher*" \) \
+            -type f \
+            -print \
+            | sort
+
+          echo "=== MANIFEST ICON REFERENCES ==="
+          grep -RniE "android:icon|android:roundIcon|ic_launcher|icon" \
+            android/app/src/main \
+            --include="*.xml" \
+            || true
+
+      - name: Build Android debug APK
+        script: |
+          cd android
+          chmod +x gradlew
+          ./gradlew clean
+          ./gradlew assembleDebug
+
+    artifacts:
+      - android/app/build/outputs/**/*.apk
+      - android/app/build/outputs/**/*.aab
+
+    publishing:
+      email:
+        recipients:
+          - "pawelgonera1987@gmail.com"
