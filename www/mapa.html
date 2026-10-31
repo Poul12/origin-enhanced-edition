@@ -1,0 +1,197 @@
+    
+<div class="view" id="map-view">
+  
+    
+  <div class="location-name-container">
+     
+    <img data-src="img/backgrounds/ribbon-title2.png" alt="Ramka" class="location-name-frame" /> 
+     
+     <svg viewBox="0 0 400 100" class="location-svg">
+      <defs>
+        
+        <path id="ribbon-arc" d="M20,40 Q200,10 380,37" />
+      </defs>
+      <text class="ribbon-text">
+        <textPath href="#ribbon-arc" startOffset="50%" text-anchor="middle" id="ribbonText">
+        
+        </textPath>
+      </text>
+    </svg>  
+    
+  </div> 
+    
+   
+  <div class="map-container">
+    <!-- Podkład graficzny mapy -->
+    <img data-src="img/maps/world-map.png" alt="Mapa Regionów">
+
+    <!-- Nakładka SVG z regionami -->
+    <svg viewBox="0 0 1000 1000" xmlns="http://www.w3.org/2000/svg">
+      
+      <!-- Region 1: Zielona północna część zachodniego kontynentu -->
+      <polygon class="region unlocked" id="west" points="-200,0 420,0 420,130 200,390 400,591 -200,660" />
+
+      <!-- Region 2: Pustynna południowa część zachodniego kontynentu + południowy pustynny kontynent -->
+      <polygon class="region" id="south" points="-200,660 -200,1000 650,1000 800,740 550,574" />
+
+      <!-- Region 3: Wchodni kontynent do gór, poza mroźną krainą -->
+      <polygon class="region" id="east" points="690,370 960,210 1200,400 1200,1000 650,1000 800,740 550,574" />
+
+      <!-- Region 4: Mroźna północno-wschodnia kraina -->
+      <polygon class="region" id="north" points="420,0 1200,0 1200,400 960,210 690,370 420,130" />
+
+      <!-- Region 5: Centralna wyspa z wulkanem -->
+      <polygon class="region" id="island" points="420,130 690,370 550,574 400,591 200,390"/>
+     
+    </svg>
+    
+    <img class="map-frame" data-src="img/frames/world-map-frame.png" alt="Ramka mapy">
+    
+    <div class="region-label" id="region-label"></div>
+    <button id="enter-world-btn" class="button hidden"></button>
+        
+  </div>
+    
+  
+        <!-- Popup -->
+    <div id="world-popup" class="world-popup">
+      <div class="popup-content">
+           
+        <div class="region-name-container">
+     
+         <img data-src="img/backgrounds/ribbon-title2.png" alt="Ramka" class="region-name-frame" /> 
+         
+         <svg viewBox="0 0 400 100" class="region-svg">
+          <defs>
+            <path id="ribbon-arc" d="M20,40 Q200,10 380,37" />
+          </defs>
+          <text class="region-text">
+            <textPath href="#ribbon-arc" startOffset="50%" text-anchor="middle" id="region-name">
+            </textPath>
+          </text>
+         </svg>  
+      
+        </div> 
+       
+        
+        <svg width="1000" height="1000" xmlns="http://www.w3.org/2000/svg"
+           xmlns:xlink="http://www.w3.org/1999/xlink" >
+
+          <defs>
+          <!-- 🔹 Filtr rozmycia maski -->
+             <filter id="softenMask" x="-10%" y="-10%" width="120%" height="120%">
+               <feGaussianBlur stdDeviation="6" />
+             </filter>
+
+             <!-- 🔹 Maska -->
+             <mask id="continentMask">
+               <image id="region-mask"
+                  x="9%" y="8.5%"
+                  width="81%" height="80%"
+                  filter="url(#softenMask)"
+                  preserveAspectRatio="xMidYMid"/>
+             </mask>
+          </defs>
+
+          <!-- 🔹 Pergaminowe tło -->
+          <image id="pergamin-bg"
+             x="0%" y="0%"
+             width="100%" height="100%"
+             preserveAspectRatio="xMidYMid"
+             class="pergamin"/>
+
+          <!-- 🔹 Mapa (pod maską) -->
+          <image id="region-map"
+             x="7%" y="7%"
+             width="85%" height="85%"
+             preserveAspectRatio="xMidYMid"
+             mask="url(#continentMask)"
+             class="region"/>
+        </svg>
+              
+      <!--</div>-->
+            
+      <svg viewBox="0 0 500 750" xmlns="http://www.w3.org/2000/svg" id="popup-hotspots"></svg>
+          
+        <img data-src="img/icons/compas-icon2.png" class="compas-icon"/>
+         
+        <div class="close-btn-wrapper" id="item-close-wrapper">
+          <button class="close-popup-btn" id="close-popup-btn" onclick="closePopUp()"></button>
+          <img data-src="img/buttons/close-btn.png" alt="Zamknij" class="close-btn-frame" />
+        </div> 
+        
+        <div class="level-name set" id="level-name"></div>
+        
+        <button id="enter-level-btn" class="enter-button" onclick="enterLevel()" style="display: none;">WEJDŹ</button>
+            
+        <div id="toggle-labels-btn" class="map-toggle-btn">
+          <span>Pokaż Nazwy</span>
+         <img data-src="img/icons/show-level-names-icon.png" alt="Ikona nazw" class="show-icon" />
+        </div>
+        
+    </div>    
+   </div>
+
+     
+ 
+  </header>  
+  
+  <br>
+  <div>
+    <button onclick="gainExperience(500)">+500 EXP</button>
+  </div>
+  <div>
+    <button onclick="gainExperience(5000)">+5000 EXP</button>
+  </div>
+  <div>
+    <button onclick="gainExperience(50000)">+50000 EXP</button>
+  </div>  
+  <div>
+    <button onclick="gainExperience(1000000)">+1000000 EXP</button>
+  </div> 
+   <div>
+    <button onclick="gainExperience(100000000)">+100000000 EXP</button>
+  </div>  
+  <div>
+    <button onclick="gainExperience(10000000000)">+10000000000 EXP</button>
+  </div>
+  <div>
+    <button onclick="gainExperience(1000000000000)">+1000000000000 EXP</button>
+  </div>
+  
+  
+   <div id="test-buttons" style="margin-top: 10px; display: flex; gap: 6px; flex-wrap: wrap;">
+  <button onclick="renderSingleItemByClass('common')" style="background: #999; color: white;">Zwykłe</button>
+  <button onclick="renderSingleItemByClass('rare')" style="background: #3fa9f5; color: white;">Magiczne</button>
+  <button onclick="renderSingleItemByClass('unique')" style="background: gold; color: black;">Unikalne</button>
+  <button onclick="renderSingleItemByClass('epic')" style="background: purple; color: white;">Epickie</button>
+  <button onclick="renderSingleItemByClass('legendary')" style="background: orange; color: white;">Legendarne</button>
+  </div>
+  
+  
+<div id="stat-tooltip" class="stat-tooltip hidden">
+  <div class="stat-tooltip-title"></div>
+  <div class="stat-tooltip-content"></div>
+</div>
+
+
+<div id="loading-screen" style="display: none;">
+  <div class="loading-overlay"></div>
+  <img id="loading-image" src="" alt="Lokacja" class="loading-image">
+  <div id="loading-title" class="loading-title"></div>
+</div>
+
+
+
+<script>
+  
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(()=>{});
+    }
+  
+</script>
+
+  
+    
+     
+</div>

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<title>Item Generator Tests</title>
+<style>
+body { font-family: monospace; background:#111; color:#eee; }
+button { margin:5px; padding:10px; }
+pre { max-height:300px; overflow:auto; background:#000; padding:10px; }
+</style>
+</head>
+<body>
+
+<h1>Generator Testów Itemów</h1>
+
+<button onclick="runTests()">▶ Uruchom testy</button>
+<button onclick="downloadJSON()">⬇ JSON</button>
+<button onclick="downloadCSV()">⬇ CSV</button>
+
+<pre id="log"></pre>
+
+<script>
+/* ===== KONFIGURACJA TESTÓW ===== */
+
+const rarities = ["rare","unique","epic","legendary"];
+const levelRanges = [
+  [1,25],
+  [25,50],
+  [50,75],
+  [75,100]
+];
+//const slots = ["weapon","helmet","armor","bracers","pants","boots","gloves","belt","shield","shoulders"];
+const slots = [
+  'Hełm', 'Naramiennik', 'Zbroja', 'Karwasze', 'Rękawice',
+  'Pas', 'Spodnie', 'Buty', 'Broń', 'Tarcza'
+];
+const ITEMS_PER_CASE = 200;
+
+/* ===== STORAGE ===== */
+
+let TEST_RESULTS = [];
+
+/* ===== ANALIZA ITEMU ===== */
+
+function analyzeItem(item) {
+  const tagsUsed = {};
+  let economy = 0;
+  let mf = 0;
+  let gf = 0;
+  let hasResist = false;
+
+  (item.statystyki || []).forEach(b => {
+    console.log(`b.nazwa`, b.nazwa);
+    if (b.nazwa?.includes("Magicznych")) mf++;
+    if (b.nazwa?.includes("Złota")) gf++;
+    if (b.nazwa?.includes("Odporność")) hasResist = true;
+  });
+
+  return {
+    rarity: item.rarity,
+    level: item.level,
+    slot: item.typ,
+    affixCount: item.statystyki?.length || 0,
+    hasResist,
+    economyCount: economy,
+    mf,
+    gf,
+    tagsUsed,
+    rawItem: item
+  };
+}
+
+/* ===== TEST RUNNER ===== */
+
+function runTests() {
+  TEST_RESULTS = [];
+  const log = document.getElementById("log");
+  log.textContent = "Running tests...\n";
+
+  for (const rarity of rarities) {
+    for (const [minL,maxL] of levelRanges) {
+      for (let i=0;i<ITEMS_PER_CASE;i++) {
+        const level = rand(minL,maxL);
+        const slot = slots[Math.floor(Math.random()*slots.length)];
+
+        const item = generateItem({
+          forceRarity: rarity,
+          forceLevel: level,
+          forceType: slot,
+          diagnostic: true
+        });
+
+        if (!item) continue;
+
+        TEST_RESULTS.push(analyzeItem(item));
+      }
+    }
+  }
+
+  log.textContent += `✔ Wygenerowano ${TEST_RESULTS.length} itemów\n`;
+  log.textContent += summary();
+}
+
+/* ===== PODSUMOWANIE ===== */
+
+function summary() {
+  const badEconomy = TEST_RESULTS.filter(i => i.mf && i.gf).length;
+  const noResist = TEST_RESULTS.filter(i => !i.hasResist).length;
+  const lowAffix = TEST_RESULTS.filter(i => i.affixCount < 3).length;
+  
+  return `
+MF+GF jednocześnie: ${badEconomy}
+Brak resistów: ${noResist}
+Za mało affixów: ${lowAffix}
+`;
+}
+
+/* ===== EXPORT ===== */
+
+function downloadJSON() {
+  console.log(`JSON`);
+  download("items-test.json", JSON.stringify(TEST_RESULTS,null,2));
+}
+
+function downloadCSV() {
+  const rows = [
+    Object.keys(TEST_RESULTS[0]).join(","),
+    ...TEST_RESULTS.map(o =>
+      Object.values(o).map(v =>
+        typeof v === "object" ? `"${JSON.stringify(v)}"` : v
+      ).join(",")
+    )
+  ];
+  download("items-test.csv", rows.join("\n"));
+}
+
+function download(name, content) {
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([content],{type:"text/plain"}));
+  a.download = name;
+  a.click();
+}
+
+/* ===== UTILS ===== */
+function rand(a,b){ return Math.floor(Math.random()*(b-a+1))+a; }
+
+</script>
+
+  <script src="js/shared.js"></script>
+  <script src="js/item-utility.js"></script>
+  <script src="js/item.js"></script>
+  
+</body>
+</html>

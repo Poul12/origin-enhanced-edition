@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <title>Combat Balance Lab</title>
+  <link rel="stylesheet" href="css/combat-balance.css">
+</head>
+<body>
+
+<h1>⚔️ Combat Balance Lab</h1>
+
+
+<div class="panel">
+  <h2>Gracz</h2>
+
+  <div class="row">
+    <label>HP</label>
+    <input id="p-hp" type="number" value="120">
+  </div>
+  
+  <div class="row">
+    <label>Dmg</label>
+    <input id="p-dmg" type="number" value="25">
+  </div>
+  
+  <div class="row">
+    <label>AtkSpd</label>
+    <input id="p-atkspd" type="number" step="0.1" value="1.0">
+  </div>
+  
+  <div class="row">
+    <label>Crit (%)</label>
+    <input id="p-crit" type="number" step="0.1" value="5.0">
+  </div>
+
+  <div class="row">
+    <label>Crit Dmg (%)</label>
+    <input id="p-critdmg" type="number"  value="100">
+  </div>
+
+  <div class="row">
+    <label>Elemental Dmg</label>
+    <input id="p-ele-dmg" type="number"  value="0">
+  </div>
+
+  <div class="row">
+    <label>Elemental Type</label>
+    <select id="p-ele-type">
+      <option value="fire">Ogień</option>
+      <option value="cold">Zimno</option>
+      <option value="poison">Trucizna</option>
+      <option value="magic">Magia</option>
+    </select>
+  </div>
+
+  <div class="row">
+    <label>Dodge (%)</label>
+    <input id="p-dodge" type="number" step="0.1" value="5">
+  </div>
+
+  <div class="row">
+    <label>Block Power (%)</label>
+    <input id="p-block" type="number" step="1" value="25">
+  </div>
+
+  <div class="row">
+    <label>Armor</label>
+    <input id="p-armor" type="number" value="50">
+  </div>
+
+  <div class="row">
+    <label>Tryb tarczy</label>
+    <select id="p-mode">
+      <option value="">Brak</option>
+      <option value="defensive">Postawa Obronna</option>
+      <option value="tactical">Blok Taktyczny</option>
+    </select>
+  </div>
+  
+</div>
+  
+<div class="panel">
+  <h2>Wróg</h2>
+
+  <div class="row">
+    <label>HP</label>
+    <input id="e-hp" type="number" value="50">
+  </div>
+  
+  <div class="row">
+    <label>Base Damage</label>
+    <input id="e-dmg" type="number" value="25">
+  </div>
+
+  <div class="row">
+    <label>Attack Speed</label>
+    <input id="e-atkspd" type="number" step="0.01" value="0.6">
+  </div>
+
+  <div class="row">
+    <label>Armor</label>
+    <input id="e-armor" type="number" value="30">
+  </div>
+  
+  <div class="row">
+    <label>Phys Reduction (%)</label>
+    <input id="e-physred" type="number" value="0">
+  </div>
+
+ <div class="row">
+    <label>Fire Resist</label>
+    <input id="e-fire" type="number" value="0">
+  </div>
+ 
+  <div class="row">
+    <label>Cold Resist</label>
+    <input id="e-cold" type="number" value="0">
+  </div>
+
+  <div class="row">
+    <label>Poison Resist</label>
+    <input id="e-poison" type="number" value="0">
+  </div>
+  
+  <div class="row">
+    <label>Magic Resist</label>
+    <input id="e-magic" type="number" value="0">
+  </div>
+
+  
+  <div class="row">
+    <label>Level</label>
+    <input id="e-level" type="number" value="1">
+  </div>
+</div>
+  
+<div class="controls">
+  <button onclick="runSimulation()">▶ Uruchom symulację Wroga</button>
+  <button onclick="runPlayerAttackSimulation()">▶ Uruchom symulację Gracza</button>
+</div>
+  
+  <table id="results">
+  <thead>
+    <tr>
+      <th>Avg Hit</th>
+      <th>DPS</th>
+      <th>Avoid %</th>
+      <th>Zero Rate %</th>
+      <th>TTD (s)</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+  
+
+<table id="attack-results">
+  <thead>
+    <tr>
+      <th>Avg Hit</th>
+      <th>DPS</th>
+      <th>DPS Breakdown</th>
+      <th>Base Breakdown</th>
+      <th>Crit DPS Breakdown</th>
+      <th>Crit</th>
+      <th>TTK</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+  
+  <script src="live/js/combat-utility.js"></script> 
+  <script src="live/js/combat.js"></script>
+  <script src="js/combat-balance.js"></script>
+  
+  
+</body>
+</html>

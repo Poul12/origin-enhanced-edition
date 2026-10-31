@@ -1,0 +1,11 @@
+{
+  "name": "Origin",
+  "version": "1.0.0",
+  "description": "Origin Cordova App",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"No test\" && exit 0"
+  },
+  "author": "Poul",
+  "license": "MIT"
+}

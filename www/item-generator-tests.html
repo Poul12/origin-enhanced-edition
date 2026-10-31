@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<title>Zaawansowany Generator Testów Itemów</title>
+
+<style>
+body {
+  font-family: monospace;
+  background: #0e0e0e;
+  color: #eaeaea;
+  padding: 20px;
+}
+
+h1 { margin-bottom: 5px; }
+h2 { margin-top: 30px; }
+
+select, input, button {
+  background: #222;
+  color: #fff;
+  border: 1px solid #444;
+  padding: 6px 10px;
+  margin: 4px;
+}
+
+button:hover {
+  background: #333;
+  cursor: pointer;
+}
+
+label {
+  margin-right: 10px;
+}
+
+#summary {
+  background: #111;
+  padding: 10px;
+  margin-top: 10px;
+  border: 1px solid #333;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  font-size: 12px;
+}
+
+th, td {
+  border: 1px solid #333;
+  padding: 6px;
+  text-align: left;
+  vertical-align: top;
+}
+
+th {
+  background: #1c1c1c;
+}
+
+tr:nth-child(even) {
+  background: #161616;
+}
+
+.bad {
+  color: #ff6b6b;
+  font-weight: bold;
+}
+
+.good {
+  color: #6bff95;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🧪 Zaawansowany Generator Testów Itemów</h1>
+<p>Testy generatora lootów – analiza dziur, konfliktów i edge-case’ów</p>
+
+<!-- ===== PANEL STEROWANIA ===== -->
+
+<div>
+  <label>Rarity:
+    <select id="rarity">
+      <option value="ALL">ALL</option>
+      <option value="rare">rare</option>
+      <option value="unique">unique</option>
+      <option value="epic">epic</option>
+      <option value="legendary">legendary</option>
+    </select>
+  </label>
+
+  <label>Slot:
+    <select id="slot">
+      <option value="ALL">ALL</option>
+      <option>helmet</option>
+      <option>shoulder</option>
+      <option>armor</option>
+      <option>bracers</option>
+      <option>gloves</option>
+      <option>belt</option>
+      <option>pants</option>
+      <option>boots</option>
+      <option>weapon</option>
+      <option>shield</option>
+    </select>
+  </label>
+
+  <label>Level od:
+    <input id="levelMin" type="number" value="100" min="1" max="100">
+  </label>
+
+  <label>do:
+    <input id="levelMax" type="number" value="100" min="1" max="100">
+  </label>
+
+  <label>Ilość:
+    <input id="count" type="number" value="100" min="1" max="5000">
+  </label>
+
+  <label>
+    <input type="checkbox" id="diagnostic" checked>
+    Tryb diagnostyczny
+  </label>
+
+  <button onclick="runTests()">▶ Uruchom test</button>
+  <button onclick="downloadCSV()">⬇ Pobierz CSV</button>
+</div>
+
+<!-- ===== PODSUMOWANIE ===== -->
+
+<div id="summary"></div>
+
+<!-- ===== TABELA ===== -->
+
+<table id="resultsTable">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Rarity</th>
+      <th>Level</th>
+      <th>Slot</th>
+      <th>Affixy</th>
+      <th>Combat</th>
+      <th>MF</th>
+      <th>GF</th>
+      <th>Style</th>
+      <th>Resist</th>
+      <th>Statystyki</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+  
+<script>
+/* ===== STORAGE ===== */
+
+let RESULTS = [];
+  
+/* ===== ANALIZA ITEMU ===== */
+
+function analyzeItem(item) {
+  let mf = 0;
+  let gf = 0;
+  let hasResist = false;
+  
+  const stats = (item.statystyki || []).map(s => {
+    if (s.id.includes("magic")) mf++;
+    if (s.id.includes("gold")) gf++;
+    if (s.id.includes("resist")) hasResist = true;
+    return `${s.id.trim()}: ${s.value}`;
+  });
+
+  const totalAffixes = item.statystyki || [];
+
+  const normalAffix = totalAffixes.filter(s => s.category !== "combat");
+  
+  const combatAffix = totalAffixes.filter(s => s.category === "combat");
+  
+  return {
+    rarity: item.rarity,
+    level: item.level,
+    slot: item.typ,
+    affixCount: normalAffix.length - 1,
+    combatAffixCount: combatAffix.length,
+    mf,
+    gf,
+    style: item?.style?.type,
+    hasResist,
+    statsText: stats.join(" | "),
+    raw: item
+  };
+}
+
+/* ===== TEST RUNNER ===== */
+
+function runTests() {
+  RESULTS = [];
+  const tbody = document.querySelector("#resultsTable tbody");
+  tbody.innerHTML = "";
+
+  const raritySel = document.getElementById("rarity").value;
+  const slotSel = document.getElementById("slot").value;
+  const minL = +levelMin.value;
+  const maxL = +levelMax.value;
+  const count = +document.getElementById("count").value;
+  const diagnostic = document.getElementById("diagnostic").checked;
+
+  for (let i = 0; i < count; i++) {
+    const rarity = raritySel === "ALL"
+      ? ["rare","unique","epic","legendary"][Math.floor(Math.random()*4)]
+      : raritySel;
+
+    const slot = slotSel === "ALL"
+      ? document.querySelectorAll("#slot option")[Math.floor(Math.random()*9)+1].value
+      : slotSel;
+
+    const level = rand(minL, maxL);
+
+    const item = generateItem({
+      forceRarity: rarity,
+      forceLevel: level,
+      forceType: slot,
+      diagnostic
+    });
+
+    if (!item) continue;
+
+    const analyzed = analyzeItem(item);
+    RESULTS.push(analyzed);
+    appendRow(analyzed, i + 1);
+  }
+
+  renderSummary();
+}
+
+/* ===== UI ===== */
+
+function appendRow(a, index) {
+  const tr = document.createElement("tr");
+  tr.innerHTML = `
+    <td>${index}</td>
+    <td>${a.rarity}</td>
+    <td>${a.level}</td>
+    <td>${a.slot}</td>
+    <td class="${a.affixCount < 5 ? "bad" : "good"}">${a.affixCount}</td>
+    <td class="${a.combatAffixCount < 3 ? "bad" : "good"}">${a.combatAffixCount}</td>
+    <td class="${a.mf && a.gf ? "bad" : ""}">${a.mf}</td>
+    <td class="${a.mf && a.gf ? "bad" : ""}">${a.gf}</td>
+    <td>${a.style}</td>
+    <td class="${!a.hasResist ? "bad" : "good"}">${a.hasResist ? "✔" : "✖"}</td>
+    <td>${a.statsText}</td>
+  `;
+  document.querySelector("#resultsTable tbody").appendChild(tr);
+}
+
+/* ===== SUMMARY ===== */
+
+function renderSummary() {
+  const badEconomy = RESULTS.filter(r => r.mf && r.gf).length;
+  const noResist = RESULTS.filter(r => !r.hasResist).length;
+  const lowAffix = RESULTS.filter(r => r.affixCount < 5).length;
+
+  summary.innerHTML = `
+    <strong>Podsumowanie:</strong><br>
+    MF + GF jednocześnie: <span class="${badEconomy ? "bad" : "good"}">${badEconomy}</span><br>
+    Brak resistów: <span class="${noResist ? "bad" : "good"}">${noResist}</span><br>
+    Za mało affixów: <span class="${lowAffix ? "bad" : "good"}">${lowAffix}</span><br>
+    Łącznie itemów: ${RESULTS.length}
+  `;
+}
+
+/* ===== CSV ===== */
+
+function downloadCSV() {
+  if (!RESULTS.length) return alert("Brak danych");
+
+  const header = [
+    "rarity","level","slot","affixCount", "combatAffixCount" ,"mf","gf", "style", "hasResist","stats"
+  ];
+
+  const rows = RESULTS.map(r => [
+    r.rarity,
+    r.level,
+    r.slot,
+    r.affixCount,
+    r.combatAffixCount,
+    r.mf,
+    r.gf,
+    r.style,
+    r.hasResist,
+    `"${r.statsText.replace(/"/g,'""')}"`
+  ].join(","));
+
+  const csv = header.join(",") + "\n" + rows.join("\n");
+  download("item-tests.csv", csv);
+}
+
+function download(name, content) {
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([content], {type:"text/csv"}));
+  a.download = name;
+  a.click();
+}
+
+ window.onload = function() {
+   
+   initializeGameState(`sandbox`);
+ }  
+  
+/* ===== UTILS ===== */
+function rand(a,b){ return Math.floor(Math.random()*(b-a+1))+a; }
+</script>
+
+<!-- TWOJE PLIKI -->
+<script src="js/localization.js"></script>
+<script src="live/js/localization-items.js"></script>
+<script src="js/shared.js"></script>
+<script src="js/gameState.js"></script>
+<script src="js/global-states.js"></script>
+<script src="live/js/item-utility.js"></script>
+<script src="live/js/item.js"></script>
+
+</body>
+</html>

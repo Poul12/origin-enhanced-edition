@@ -1,0 +1,129 @@
+<div class="view" id="inventory-view">
+ 
+  
+<div class="filters">
+  <!-- <span class="filter-label">Typ:</span>-->
+  <div class="filter-icons">
+     <div class="filter-icon" data-type="Broń" title="Broń">
+      <img data-src="img/icons/filter-long-sword-icon.png" alt="Broń">
+    </div>
+    <div class="filter-icon" data-type="Hełm" title="Hełm">
+      <img data-src="img/icons/filter-helmet-icon.png" alt="Hełm">
+    </div>
+    <div class="filter-icon" data-type="Zbroja" title="Zbroja">
+      <img data-src="img/icons/filter-armor-icon.png" alt="Zbroja">
+    </div>
+    <div class="filter-icon" data-type="Rękawice" title="Rękawice">
+      <img data-src="img/icons/filter-gloves-icon.png" alt="Rękawice">
+    </div>
+    <div class="filter-icon" data-type="Naramiennik" title="Naramiennik">
+      <img data-src="img/icons/filter-shoulder-icon.png" alt="Naramiennik">
+    </div>
+    <div class="filter-icon" data-type="Karwasze" title="Karwasze">
+      <img data-src="img/icons/filter-bracers-icon.png" alt="Karwasze">
+    </div>
+    <div class="filter-icon" data-type="Pas" title="Pas">
+      <img data-src="img/icons/filter-belt-icon.png" alt="Pas">
+    </div>
+    <div class="filter-icon" data-type="Spodnie" title="Spodnie">
+      <img data-src="img/icons/filter-pants-icon.png" alt="Spodnie">
+    </div>
+    <div class="filter-icon" data-type="Buty" title="Buty">
+      <img data-src="img/icons/filter-boots-icon.png" alt="Buty">
+    </div>
+    <div class="filter-icon" data-type="Tarcza" title="Tarcza">
+      <img data-src="img/icons/filter-shield-icon.png" alt="Tarcza">
+    </div>
+  </div>
+</div>
+  
+
+<div class="filters">
+  <label>Klasa:</label>
+
+  <div class="filter-box common" onclick="setFilter('common')"></div>
+  <div class="filter-box rare" onclick="setFilter('rare')"></div>
+  <div class="filter-box unique" onclick="setFilter('unique')"></div>
+  <div class="filter-box epic" onclick="setFilter('epic')"></div>
+  <div class="filter-box legendary" onclick="setFilter('legendary')"></div>
+</div>
+  
+  
+  
+<div class="inventory-wrapper">
+  <div class="inventory-header">
+    <div class="inventory-title">Ekwipunek</div>
+    <div class="inventory-capacity common-slot">
+      <img data-src="img/icons/inventory-icon.png" class="capacity-icon" alt="Potions"  style="width:20px; height:20px; margin-right: 4px;"/>
+      <span id="count">0</span>/20   
+    </div>
+  </div>
+
+  <div class="inventory-scroll" id="inventory-container">
+    <!-- Przedmioty będą tutaj wstawiane dynamicznie -->
+  </div>
+</div>
+  
+  
+<div id="item-popup" class="item-popup hidden">
+  <div class="popup-content">
+    <div id="popup-content"></div>
+  </div>
+</div>
+
+
+<div class="popup hidden" id="compare-popup">
+  <div class="compare-popup-content">
+    <!--<div class="item-wrapper">-->
+      <div class="item-panel show" id="panel-1">
+        <div class="item-panel-inner" id="popup-left">
+          <div class="item-panel-content" id="content-left"></div>
+        </div> 
+      </div>  
+    
+      <div class="close-btn-wrapper" id="item-close-wrapper">
+        <button class="close-button" id="item-close-btn" onclick="closeComparePopup()"></button>
+        <img data-src="img/buttons/close-btn.png" alt="Zamknij" class="close-btn-frame" />
+      </div> 
+
+    <!--</div>-->
+    <!--<div class="item-wrapper">-->
+      <div class="item-panel" id="panel-2">
+        <div class="item-panel-inner" id="popup-right">
+          <div class="item-panel-content" id="content-right"></div>
+        </div>
+      </div>
+    <!--</div>--> 
+  </div>
+  
+  <div class="compare-popup-actions">
+     <button class="item-button" id="equip-btn2" style="width: 100px;">ZAŁÓŻ</button>
+  </div>
+  
+</div>
+  
+  
+<div id="stat-tooltip" class="stat-tooltip hidden">
+  <div class="stat-tooltip-title"></div>
+  <div class="stat-tooltip-content"></div>
+</div>
+
+    
+<div id="confirm-popup" class="confirm-popup hidden">
+  <div class="confirm-content special">
+    <div id="confirm-message"></div>
+    <div class="custom-confirm-buttons">
+      <button id="confirm-yes">Tak</button>
+      <button id="confirm-no">Nie</button>
+    </div>
+  </div>
+</div>
+    
+<div id="custom-alert-container"></div>
+  
+  
+
+
+
+
+</div>

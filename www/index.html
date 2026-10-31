@@ -1,0 +1,452 @@
+<!DOCTYPE html><html lang="pl">
+<head>
+  <meta charset="UTF-8">  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>RPG Looter</title>
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="stylesheet" href="css/menu.css">
+  <!-- <link rel="stylesheet" href="css/map.css">
+  <link rel="stylesheet" href="css/battle.css">
+  <link rel="stylesheet" href="css/explore.css">
+  <link rel="stylesheet" href="css/skills.css">
+  <link rel="stylesheet" href="css/inventory.css">
+  <link rel="stylesheet" href="css/store.css">
+  <link rel="stylesheet" href="css/character.css"> -->
+
+<style>
+  
+  body{ 
+   background-color: black;
+  }
+  
+  .boot-hidden {
+    visibility: hidden;
+    
+  }
+
+  html,
+  body {
+    transition: opacity 0.8s ease;
+  }
+  
+</style> 
+  
+</head>
+
+<body class="boot-hidden">
+  
+  <!--  <div id="global-logo" class="hidden">
+    <img id="mainLogo" >
+  </div> 
+ 
+    
+<div id="meta-layer">
+  
+  
+</div> -->  <!-- menu -->
+
+<div id="meta-scene">
+
+  <div id="global-logo" class="hidden">
+    <img id="mainLogo" >
+  </div> 
+
+  <div id="meta-layer">
+   
+  </div>
+
+</div>
+  
+ 
+
+  
+<div id="game-layer">
+  
+  
+  <div id="layout">
+  <!-- Pasek statystyk postaci -->
+  <div class="stats-bar">
+   
+   <div class="stat-group">  
+     
+     <div class="stat-block hidden" data-stat="hpstat" id="hp-stat-id">
+       <div class="stat-icon">
+         <img data-src="img/icons/menu-hp-icon.png" alt="HP" class="stat-img" />
+       </div>
+       <span id="hp" class="stat-main">100</span>
+       <span id="hp-diff" class="stat-diff"></span>
+       <span id="hp-diff-preview" class="stat-diff stat-preview"></span>  
+     </div>
+       
+     <div class="stat-block" data-stat="dmgstat">
+       <div class="stat-icon">
+         <img data-src="img/icons/menu-dmg-icon.png" alt="DMG" class="stat-img" />
+       </div>
+       <span id="dmg" class="stat-main">5</span>
+       <span id="dmg-diff" class="stat-diff"></span>
+       <span id="dmg-diff-preview" class="stat-diff stat-preview"></span>    
+       <span id="dmg-debuff" class="stat-debuff"></span>    
+     </div> 
+     
+     <div class="stat-block" data-stat="defstat">
+       <div class="stat-icon">
+         <img data-src="img/icons/menu-def-icon.png" alt="DEF" class="stat-img" />
+       </div>
+       <span id="def" class="stat-main">5</span>
+       <span id="def-diff" class="stat-diff"></span>
+       <span id="def-diff-preview" class="stat-diff stat-preview"></span>
+     </div>
+  
+     <div class="stat-block" data-stat="goldstat" id="gold-stat-id">
+       <div class="stat-icon">
+         <img data-src="img/icons/expedition-gold-icon.png" alt="GOLD" class="stat-img" />
+       </div>
+       <span id="gold" class="stat-main">0</span>
+      <!-- <span id="gold-diff" class="stat-diff"></span>
+       <span id="gold-diff-preview" class="stat-diff stat-preview"></span>-->
+     </div>
+  
+    <div class="stat-block" data-stat="energystat" id="energy-stat-id">
+       <div class="stat-icon">
+         <img id="stat-icon-main" alt="ENERGY" class="stat-img" />
+       </div>
+       <span id="energy" class="stat-main">100</span>
+     
+       <div class="energy-popup-container"></div>
+   
+    </div>        
+ 
+  </div>
+         
+    
+    <!--<div class="separator"></div>-->
+    
+    <div id="low-hp-vignette"></div>
+
+    <div id="focus-filter"></div>
+    
+    <div id="focus-vignette"></div>
+    
+    
+<!-- TOP COMBAT HUD -->
+<div class="combat-hud">
+
+  <!-- HP ORB -->
+  <div class="orb-container left" data-stat="hpstat">
+    <div class="orb hp-orb">
+      <div class="orb-liquid" id="hp-orb-fill"></div>
+      <div class="orb-glass"></div>
+      <div class="orb-label" id="hp-label">100 / 100</div>
+    </div>
+    
+    <span id="hp-label-diff" class="stat-diff"></span>
+    <span id="hp-label-diff-preview" class="stat-diff stat-preview"></span>  
+    
+    <div class="orb-frame">
+         <img data-src="img/backgrounds/hp-orb-frame3.png" alt="HP Orb" class="orb-img">
+    </div>
+  
+  </div>
+
+  <!-- CENTER COMBAT FEEDBACK -->
+  <div class="combat-center">
+
+    <div id="combat-feedback">
+      <div id="combat-outcome" class="combat-msg outcome">
+        <div class="main"></div>
+      </div>
+
+      <div id="combat-rewards"></div>
+     
+      <div id="combat-control-meter" class="hidden">
+       
+        <div class="control-bar">
+          <div class="segment"></div>
+          <div class="segment"></div>
+          <div class="segment"></div>
+          <div class="segment"></div>
+          <div class="segment"></div>
+        </div>
+       
+      </div>
+
+    </div>
+
+    
+    <div id="perfect-block-wrapper">
+      <div class="perfect-block-bar hidden" id="timing-mode">
+        <div class="miss-window"></div>
+        <div class="normal-window"></div>
+        <div class="perfect-window"></div>
+        <div class="glass-sweep"></div>
+        <div class="glass-crack"></div>
+        <div class="time-indicator"></div>
+      </div>
+      
+      <div class="perfect-block-bar hidden" id="poise-mode">
+        <div class="poise-bar">
+          <div class="poise-fill"></div>
+          <div class="poise-text"></div>
+          <div class="poise-threshold"></div>
+        </div>
+      </div>
+        
+    </div>
+    
+    
+  </div>
+
+  <!-- STAMINA ORB -->
+  <div class="orb-container right" data-stat="stamina">
+   
+    <div class="stamina-popup-container"></div>
+
+    <div class="orb stamina-orb">
+      <div class="orb-liquid" id="stamina-orb-fill"></div>
+      <div class="orb-glass"></div>
+      <div class="orb-label" id="stamina-label">100 / 100</div>
+    </div>
+    <div class="orb-frame">
+         <img data-src="img/backgrounds/hp-orb-frame3.png" alt="HP Orb" class="stamina-img">
+    </div>
+
+  </div>
+
+</div>
+
+<!-- EXP BAR  -->
+<div class="bar-container" id="exp-bar-container">
+  <div class="hp-row">  
+    <div class="level-badge" id="player-level">1</div>
+    <div class="bar-icon"></div>
+    <div class="bar-background">
+      <div id="exp-bar">
+        <span id="exp-label" class="bar-label">0 / 100</span>
+      </div>
+    </div>
+  </div>
+</div>    
+   
+<div class="bar-container hidden" id="mastery-bar-container">
+  <div class="hp-row">  
+    <div class="level-badge" id="weapon-mastery">1</div>
+    <div class="bar-icon"></div>
+    <div class="bar-background">
+      <div id="mastery-bar">
+        <span id="mastery-label" class="bar-label">0 / 100</span>
+        <div id="mastery-title"></div>
+      </div>
+    </div>
+  </div>
+</div>    
+
+    
+</div> <!-- ← zamknięcie stats-bar -->
+    
+    
+    
+<!-- Pasek menu przyklejony do dołu ekranu -->
+<div class="bottom-menu">
+  <button class="menu-item" id="map-menu-btn" onclick="navigate('map')" title="Strona główna">
+    <img data-src="img/icons/menu-world-map-icon.png" alt="Zamknij" class="menu-icon" />
+  </button>
+  <button class="menu-item" onclick="navigate('inventory')" title="Ekwipunek">
+    <img data-src="img/icons/menu-equipment-icon.png" alt="Zamknij" class="menu-icon" />
+  </button>
+  <button class="menu-item" onclick="navigate('character')" title="Postać">
+    <img data-src="img/icons/menu-character-icon.png" alt="Zamknij" id="char-menu" class="menu-icon" />
+  </button>
+  <button class="menu-item legendary" id="fight-menu-btn" onclick="navigate('battle')" title="Walka">
+    <img data-src="img/icons/menu-battle-icon.png" alt="Zamknij" class="menu-icon battle" />
+  </button>
+  <button class="menu-item" onclick="navigate('skills')" title="Umiejętności">
+    <img data-src="img/icons/menu-skills-icon.png" alt="Zamknij" id="skills-menu" class="menu-icon" />
+  </button>
+  <button class="menu-item disabled" title="ComingSoon">
+    <img data-src="img/items/placeholder.png" alt="Zamknij" class="menu-icon" />
+  </button>
+  <button class="menu-item" id="setting-menu-btn" onclick="openPauseMenu()" title="Menu">
+    <img data-src="img/icons/menu-settings-icon.png" alt="Zamknij" class="menu-icon" />
+  </button>
+</div>
+
+     
+  </div> <!-- End layout  -->
+  
+  
+  <div id="app-wrapper">
+
+    <div id="view-loader" class="hidden">
+      <div class="view-loader-spinner"></div>
+    </div>
+  
+    <div id="app"></div>
+
+  </div>
+  
+  
+  
+  <!-- TU ŁADUJE SIĘ WIDOK -->
+  <!-- <div id="app"></div> -->
+  
+  
+  <div id="stat-tooltip" class="stat-tooltip hidden">
+    <div class="stat-tooltip-title"></div>
+    <div class="stat-tooltip-content"></div>
+  </div>
+
+  
+  
+</div>   <!-- cała gra (game layer)-->  
+  
+
+<div id="loading-screen" style="display: none;">
+  <div class="loading-overlay"></div>
+  <img id="loading-image" src="" alt="Lokacja" class="loading-image">
+  <div id="loading-title" class="loading-title"></div>
+  <div class="loading-divider" id="loading-divider"></div>
+  <div id="loading-lore" class="loading-lore"></div>
+</div>
+
+  
+  
+<div id="view-preloader" class="hidden">
+  <div class="view-loader-spinner"></div>
+</div>
+  
+  
+<div id="game-loader">
+
+  <img src="assets/bootstrap/img/loadings/hero-story-loading.png" class="game-loader-bg" id="loader-bg-id">
+  <div class="loader-overlay" id="loader-overlay-id"></div>
+
+  <div class="game-loader-ui" id="loader-ui">
+
+    <div class="loader-title" id="loader-title"></div>
+
+    <div id="loader-percent">0%</div>
+
+    <div class="loader-progress">
+      <div id="loader-progress-fill"></div>
+      <div class="loader-progress-glow"></div>
+    </div>
+
+    <div id="loader-file">
+      Checking updates<span class="game-loader-dots"></span>
+    </div>
+
+    
+  </div>
+
+   
+  <div id="error-popup" class="popup hidden">
+    <div class="error-content" id="loader-error">
+    
+      <div class="loader-error-title" id="error-title">
+          CONNECTION ERROR
+      </div>
+
+      <div id="loader-error-message"></div>
+  
+      <button class="item-button" id="retry-btn" onclick="retryGameBoot()">RETRY</button>
+    
+    </div>
+  </div>
+  
+  
+  <div class="menu-footer loader-footer">
+
+    <!-- LEWY DÓŁ -->
+    <div class="menu-footer-left">
+      <span class="game-version">Build v0.7.98a</span>
+    </div>
+
+    <!-- ŚRODEK -->
+    <div class="menu-footer-center">
+      <span class="game-author">ORIGIN Project © 2026</span>
+    </div>
+
+  </div>
+
+  
+</div>
+  
+ 
+  
+  
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/analytics.js"></script>
+  
+ <!-- WSZYSTKIE SCRIPTY -->
+   <!--<script src="https://unpkg.com/gsap@3/dist/gsap.min.js"></script>-->
+  <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>-->
+  
+  
+  <script src="js/assetBundles.js"></script>  
+  <script src="js/asset-manager.js"></script>  
+  
+  <script src="js/localization.js"></script>  
+  
+  <script src="js/localization-ui.js"></script>
+  <!-- <script src="js/localization-skills.js"></script>
+  <script src="js/localization-items.js"></script>
+  <script src="js/localization-dialogues.js"></script>
+  <script src="js/localization-quests.js"></script>
+  <script src="js/localization-locations.js"></script>
+  <script src="js/localization-tooltips.js"></script> -->
+
+  <script src="js/config.js"></script>
+  <script src="js/gameState.js"></script>
+  <script src="js/global-states.js"></script>
+    
+  <!-- <script src="js/item-utility.js"></script>
+  <script src="js/item.js"></script>
+  <script src="js/store-items.js"></script>
+  <script src="js/expedition-config.js"></script>
+  <script src="js/quests-assets.js"></script>
+  <script src="js/quests-database.js"></script>  
+  <script src="js/shrine-chest-database.js"></script> 
+  <script src="js/enemy-database.js"></script>
+  <script src="js/skills-database.js"></script> -->
+  <script src="js/sound-database.js"></script>  
+
+  <script src="js/test.js"></script> 
+  <script src="js/sound.js"></script>
+  <script src="js/shared.js"></script> 
+ 
+  <!--  <script src="js/location.js"></script> 
+  <script src="js/character.js"></script>
+  <script src="js/inventory.js"></script>  
+  <script src="js/store.js"></script>
+  <script src="js/quests.js"></script>
+  <script src="js/shrine-chest.js"></script> 
+  <script src="js/exploring-utility.js"></script>
+  <script src="js/map.js"></script> 
+  <script src="js/skills-combat.js"></script> 
+  <script src="js/skills.js"></script> 
+  <script src="js/combat.js"></script> 
+  <script src="js/combat-utility.js"></script> 
+  <script src="js/combat-animations.js"></script> 
+  <script src="js/enemy.js"></script>
+  <script src="js/battle.js"></script> -->
+  <script src="js/menu.js"></script>
+
+  <script src="js/views/menuView.js"></script>
+ <!-- <script src="js/views/mapView.js"></script>
+  <script src="js/views/battleView.js"></script>
+  <script src="js/views/inventoryView.js"></script>
+  <script src="js/views/storeView.js"></script>
+  <script src="js/views/characterView.js"></script>
+  <script src="js/views/skillsView.js"></script> -->
+  
+  <script src="js/router.js"></script>
+  <script src="js/app.js"></script>
+  
+  
+ <!--  <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+  <script>
+    eruda.init();
+  </script> -->
+  
+</body>
+</html>

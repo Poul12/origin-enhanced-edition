@@ -1,0 +1,132 @@
+name: Build APK
+
+on:
+  push:
+    branches: [ develop ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18
+
+    - name: Install Cordova
+      run: npm install -g cordova
+
+    - name: Check icon
+      run: |
+        echo "=== ICON ==="
+        ls -lah resources/
+        file resources/icon.png
+
+    - name: Create Cordova project
+      run: |
+        cordova create rpglooter com.poul12.rpglooter Origin
+
+        cp -r www/* rpglooter/www/
+        cp config.xml rpglooter/
+        cp -r resources rpglooter/resources
+
+        cd rpglooter
+        cordova platform add android
+
+    - name: Install Python image tools
+      run: |
+        python3 -m pip install --upgrade pip
+        python3 -m pip install Pillow
+
+    - name: Generate Android icons
+      run: |
+        cd rpglooter
+
+        python3 - <<'PY'
+        from PIL import Image
+        import os
+
+        source = "resources/icon.png"
+
+        sizes = {
+            "mipmap-mdpi": 48,
+            "mipmap-hdpi": 72,
+            "mipmap-xhdpi": 96,
+            "mipmap-xxhdpi": 144,
+            "mipmap-xxxhdpi": 192
+        }
+
+        image = Image.open(source).convert("RGBA")
+
+        for folder, size in sizes.items():
+            output_dir = f"platforms/android/app/src/main/res/{folder}"
+            os.makedirs(output_dir, exist_ok=True)
+
+            resized = image.resize(
+                (size, size),
+                Image.Resampling.LANCZOS
+            )
+
+            resized.save(
+                f"{output_dir}/icon.png",
+                "PNG"
+            )
+
+            print(f"Created {folder}/icon.png -> {size}x{size}")
+
+        PY
+
+    - name: Set Android application icon
+      run: |
+        cd rpglooter
+
+        MANIFEST="platforms/android/app/src/main/AndroidManifest.xml"
+
+        python3 - <<'PY'
+        manifest = "platforms/android/app/src/main/AndroidManifest.xml"
+
+        with open(manifest, "r", encoding="utf-8") as f:
+            data = f.read()
+
+        data = data.replace(
+            'android:icon="@mipmap/ic_launcher"',
+            'android:icon="@mipmap/icon"'
+        )
+
+        data = data.replace(
+            'android:icon="@mipmap/ic_launcher_round"',
+            'android:icon="@mipmap/icon"'
+        )
+
+        with open(manifest, "w", encoding="utf-8") as f:
+            f.write(data)
+
+        print("Android manifest updated.")
+        PY
+
+        echo "=== ICON FILES ==="
+        find platforms/android/app/src/main/res -path "*mipmap*" -type f | sort
+
+        echo "=== MANIFEST ==="
+        grep -n "android:icon" platforms/android/app/src/main/AndroidManifest.xml || true
+
+    - name: Build APK
+      run: |
+        cd rpglooter
+        cordova build android
+
+    - name: Verify APK
+      run: |
+        echo "=== APK ==="
+        ls -lh rpglooter/platforms/android/app/build/outputs/apk/debug/
+
+    - name: Upload APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: Origin-First-Demo-Android
+        path: rpglooter/platforms/android/app/build/outputs/apk/debug/app-debug.apk

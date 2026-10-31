@@ -1,0 +1,244 @@
+
+  <div class="view" id="battle-view">
+ 
+   
+  <div class="location-name-container">
+     <img data-src="img/backgrounds/ribbon-title2.png" alt="Ramka" class="location-name-frame" /> 
+     <!-- <div id="location-name" class="location-name"></div>-->
+     <svg viewBox="0 0 400 100" class="location-svg">
+      <defs>
+        
+        <path id="ribbon-arc" d="M20,40 Q200,10 380,37" />
+      </defs>
+      <text class="ribbon-text">
+        <textPath href="#ribbon-arc" startOffset="50%" text-anchor="middle" id="ribbonText">
+        
+        </textPath>
+      </text>
+    </svg>  
+    
+  </div> 
+
+   
+   <div id="progress-container" class="progress-container">
+     <!-- Segmenty zostaną wygenerowane dynamicznie -->
+  </div>
+  
+  <div class="explore-direction-wrapper">
+    
+    <div id="quest-short-info" class="quest-short-info"></div>
+    
+    <div class="arrows-center">
+      <button id="prev-btn" class="arrow-button" onclick="goBack()">
+        <img data-src="img/icons/explore-arrow-left-icon.png" alt="left" class="arrow-icon" />
+      </button>
+      <button id="next-btn" class="arrow-button" onclick="rollOptions()">
+        <span class="quest-short-info hidden" id="next-level">Następny poziom</span>
+        <img data-src="img/icons/explore-arrow-right-icon.png" id="arrow-next-icon" alt="right" class="arrow-icon" />
+      </button>
+    </div>
+
+    <button class="menu-item journal-btn legendary" id="quest-button" onclick="openQuestsPopup()">
+       <img data-src="img/icons/quest-book-icon2.png" alt="quest-book" class="quest-icon" />
+       <span id="quest-notify" class="notify-dot"></span>
+    </button>
+        
+  </div>  
+  
+  
+  
+  <div class="slot-name-container">
+    <div id="slot-name" class="slot-name hidden"></div>
+  </div>
+
+  <div id="explore-options" class="slot-row">
+    
+  </div>   
+  
+     
+<div id="item-popup" class="npc-popup hidden">
+  <div class="popup-content">
+    <div id="popup-content"></div>
+  </div>
+</div>
+  
+  
+ <div id="quest-popup" class="quest-popup hidden">
+  <div class="popup-content">
+    <div id="popup-content">
+      <div class="popup-header">
+        <h2>📜 Dziennik Misji</h2>
+      </div>
+
+      <!-- 🔖 Zakładki dla aktów -->
+      <div class="quest-tabs">
+        <button class="quest-tab active" data-act="1">Akt I</button>
+        <button class="quest-tab" data-act="2">Akt II</button>
+        <button class="quest-tab" data-act="3">Akt III</button>
+        <button class="quest-tab" data-act="4">Akt IV</button>
+        <button class="quest-tab" data-act="5">Akt V</button>
+      </div>
+
+      <!-- 📋 Lista questów -->
+      <div id="quests-popup-content" class="quest-list"></div>
+    </div>
+      <div class="close-btn-wrapper" id="quest-close-wrapper">
+         <button class="close-button" id="item-close-btn" onclick="closeQuestsPopup()"></button>
+         <img data-src="img/buttons/close-btn.png" alt="Zamknij" class="close-btn-frame" />
+      </div> 
+  </div>
+</div>
+    
+  
+<div class="attack-dialog-container">
+  <div id="attack-dialog-box" class="attack-dialog-box"></div>
+  
+</div>
+ 
+<div id="levelup-popup" class="npc-popup hidden">
+  <div class="popup-content">
+    <div id="popup-content">
+
+       <!-- OBRAZ / IKONA -->
+    <div class="levelup-image-wrapper">
+      <img 
+        src="assets/ui/levelup_obelisk.png" 
+        alt="Awans" 
+        class="levelup-image"
+      />
+    </div>
+
+    <!-- TYTUŁ -->
+    <h2 class="levelup-title">AWANS</h2>
+
+    <!-- FLAVOR / OPIS -->
+    <div class="levelup-flavor">
+      Czujesz, że stałeś się silniejszy.
+    </div>
+
+    <!-- SEPARATOR -->
+    <div class="levelup-separator"></div>
+
+    <!-- NAGRODY GŁÓWNE -->
+    <div class="levelup-rewards">
+
+      <div class="levelup-reward">
+        <span class="reward-icon">🧠</span>
+        <span class="reward-text">
+          <strong>+1</strong> Punkt Umiejętności
+        </span>
+      </div>
+
+      <div class="levelup-reward">
+        <span class="reward-icon">🧬</span>
+        <span class="reward-text">
+          <strong>+5</strong> Punktów Atrybutów
+        </span>
+      </div>
+
+    </div>
+
+    <!-- OPCJONALNY BONUS -->
+    <!-- ukryj jeśli brak -->
+    <div class="levelup-bonus hidden" id="levelup-bonus">
+      <span class="bonus-label">Dodatkowy efekt:</span>
+      <span class="bonus-value">+2% Maks. Życia</span>
+    </div>
+
+      
+      
+      <button id="levelup-confirm" class="item-button">KONTYNUUJ</button>
+ 
+    </div>
+  </div>
+</div>
+  
+  
+  
+  <div id="death-popup" class="npc-popup hidden">
+  <div class="popup-content">
+    <div id="popup-content">
+      
+      <div class="death-icon">
+        <img data-src="img/icons/death-title-icon.png" alt="death-icon"/>
+      </div>
+      
+      <h2 class="death-title">POLEGŁEŚ</h2>
+                
+      <div class="death-consequences">
+        <span>Złoto</span>
+        <span class="gold-loss">-
+          <span id="gold-loss"></span>      
+        </span>
+      </div>   
+        
+      <div class="death-debuff" id="death-debuff">
+       <div class="debuff-title">OSŁABIENIE</div>
+       <div class="debuff-desc" id="death-debuff-value"></div>
+      </div>
+      
+      
+      <div class="death-info" id="death-info"></div> 
+          
+      <div class="death-tip-title">WSKAZÓWKA</div>
+      <div class="death-tip" id="death-tip"></div>
+       
+      <button id="death-confirm" class="item-button">KONTYNUUJ</button>
+   
+    </div>
+  </div>
+</div>
+  
+    
+<div id="confirm-popup" class="popup hidden">
+  <div class="confirm-content rare-slot">
+    <div id="confirm-message"></div>
+    <div class="custom-confirm-buttons">
+      <button id="confirm-yes">Tak</button>
+      <button id="confirm-no">Nie</button>
+    </div>
+  </div>
+</div>
+    
+  <div id="custom-alert-container"></div>
+   
+<div id="stat-tooltip" class="stat-tooltip hidden">
+  <div class="stat-tooltip-title"></div>
+  <div class="stat-tooltip-content"></div>
+</div>
+
+  
+<div id="loading-screen" style="display: none;">
+  <div class="loading-overlay"></div>
+  <div id="loading-title" class="loading-title"></div>
+</div>
+
+  
+  <!-- Pasek menu przyklejony do dołu ekranu -->
+<div class="bottom-menu">
+  <button class="menu-item legendary" onclick="location.href='mapa.html'" title="Strona główna">
+    <img data-src="img/icons/menu-world-map-icon.png" alt="Zamknij" class="menu-icon" />
+  </button>
+  <button class="menu-item rare" onclick="location.href='ekwipunek.html'" title="Ekwipunek">
+    <img data-src="img/icons/menu-equipment-icon.png" alt="Zamknij" class="menu-icon" />
+  </button>
+  <button class="menu-item set" onclick="location.href='postac.html'" title="Postać">
+    <img data-src="img/icons/menu-character-icon.png" alt="Zamknij" class="menu-icon" />
+  </button>
+  <button class="menu-item epic" onclick="location.href='umiejetnosci.html'" title="Umiejętności">
+    <img data-src="img/icons/menu-skills-icon.png" alt="Zamknij" class="menu-icon" />
+  </button>
+  <button class="menu-item special" id="fight-menu-btn" onclick="location.href='walka.html'" title="Walka">
+    <img data-src="img/icons/menu-battle-icon.png" alt="Zamknij" class="menu-icon" />
+  </button>
+  <button class="menu-item unique" id="shop-menu-btn" onclick="location.href='sklep.html'" title="Sklep">
+    <img data-src="img/icons/menu-market-icon.png" alt="Zamknij" class="menu-icon" />
+  </button>
+  <button class="menu-item" onclick="toggleBypass()" id="bypass-btn" title="Test">T
+    <!-- <img data-src="img/icons/menu-market-icon.png" alt="Zamknij" class="menu-icon" />-->
+  </button>
+</div>
+
+    
+    
+ </div>

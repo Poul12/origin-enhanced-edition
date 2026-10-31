@@ -1,0 +1,89 @@
+<div class="view" id="store-view">
+  
+
+
+<div class="shop-container">
+  
+  <div class="shop-header">
+    <button id="sellModeBtn" class="wood-button-small">
+       <img data-src="img/icons/sell-item-icon.png" alt="Sprzedaj" style="width:24px;height:24px;">
+    </button>   
+    <button id="generateNewShop" onClick="generateNewShopForCity()" class="wood-button-small"></button>   
+    <div class="shop-title">Sklep</div>
+    <div class="potion-capacity common" id="capacity-slot"> 
+      <img data-src="img/items/small-heal-potion.png" class="capacity-icon" alt="Potions"  style="width:15px; height:20px;"/>
+      <span id="count">0</span>/7 
+    </div>
+  </div>
+
+  <!-- Zakładki -->
+  <div class="shop-tabs">
+    <button class="shop-tab active" data-tab="weapons">Bronie</button>
+    <button class="shop-tab" data-tab="armors">Zbroje</button>
+    <button class="shop-tab" data-tab="others">Inne</button>
+    <button class="shop-tab" data-tab="special">Specjalne</button>
+  </div>
+
+  <!-- Gridy wypełniane dynamicznie -->
+  <div class="shop" id="shop-content"></div>
+</div>
+  
+  
+<div id="item-popup" class="popup hidden">
+  <div class="popup-content">
+    <div id="popup-content"></div>
+    <!--  <img data-src="img/frames/frame1.png" alt="Ramka" class="item-frame" /> -->
+  
+  </div>
+</div>
+  
+ <div id="confirm-popup" class="popup hidden">
+  <div class="confirm-content special-slot">
+    <div id="confirm-message"></div>
+    <div class="custom-confirm-buttons">
+      <button id="confirm-yes">Tak</button>
+      <button id="confirm-no">Nie</button>
+    </div>
+  </div>
+</div>
+
+  
+  <div id="custom-alert-container"></div>
+  
+  
+<div id="stat-tooltip" class="stat-tooltip hidden">
+  <div class="stat-tooltip-title"></div>
+  <div class="stat-tooltip-content"></div>
+</div>
+  
+  
+    <!-- Pasek menu przyklejony do dołu ekranu -->
+<div class="bottom-menu">
+  <button class="menu-item legendary" onclick="location.href='mapa.html'" title="Strona główna">
+    <img data-src="img/icons/menu-world-map-icon.png" alt="Zamknij" class="menu-icon" />
+  </button>
+  <button class="menu-item rare" onclick="location.href='ekwipunek.html'" title="Ekwipunek">
+    <img data-src="img/icons/menu-equipment-icon.png" alt="Zamknij" class="menu-icon" />
+  </button>
+  <button class="menu-item set" onclick="location.href='postac.html'" title="Postać">
+    <img data-src="img/icons/menu-character-icon.png" alt="Zamknij" class="menu-icon" />
+  </button>
+  <button class="menu-item epic" onclick="location.href='umiejetnosci.html'" title="Umiejętności">
+    <img data-src="img/icons/menu-skills-icon.png" alt="Zamknij" class="menu-icon" />
+  </button>
+  <button class="menu-item special" id="fight-menu-btn" onclick="location.href='walka.html'" title="Walka">
+    <img data-src="img/icons/menu-battle-icon.png" alt="Zamknij" class="menu-icon" />
+  </button>
+  <button class="menu-item unique" id="shop-menu-btn" onclick="location.href='sklep.html'" title="Sklep">
+    <img data-src="img/icons/menu-market-icon.png" alt="Zamknij" class="menu-icon" />
+  </button>
+  <button class="menu-item common disabled" onclick="location.href='ranking.html'" title="Ranking">
+    Coming Soon
+    <!-- <img data-src="img/icons/menu-market-icon.png" alt="Zamknij" class="menu-icon" />-->
+  </button>
+</div>
+
+
+
+
+</div>
