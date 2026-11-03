@@ -308,6 +308,15 @@
   document.addEventListener("visibilitychange", () => {
     record("document.visibility", { state: document.visibilityState });
   });
+  window.addEventListener("pagehide", event => {
+    record("document.pagehide", { persisted: !!event.persisted });
+  });
+  window.addEventListener("pageshow", event => {
+    record("document.pageshow", {
+      persisted: !!event.persisted,
+      visibilityState: document.visibilityState
+    });
+  });
 
   if (typeof console !== "undefined" && typeof console.error === "function") {
     const originalError = console.error.bind(console);
