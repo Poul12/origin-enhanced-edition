@@ -282,7 +282,7 @@ function initializeProgressBar(steps) {
     const segment = document.createElement("div");
     segment.classList.add("progress-segment");
 
-    const isMiniBoss = story.storyInjections[index]?.inject.miniboss;
+    const isMiniBoss = story.storyInjections?.[index]?.inject?.miniboss;
     //const isMiniboss = true;
     //console.error(`isMiniBoss, index`, isMiniBoss, index);
 
@@ -337,7 +337,17 @@ function initializeProgressBar(steps) {
 
 function getStoryConfig(location) {
   const key = location?.trim() || "";
-  return STORY_CONTROLLER[key] || {};
+  const config = STORY_CONTROLLER[key] || {};
+
+  // Nieznana lub niekompletna lokacja nie może powodować błędów
+  // przy odczycie tablic konfiguracji fabularnej.
+  return {
+    ...config,
+    storyInjections: Array.isArray(config.storyInjections) ? config.storyInjections : [],
+    storyEnemies: Array.isArray(config.storyEnemies) ? config.storyEnemies : [],
+    forcedSteps: Array.isArray(config.forcedSteps) ? config.forcedSteps : [],
+    storyAllEnemies: Array.isArray(config.storyAllEnemies) ? config.storyAllEnemies : []
+  };
 }
 
 function generateLocation(options = {}) {
@@ -813,7 +823,7 @@ function renderStepContents(contents) {
   const level = gameState.char.level || 1;
   const story = getStoryConfig(world.currentLocation);
   //console.log("currentStepIndex in rendeStep inject", world.currentStepIndex);
-  let minibossId = story.storyInjections[world.currentStepIndex]?.inject.minibossId;
+  let minibossId = story.storyInjections?.[world.currentStepIndex]?.inject?.minibossId;
   //let minibossId = `alpha_wolf_miniboss`;
   if (world.mode === "expedition" && step.expeditionMiniBoss) {
     minibossId = pickRandomExpeditionMiniBoss();
@@ -948,7 +958,7 @@ function renderStepContents(contents) {
            guaranteedDrop: guaranteedDrop
         };
       } else if (type === "story_event") {
-        let storyEvent = story.storyInjections[world.currentStepIndex-1].inject;
+        let storyEvent = story.storyInjections?.[world.currentStepIndex - 1]?.inject || {};
         
         return { 
            type, 
@@ -1058,7 +1068,7 @@ function rollOptions() {
   
   const opt = world.exploreOptions[world.selectedSlotIndex];
   const story = getStoryConfig(world.currentLocation);
-  const isMiniboss = story.storyInjections[world.currentStepIndex + 2]?.inject.miniboss;
+  const isMiniboss = story.storyInjections?.[world.currentStepIndex + 2]?.inject?.miniboss;
   //const isMiniboss = true;
  /* console.log(`isMiniboss`, isMiniboss);
   console.log("currentStepIndex miniboss", world.currentStepIndex);
@@ -1098,7 +1108,7 @@ function rollOptions() {
   const nextArrow = document.getElementById("arrow-next-icon");
   const nextLevel = document.getElementById("next-level");
   
-  world.isMinibossLastStep = story.storyInjections[world.currentStepIndex + 1]?.inject.miniboss;
+  world.isMinibossLastStep = story.storyInjections?.[world.currentStepIndex + 1]?.inject?.miniboss;
   if(world.isMinibossLastStep && world.mode === `story`) {
     //console.log("isMiniboss last step");
     const prevBtn = document.getElementById("prev-btn");
