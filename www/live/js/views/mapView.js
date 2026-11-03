@@ -504,7 +504,7 @@ async function renderMapView(options = {}) {
       await assetManager.preloadAssets(EXPEDITION_ASSETS);
     }
 
-    initMapView();
+    await initMapView();
         
     await waitForImages(app);
 
@@ -580,7 +580,7 @@ let regionHandlers = [];
 let outsideClickHandler = null;
 let enterWorldHandler = null;
 
-function initMapView() {
+async function initMapView() {
   //console.log("Map initialized");
   
   if(gameState.world.isStartNewGame) setStarterSet();
