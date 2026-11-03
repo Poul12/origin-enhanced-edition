@@ -1,6 +1,8 @@
 let currentViewDestroy = null;
 
 async function navigate(viewName) {
+  const navigationStartedAt = performance.now();
+  window.RuntimeDiagnostics?.record("navigation.start", { viewName });
   playSound(`menu-tab`, 1, 1, 0.45);
   //clearAllDiffs();
   
@@ -69,6 +71,11 @@ async function navigate(viewName) {
       await renderMapView();
       currentViewDestroy = destroyMapView;
   }
+
+  window.RuntimeDiagnostics?.record("navigation.complete", {
+    viewName,
+    durationMs: Math.round(performance.now() - navigationStartedAt)
+  });
 }
 
 
