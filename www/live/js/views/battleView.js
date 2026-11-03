@@ -697,7 +697,7 @@ function loadCombatAssets() {
 function checkIsStepBeforeMiniboss() {
   const world = gameState.world;
   const story = getStoryConfig(world.currentLocation);
-  const isMiniboss = story.storyInjections[world.currentStepIndex + 1]?.inject.miniboss;
+  const isMiniboss = story.storyInjections?.[world.currentStepIndex + 1]?.inject?.miniboss;
   //const isMiniboss = true;
   const nextBtn = document.getElementById("next-btn");
  // console.log("isMiniboss", isMiniboss);
