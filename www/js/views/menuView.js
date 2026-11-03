@@ -740,11 +740,9 @@ async function enterGame() {
     //document.body.classList.remove(`body-bg`);
     document.body.classList.add(`default-body-bg`);
 
-    navigate("map");
-
-    requestAnimationFrame(() => {
-      game.classList.add("ready");
-    });
+    // Do not reveal the game layer until the map view and its popup are ready.
+    await navigate("map");
+    game.classList.add("ready");
 
     return;
   }
@@ -868,12 +866,11 @@ async function enterGame() {
     document.body.classList.add(`default-body-bg`);
     //console.error("before navigate map enterGame");
     
-    navigate("map");
+    // Map rendering includes asynchronous template, asset and region setup.
+    // Keep the boot loader visible until the complete navigation has finished.
+    await navigate("map");
 
     hideGameLoader();
-
-    await wait(1000);
-
     game.classList.add("ready");
 
     appState.hasEnteredGameBefore = true;
