@@ -345,10 +345,10 @@ function initializeExploreOptions(newStep) {
                 
        // console.warn(`opt.enemyData, guaranteedDrop`, opt.enemyData.name, guaranteedDrop);
         
-        opt.questId = storyData.questId;
+        opt.questId = storyData?.questId || null;
         opt.guaranteedDrop = storyData?.guaranteedDrop || null;
       } else if (type === "story_event") {
-        opt.storyEvent = story.storyInjections[world.currentStepIndex].inject;
+        opt.storyEvent = story.storyInjections?.[world.currentStepIndex]?.inject || {};
       }
       
       return opt;
