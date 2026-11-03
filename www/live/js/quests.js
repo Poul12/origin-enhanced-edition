@@ -1009,7 +1009,7 @@ function onStoryEventFinished(questId) {
     // odśwież UI, aby natychmiast pokazać przeciwnika
     renderOptions();
   } else {
-    const questItem = story.storyInjections[world.currentStepIndex]?.inject.reward;
+    const questItem = story.storyInjections?.[world.currentStepIndex]?.inject?.reward;
       
     if(questItem) {
       addItemToInventory(questItem);
