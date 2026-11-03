@@ -93,7 +93,7 @@ function isLocationWithTown() {
 
   //console.error("forced", forced?.type);
   
-  if (forced.type === "npc_all") {
+  if (forced?.type === "npc_all") {
     return true;
   }
   
