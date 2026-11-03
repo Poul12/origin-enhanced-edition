@@ -895,12 +895,80 @@ function wait(ms) {
   );
 }
 
-function nextFrame() {
-  return new Promise(resolve =>
-    requestAnimationFrame(() =>
-      requestAnimationFrame(resolve)
-    )
-  );
+function nextFrame(timeoutMs = 500) {
+  return new Promise(resolve => {
+    let settled = false;
+    let rafId = null;
+    let timeoutId = null;
+
+    const cleanup = () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      if (rafId !== null) cancelAnimationFrame(rafId);
+      if (timeoutId !== null) clearTimeout(timeoutId);
+    };
+
+    const finish = () => {
+      if (settled) return;
+      settled = true;
+      cleanup();
+      resolve();
+    };
+
+    const scheduleFrames = () => {
+      if (settled) return;
+
+      if (document.visibilityState === "hidden") {
+        timeoutId = window.setTimeout(finish, timeoutMs);
+        return;
+      }
+
+      let framesRemaining = 2;
+      const tick = () => {
+        if (settled) return;
+
+        if (document.visibilityState === "hidden") {
+          timeoutId = window.setTimeout(finish, timeoutMs);
+          return;
+        }
+
+        framesRemaining -= 1;
+        if (framesRemaining <= 0) {
+          finish();
+          return;
+        }
+
+        rafId = requestAnimationFrame(tick);
+      };
+
+      rafId = requestAnimationFrame(tick);
+      timeoutId = window.setTimeout(finish, timeoutMs);
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "hidden") {
+        if (rafId !== null) {
+          cancelAnimationFrame(rafId);
+          rafId = null;
+        }
+        if (timeoutId !== null) clearTimeout(timeoutId);
+        timeoutId = window.setTimeout(finish, timeoutMs);
+        return;
+      }
+
+      if (timeoutId !== null) {
+        clearTimeout(timeoutId);
+        timeoutId = null;
+      }
+      if (rafId !== null) {
+        cancelAnimationFrame(rafId);
+        rafId = null;
+      }
+      scheduleFrames();
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    scheduleFrames();
+  });
 }
 
 function showCriticalRuntimeError(message) {
