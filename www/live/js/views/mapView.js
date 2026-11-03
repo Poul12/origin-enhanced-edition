@@ -474,7 +474,12 @@ async function getMapTemplate() {
 
 
 async function renderMapView(options = {}) {
+  const renderStartedAt = performance.now();
   const firstLoad = options.firstLoad;
+  window.RuntimeDiagnostics?.record("map.render.start", {
+    firstLoad: !!firstLoad,
+    mode: gameState.world.mode || ""
+  });
   
   if (!firstLoad) {
     showViewLoader();
@@ -487,7 +492,11 @@ async function renderMapView(options = {}) {
 
     app.classList.add("view-hidden");
 
+    window.RuntimeDiagnostics?.record("map.render.template.start");
     app.innerHTML = await getMapTemplate();
+    window.RuntimeDiagnostics?.record("map.render.template.complete", {
+      durationMs: Math.round(performance.now() - renderStartedAt)
+    });
 
     // 🔥 tylko pierwszy raz
     if (firstLoad) {
@@ -504,13 +513,31 @@ async function renderMapView(options = {}) {
       await assetManager.preloadAssets(EXPEDITION_ASSETS);
     }
 
+    window.RuntimeDiagnostics?.record("map.render.init.start");
     await initMapView();
-        
+    window.RuntimeDiagnostics?.record("map.render.init.complete", {
+      durationMs: Math.round(performance.now() - renderStartedAt)
+    });
+
+    window.RuntimeDiagnostics?.record("map.render.images.start", {
+      imageCount: app.querySelectorAll("img").length
+    });
     await waitForImages(app);
+    window.RuntimeDiagnostics?.record("map.render.images.complete", {
+      durationMs: Math.round(performance.now() - renderStartedAt)
+    });
 
     await nextFrame();
     app.classList.remove("view-hidden");
+    window.RuntimeDiagnostics?.record("map.render.complete", {
+      durationMs: Math.round(performance.now() - renderStartedAt)
+    });
 
+  } catch (error) {
+    window.RuntimeDiagnostics?.captureError(error, "map-render", {
+      durationMs: Math.round(performance.now() - renderStartedAt)
+    });
+    throw error;
   } finally {
 
     if (!firstLoad) {
