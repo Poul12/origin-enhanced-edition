@@ -571,6 +571,10 @@ function resetGameLoaderUI() {
 
 
 function showLoaderError(error) {
+  window.RuntimeDiagnostics?.record("launcher.error", {
+    type: error?.type || error?.code || "UNKNOWN",
+    message: String(error?.message || "Unknown error").slice(0, 1200)
+  });
 //  console.error("🚨 Loader error:", error);
   //const box = document.getElementById("loader-error");
   const msg = document.getElementById("loader-error-message");
