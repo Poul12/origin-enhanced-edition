@@ -1302,6 +1302,20 @@ class AssetManager {
   
   async getAssetUrl(path) {
 
+    // Local browser tests must use the runtime files served by the same
+    // checkout as index.html. Otherwise online mode can silently load an
+    // older cross-origin runtime from GitHub Pages and hide its stack trace.
+    const isLocalTestHost =
+      window.location.hostname === "127.0.0.1" ||
+      window.location.hostname === "localhost";
+    const isCodeFile =
+      typeof path === "string" &&
+      (path.endsWith(".js") || path.endsWith(".css"));
+
+    if (isLocalTestHost && isCodeFile) {
+      return `/${path}`;
+    }
+
     // 1. CACHE FIRST (NAJWAŻNIEJSZE)
     const cached = await this.getCachedAssetUrl(path);
 
