@@ -89,7 +89,7 @@ function isLocationWithTown() {
   
   const story = getStoryConfig(gameState.world.currentLocation);
   
-  const forced = story?.forcedSteps[0];
+  const forced = story?.forcedSteps?.[0];
 
   //console.error("forced", forced?.type);
   
