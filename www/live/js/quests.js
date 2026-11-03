@@ -961,7 +961,7 @@ function onStoryEventFinished(questId) {
       const step = world.locationSteps[world.currentStepIndex];
       
       if (step && step.contents.includes("story_event") && story.finalStep === "mini_boss") {
-        const minibossId = story.storyInjections[world.currentStepIndex].inject.minibossId;
+        const minibossId = story.storyInjections?.[world.currentStepIndex]?.inject?.minibossId;
       //  console.log("minibossId:", minibossId);
         const miniboss = generateMiniboss(gameState.char.level, minibossId);
  
