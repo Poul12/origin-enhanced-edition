@@ -560,26 +560,71 @@ async function renderFirstBattleView() {
   })();
 }
 
+async function traceBattleStage(stage, task) {
+  const startedAt = performance.now();
+  window.RuntimeDiagnostics?.record("battle.render.stage.start", { stage });
+
+  try {
+    const result = await task();
+    window.RuntimeDiagnostics?.record("battle.render.stage.complete", {
+      stage,
+      durationMs: Math.round(performance.now() - startedAt)
+    });
+    return result;
+  } catch (error) {
+    window.RuntimeDiagnostics?.captureError(error, "battle-render-" + stage);
+    window.RuntimeDiagnostics?.record("battle.render.stage.fail", {
+      stage,
+      durationMs: Math.round(performance.now() - startedAt),
+      message: String(error?.message || error)
+    });
+    throw error;
+  }
+}
+
 async function renderBattleView() {
-
-  await withViewLoader(async () => {
-    
-    const app = document.getElementById("app");
-
-    app.classList.add("view-hidden");
-    app.innerHTML = await getBattleTemplate();
-
-    await assetManager.preloadAssets(COMBAT_ASSETS);
-    await assetManager.preloadAssets(ENEMY_ASSETS);
-    await assetManager.preloadAssets(STORY_ASSETS);
-    
-    initBattleView(); // tu wywołujesz logikę tej strony
-
-    await waitForImages(app);
-    await nextFrame();
-    app.classList.remove("view-hidden");
-    
+  const renderStartedAt = performance.now();
+  window.RuntimeDiagnostics?.record("battle.render.start", {
+    visibilityState: document.visibilityState,
+    online: navigator.onLine
   });
+
+  try {
+    await withViewLoader(async () => {
+      const app = document.getElementById("app");
+
+      await traceBattleStage("hide-previous-view", () => {
+        app.classList.add("view-hidden");
+      });
+
+      await traceBattleStage("template", async () => {
+        app.innerHTML = await getBattleTemplate();
+      });
+
+      await traceBattleStage("combat-assets", () => assetManager.preloadAssets(COMBAT_ASSETS));
+      await traceBattleStage("enemy-assets", () => assetManager.preloadAssets(ENEMY_ASSETS));
+      await traceBattleStage("story-assets", () => assetManager.preloadAssets(STORY_ASSETS));
+
+      await traceBattleStage("init-battle-view", () => initBattleView());
+      await traceBattleStage("wait-for-images", () => waitForImages(app));
+      await traceBattleStage("next-frame", () => nextFrame());
+
+      await traceBattleStage("reveal-view", () => {
+        app.classList.remove("view-hidden");
+      });
+    });
+
+    window.RuntimeDiagnostics?.record("battle.render.complete", {
+      durationMs: Math.round(performance.now() - renderStartedAt)
+    });
+  } catch (error) {
+    window.RuntimeDiagnostics?.captureError(error, "battle-render");
+    window.RuntimeDiagnostics?.record("battle.render.fail", {
+      durationMs: Math.round(performance.now() - renderStartedAt),
+      message: String(error?.message || error)
+    });
+    throw error;
+  }
 }
 
 
