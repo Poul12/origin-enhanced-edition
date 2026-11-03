@@ -476,18 +476,44 @@ async function decodeImage(url) {
 }
 
 async function waitForImages(container) {
-  const images = container.querySelectorAll("img");
+  const startedAt = performance.now();
+  const images = [...container.querySelectorAll("img")];
+  const pendingAtStart = images.filter(img => !img.complete);
 
-  await Promise.all(
-    [...images].map(img => {
+  window.RuntimeDiagnostics?.record("images.wait.start", {
+    total: images.length,
+    pending: pendingAtStart.length,
+    pendingSources: pendingAtStart.slice(0, 30).map(img => ({
+      src: img.currentSrc || img.src || "",
+      dataSrc: img.getAttribute("data-src") || ""
+    }))
+  });
 
-      if (img.complete) {
-        return Promise.resolve();
-      }
+  try {
+    await Promise.all(
+      images.map(img => {
+        if (img.complete) return Promise.resolve();
+        return img.decode?.().catch(() => {});
+      })
+    );
 
-      return img.decode?.().catch(() => {});
-    })
-  );
+    const failed = images.filter(img =>
+      img.complete && img.naturalWidth === 0 && !!(img.currentSrc || img.src)
+    );
+
+    window.RuntimeDiagnostics?.record("images.wait.complete", {
+      durationMs: Math.round(performance.now() - startedAt),
+      total: images.length,
+      failed: failed.length,
+      failedSources: failed.slice(0, 30).map(img => ({
+        src: img.currentSrc || img.src || "",
+        dataSrc: img.getAttribute("data-src") || ""
+      }))
+    });
+  } catch (error) {
+    window.RuntimeDiagnostics?.captureError(error, "images-wait");
+    throw error;
+  }
 }
 
 
