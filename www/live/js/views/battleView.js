@@ -576,12 +576,8 @@ async function renderBattleView() {
     initBattleView(); // tu wywołujesz logikę tej strony
 
     await waitForImages(app);
-    
-    //await nextFrame();
-    
-    requestAnimationFrame(() => {
-      app.classList.remove("view-hidden");
-    });
+    await nextFrame();
+    app.classList.remove("view-hidden");
     
   });
 }
