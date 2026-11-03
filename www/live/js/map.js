@@ -535,7 +535,21 @@ async function enterRegion() {
      return;
   }
     
-  await preloadRegionAssets(selectedRegion);
+  if (!selectedRegion) {
+    window.RuntimeDiagnostics?.record("map.region.open.skipped", { reason: "missing-selected-region" });
+    return false;
+  }
+
+  const regionId = selectedRegion.id;
+  const regionStartedAt = Date.now();
+  window.RuntimeDiagnostics?.record("map.region.open.start", { regionId });
+
+  try {
+    await preloadRegionAssets(selectedRegion);
+  } catch (error) {
+    window.RuntimeDiagnostics?.captureError(error, "map-region-preload", { regionId });
+    throw error;
+  }
   
   const worldPopup = document.getElementById('world-popup');
   const regionMap = document.getElementById('region-map');
@@ -545,7 +559,6 @@ async function enterRegion() {
   let currentState = gameState.world;
  
     
-  if (!selectedRegion) return;
     //console.log(`enter region selected region`, selectedRegion.id);
     updateLocationNameOnMap();
     //regionMap.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', ASSET_BASE + selectedRegion.image);
@@ -635,9 +648,8 @@ async function enterRegion() {
     
     worldPopup.style.display = 'flex';
 
-    requestAnimationFrame(() => {
-      worldPopup.classList.add('zoom-in');
-    });
+    await nextFrame();
+    worldPopup.classList.add('zoom-in');
 
     hideWorldMapLoader();
       
@@ -647,7 +659,12 @@ async function enterRegion() {
    
     document.getElementById('enter-level-btn').style.display = 'none';
     selectedLevel = null;
-    
+
+    window.RuntimeDiagnostics?.record("map.region.open.complete", {
+      regionId,
+      durationMs: Date.now() - regionStartedAt
+    });
+    return true;
 }
 
 function showWorldMapLoader() {
@@ -656,8 +673,8 @@ function showWorldMapLoader() {
     
   loader.classList.remove("hidden");
 
-  requestAnimationFrame(() => {
-    loader.classList.add("visible");
+  nextFrame().then(() => {
+    if (loader.isConnected) loader.classList.add("visible");
   });
 }
 
