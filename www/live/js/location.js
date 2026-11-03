@@ -343,10 +343,12 @@ function getStoryConfig(location) {
   // przy odczycie tablic konfiguracji fabularnej.
   return {
     ...config,
-    storyInjections: Array.isArray(config.storyInjections) ? config.storyInjections : [],
-    storyEnemies: Array.isArray(config.storyEnemies) ? config.storyEnemies : [],
-    forcedSteps: Array.isArray(config.forcedSteps) ? config.forcedSteps : [],
-    storyAllEnemies: Array.isArray(config.storyAllEnemies) ? config.storyAllEnemies : []
+    // These step maps may be arrays OR objects keyed by step index.
+    // Do not discard object-based story configuration (e.g. forcedSteps[0]).
+    storyInjections: config.storyInjections ?? {},
+    storyEnemies: config.storyEnemies ?? {},
+    forcedSteps: config.forcedSteps ?? {},
+    storyAllEnemies: config.storyAllEnemies ?? {}
   };
 }
 
