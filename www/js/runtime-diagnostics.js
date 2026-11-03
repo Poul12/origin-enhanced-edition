@@ -331,15 +331,40 @@
   });
 
   document.addEventListener("DOMContentLoaded", () => {
-    const button = document.getElementById("diagnostics-export-btn");
-    if (!button) return;
-
-    button.addEventListener("click", () => {
+    const exportReport = () => {
       try {
         downloadReport();
       } catch (error) {
         captureError(error, "diagnostics-export");
       }
-    });
+    };
+
+    const errorButton = document.getElementById("diagnostics-export-btn");
+    errorButton?.addEventListener("click", exportReport);
+
+    // Optional mobile-friendly export control for dedicated debug sessions.
+    if (new URLSearchParams(window.location.search).get("diagnostics") === "1") {
+      const debugButton = document.createElement("button");
+      debugButton.type = "button";
+      debugButton.textContent = "EXPORT LOG";
+      debugButton.setAttribute("aria-label", "Export runtime diagnostics");
+      debugButton.style.cssText = [
+        "position:fixed",
+        "right:12px",
+        "bottom:12px",
+        "z-index:2147483000",
+        "padding:10px 12px",
+        "border:1px solid rgba(255,255,255,.35)",
+        "border-radius:6px",
+        "background:#17131d",
+        "color:#fff",
+        "font:600 12px sans-serif",
+        "letter-spacing:.06em",
+        "box-shadow:0 2px 10px rgba(0,0,0,.45)"
+      ].join(";");
+
+      debugButton.addEventListener("click", exportReport);
+      document.body.appendChild(debugButton);
+    }
   });
 })();
