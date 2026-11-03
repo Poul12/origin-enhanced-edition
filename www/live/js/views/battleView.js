@@ -736,15 +736,34 @@ function checkIfGameWasKilled() {
 function handleBattleOptionClick(e) {
   const npcElement = e.target.closest("[data-type='npc']");
   if (!npcElement) return;
+
   const locationKey = (gameState.world.currentLocation || "")
-         .toLowerCase()
-         .replace(/\s+/g, "_");
+    .toLowerCase()
+    .replace(/\s+/g, "_");
 
   const npcs = NPC_DATA[locationKey] || [];
-  
-  const npcId = npcElement.dataset.npcId;
-  let npc = npcs.find(n => n.id === npcId);
+  const npcId = npcElement.dataset.npcId || "";
+  const npc = npcs.find(n => n.id === npcId);
+
+  if (!npc) {
+    const error = new Error(`NPC not found for click: ${npcId || "(missing id)"}`);
+    window.RuntimeDiagnostics?.captureError(error, "npc-click", {
+      locationKey,
+      npcId
+    });
+    return;
+  }
+
   const quest = QUEST_DATA[npc.questId];
+  if (!quest) {
+    const error = new Error(`Quest not found for NPC: ${npc.id} (${npc.questId || "missing questId"})`);
+    window.RuntimeDiagnostics?.captureError(error, "npc-click", {
+      locationKey,
+      npcId: npc.id,
+      questId: npc.questId || ""
+    });
+    return;
+  }
 
   openNpcDialog(npc, quest);
 }
