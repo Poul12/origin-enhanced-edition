@@ -151,6 +151,8 @@
         ? limitText(target.className, 160)
         : "",
       action: target.dataset?.action || "",
+      dataType: target.dataset?.type || "",
+      npcId: target.dataset?.npcId || "",
       role: target.getAttribute?.("role") || ""
     };
   }
@@ -219,7 +221,7 @@
 
   function onClick(event) {
     const target = event.target?.closest
-      ? event.target.closest("button, a, [data-action], [role='button']")
+      ? event.target.closest("button, a, [data-action], [role='button'], [data-type='npc']")
       : event.target;
 
     if (target) record("user.click", describeTarget(target));
