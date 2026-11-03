@@ -509,10 +509,7 @@ async function renderMapView(options = {}) {
     await waitForImages(app);
 
     await nextFrame();
-    
-    requestAnimationFrame(() => {
-      app.classList.remove("view-hidden");
-    });
+    app.classList.remove("view-hidden");
 
   } finally {
 
@@ -610,7 +607,7 @@ function initMapView() {
     //handleReturnFromRegion();
   }
     
-  handleReturnFromRegion();
+  const restoredRegionOpened = await handleReturnFromRegion();
     
   updateHUDLayout();
     
@@ -623,11 +620,11 @@ function initMapView() {
   //window.addEventListener("resize", updateHUDLayoutHandler);
   //window.addEventListener("load", updateHUDLayoutHandler);
 
-  if(gameState.world.mode === `story` && !gameState.world.isStartNewWorld) {
+  if (!restoredRegionOpened && gameState.world.mode === `story` && !gameState.world.isStartNewWorld) {
     selectedRegion = Object.values(regionNames)
       .find(region => region.id === `west`);
 
-    enterRegion();
+    await enterRegion();
   }
     
   if(!appState.compareBgLoaded) {
@@ -741,21 +738,23 @@ function setupWorldState() {
   initEnterWorld();
 }
 
-function handleReturnFromRegion() {
-
+async function handleReturnFromRegion() {
   const shouldOpenRegion = gameState.world.openRegionMapAfterLoad;
 
-  if (shouldOpenRegion === "1") {
-    //console.error(`shouldOpenRegion, regionId`, shouldOpenRegion, gameState.world.selectedRegionId);
-    const regionId = gameState.world.selectedRegionId;
+  if (shouldOpenRegion !== "1") return false;
 
-    selectedRegion = Object.values(regionNames)
-      .find(region => region.id === regionId);
+  const regionId = gameState.world.selectedRegionId;
+  selectedRegion = Object.values(regionNames)
+    .find(region => region.id === regionId);
 
-    enterRegion();
-
-    gameState.world.openRegionMapAfterLoad = "0";
+  if (!selectedRegion) {
+    window.RuntimeDiagnostics?.record("map.region.restore.missing", { regionId: regionId || "" });
+    return false;
   }
+
+  await enterRegion();
+  gameState.world.openRegionMapAfterLoad = "0";
+  return true;
 }
 
 function destroyMapView() {
