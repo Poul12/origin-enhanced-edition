@@ -377,24 +377,48 @@ function hideViewLoader() {
 }
 
 async function withViewLoader(task, delay = 120) {
+  const startedAt = performance.now();
   let loaderVisible = false;
+
+  window.RuntimeDiagnostics?.record("view-loader.start", { delayMs: delay });
 
   const timer = setTimeout(() => {
     loaderVisible = true;
+    window.RuntimeDiagnostics?.record("view-loader.show.start", {
+      elapsedMs: Math.round(performance.now() - startedAt)
+    });
 
     showViewLoader();
-    setMenuDisabled(true); 
+    setMenuDisabled(true);
+    window.RuntimeDiagnostics?.record("view-loader.show.complete", {});
   }, delay);
 
   try {
     await task();
-
+    window.RuntimeDiagnostics?.record("view-loader.task.complete", {
+      durationMs: Math.round(performance.now() - startedAt)
+    });
+  } catch (error) {
+    window.RuntimeDiagnostics?.captureError(error, "view-loader-task");
+    window.RuntimeDiagnostics?.record("view-loader.task.fail", {
+      durationMs: Math.round(performance.now() - startedAt),
+      message: String(error?.message || error)
+    });
+    throw error;
   } finally {
     clearTimeout(timer);
 
     if (loaderVisible) {
+      window.RuntimeDiagnostics?.record("view-loader.hide.start", {});
       hideViewLoader();
       setMenuDisabled(false);
+      window.RuntimeDiagnostics?.record("view-loader.hide.complete", {
+        durationMs: Math.round(performance.now() - startedAt)
+      });
+    } else {
+      window.RuntimeDiagnostics?.record("view-loader.not-shown", {
+        durationMs: Math.round(performance.now() - startedAt)
+      });
     }
   }
 }
