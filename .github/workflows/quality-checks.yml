@@ -1,0 +1,78 @@
+name: Quality Checks
+
+on:
+  push:
+    branches:
+      - "automation/**"
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: quality-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  static-checks:
+    name: JavaScript and data validation
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Check JavaScript syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          count=0
+
+          while IFS= read -r -d '' file; do
+            echo "Checking $file"
+            node --check "$file"
+            count=$((count + 1))
+          done < <(git ls-files -z -- '*.js')
+
+          echo "Validated $count JavaScript files."
+
+      - name: Validate JSON files
+        run: |
+          python3 - <<'PY'
+          import json
+          import subprocess
+          from pathlib import Path
+
+          raw = subprocess.check_output(["git", "ls-files", "-z", "--", "*.json"])
+          files = [Path(p.decode()) for p in raw.split(b"\\0") if p]
+
+          for path in files:
+              with path.open("r", encoding="utf-8") as handle:
+                  json.load(handle)
+              print(f"Valid JSON: {path}")
+
+          print(f"Validated {len(files)} JSON files.")
+          PY
+
+      - name: Validate XML files
+        run: |
+          python3 - <<'PY'
+          import subprocess
+          import xml.etree.ElementTree as ET
+          from pathlib import Path
+
+          raw = subprocess.check_output(["git", "ls-files", "-z", "--", "*.xml"])
+          files = [Path(p.decode()) for p in raw.split(b"\\0") if p]
+
+          for path in files:
+              ET.parse(path)
+              print(f"Valid XML: {path}")
+
+          print(f"Validated {len(files)} XML files.")
+          PY
