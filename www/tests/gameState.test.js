@@ -208,6 +208,36 @@ test("story-save menu check accepts a valid save payload", () => {
 });
 
 
+test("continuing a corrupted save preserves the original data and does not boot", () => {
+  const corruptedSave = "{broken save data";
+  const harness = createGameHarness({ save_story: corruptedSave });
+
+  const start = menuSource.indexOf("function continueGame(mode = `story`)");
+  const end = menuSource.indexOf("\n\n/*function continueGame()", start);
+  assert.notEqual(start, -1, "continueGame should exist");
+  assert.notEqual(end, -1, "continueGame function should have a clear boundary");
+
+  harness.context.setStoryUI = () => {
+    throw new Error("UI should not change when save recovery is required");
+  };
+  harness.context.bootGame = () => {
+    throw new Error("Game should not boot when save recovery is required");
+  };
+
+  vm.runInContext(
+    menuSource.slice(start, end) +
+      "\nglobalThis.__continueGame = continueGame;",
+    harness.context,
+    { filename: "menu.js" }
+  );
+
+  assert.equal(harness.context.__continueGame("story"), false);
+  assert.equal(harness.api.getAppState().recoveryNeeded, true);
+  assert.equal(harness.storage.get("save_story"), corruptedSave);
+  assert.equal(harness.storage.has("last_mode"), false);
+});
+
+
 const skillsCombatSource = fs.readFileSync(
   path.join(__dirname, "../live/js/skills-combat.js"),
   "utf8"
