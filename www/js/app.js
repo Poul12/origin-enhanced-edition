@@ -10,10 +10,57 @@ window.liveRuntimePromise = new Promise((resolve) => {
 });
 
 function appTrace(stage, details = {}) {
+  window.__originStartupStage = stage;
   window.RuntimeDiagnostics?.record("app." + stage, details);
 }
 
+function startStartupWatchdog() {
+  let overlay = null;
+  const timer = window.setTimeout(() => {
+    if (!document.body.classList.contains("boot-hidden")) return;
+
+    overlay = document.createElement("div");
+    overlay.id = "startup-diagnostic-overlay";
+    overlay.style.cssText = [
+      "position:fixed", "inset:0", "z-index:2147483000",
+      "display:flex", "align-items:center", "justify-content:center",
+      "padding:24px", "box-sizing:border-box", "background:rgba(0,0,0,.94)",
+      "color:#f2eadc", "visibility:visible", "font:14px/1.5 sans-serif",
+      "text-align:center"
+    ].join(";");
+
+    const panel = document.createElement("div");
+    panel.style.cssText = "max-width:340px;border:1px solid #75634b;padding:20px;background:#17131d";
+    const heading = document.createElement("div");
+    heading.textContent = "Uruchamianie trwa dłużej niż zwykle";
+    heading.style.cssText = "font-weight:700;font-size:17px;margin-bottom:10px";
+    const message = document.createElement("div");
+    message.textContent = "Gra nadal czeka na zakończenie ładowania. Nie zamykaj jej — możesz wyeksportować diagnostykę.";
+    const stage = document.createElement("div");
+    stage.id = "startup-diagnostic-stage";
+    stage.style.cssText = "margin:12px 0;color:#d7b982;overflow-wrap:anywhere";
+    stage.textContent = "Etap: " + (window.__originStartupStage || "nieustalony");
+    const button = document.createElement("button");
+    button.type = "button";
+    button.textContent = "EKSPORTUJ DIAGNOSTYKĘ";
+    button.style.cssText = "margin-top:12px;padding:10px 14px;background:#403044;color:#fff;border:1px solid #a78b68";
+    button.addEventListener("click", () => window.RuntimeDiagnostics?.downloadReport());
+    panel.append(heading, message, stage, button);
+    overlay.appendChild(panel);
+    document.body.appendChild(overlay);
+    window.RuntimeDiagnostics?.record("app.startup.watchdog-shown", {
+      stage: window.__originStartupStage || "unknown"
+    });
+  }, 12000);
+
+  return function stopStartupWatchdog() {
+    window.clearTimeout(timer);
+    overlay?.remove();
+  };
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
+  const stopStartupWatchdog = startStartupWatchdog();
   const startupStartedAt = performance.now();
   appTrace("domcontentloaded.start", { readyState: document.readyState });
   //initAssets();
@@ -24,6 +71,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   initializeGameState();
   appTrace("game-state.initialized");
   if(await resumeAfterReload()) {
+    stopStartupWatchdog();
     appTrace("resume-after-reload.completed");
     return;
   }
@@ -48,6 +96,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   //setAffixesForCodex();
   
   document.body.classList.remove("boot-hidden");
+  stopStartupWatchdog();
   appTrace("startup.visible", { durationMs: Math.round(performance.now() - startupStartedAt) });
    
   console.log({
