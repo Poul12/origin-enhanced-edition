@@ -213,7 +213,7 @@ const skillsCombatSource = fs.readFileSync(
   "utf8"
 );
 
-function createBuffHarness({ now = 100000, gameTime = 5000, activeBuffs = {} } = {}) {
+function createBuffHarness({ now = 1800000000000, gameTime = 5000, activeBuffs = {} } = {}) {
   let currentTime = now;
   let nextTimerId = 1;
   const timers = new Map();
@@ -292,7 +292,7 @@ function createBuffHarness({ now = 100000, gameTime = 5000, activeBuffs = {} } =
 }
 
 test("temporary buff expiry uses the same real-time clock as its timeout", () => {
-  const harness = createBuffHarness({ now: 100000, gameTime: 5000 });
+  const harness = createBuffHarness({ now: 1800000000000, gameTime: 5000 });
 
   harness.api.addTemporaryBuff({
     stat: "dmg",
@@ -303,17 +303,17 @@ test("temporary buff expiry uses the same real-time clock as its timeout", () =>
 
   assert.equal(
     harness.gameState.combat.activeBuffs.dmg.expiresAt,
-    110000,
+    1800000010000,
     "expiresAt should use Date.now(), matching the timeout clock"
   );
 });
 
 test("restores a buff when its real-time expiry is still in the future", () => {
   const harness = createBuffHarness({
-    now: 100000,
+    now: 1800000000000,
     gameTime: 5000,
     activeBuffs: {
-      dmg: { value: 1.25, expiresAt: 106000, source: "test" }
+      dmg: { value: 1.25, expiresAt: 1800000006000, source: "test" }
     }
   });
 
@@ -326,16 +326,32 @@ test("restores a buff when its real-time expiry is still in the future", () => {
 
 test("does not restore a buff that expired while the game was offline", () => {
   const harness = createBuffHarness({
-    now: 200000,
+    now: 1800000200000,
     gameTime: 105000,
     activeBuffs: {
-      dmg: { value: 1.25, expiresAt: 150000, source: "test" }
+      dmg: { value: 1.25, expiresAt: 1800000150000, source: "test" }
     }
   });
 
   harness.api.restoreBuffsAfterReload();
 
-  assert.ok(harness.gameState.combat.activeBuffs.dmg);
+  assert.equal(harness.gameState.combat.activeBuffs.dmg, undefined);
+  assert.equal(harness.timers.size, 0);
+  assert.equal(harness.applied.length, 0);
+});
+
+test("discards legacy game-time buff expiries without replacing the save", () => {
+  const harness = createBuffHarness({
+    now: 1800000000000,
+    gameTime: 5000,
+    activeBuffs: {
+      dmg: { value: 1.25, expiresAt: 15000, source: "legacy" }
+    }
+  });
+
+  harness.api.restoreBuffsAfterReload();
+
+  assert.equal(harness.gameState.combat.activeBuffs.dmg, undefined);
   assert.equal(harness.timers.size, 0);
   assert.equal(harness.applied.length, 0);
 });
