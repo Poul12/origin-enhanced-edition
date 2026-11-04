@@ -815,6 +815,11 @@ function continueGame(mode = `story`) {
   
   initializeGameState(mode);
 
+  if (appState.recoveryNeeded) {
+    console.warn("Cannot continue game: save recovery is required");
+    return false;
+  }
+
   //document.getElementById(`fight-menu-btn`).classList.add('disabled');
   
   setStoryUI();
