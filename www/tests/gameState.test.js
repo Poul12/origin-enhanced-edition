@@ -35,7 +35,7 @@ function createGameHarness(initialStorage = {}) {
 
   vm.runInContext(
     gameStateSource +
-      "\n;globalThis.__gameTestApi = { initializeGameState, createNewGameState, saveGame, getSaveKey, getGameState: () => gameState, getAppState: () => appState };",
+      "\n;globalThis.__gameTestApi = { initializeGameState, createNewGameState, saveGame, getSaveKey, getGameState: () => gameState, getAppState: () => appState, parseSavePayload };",
     context,
     { filename: "gameState.js" }
   );
@@ -106,4 +106,38 @@ test("does not write a persistent save in Sandbox mode", () => {
   assert.equal(harness.storage.has("last_mode"), false);
 });
 
-test.todo("handles malformed save JSON without aborting game initialization");
+test("falls back to a fresh game when the stored save contains malformed JSON", () => {
+  const corruptedSave = "{not valid JSON";
+  const harness = createGameHarness({ save_story: corruptedSave });
+
+  assert.doesNotThrow(() => harness.api.initializeGameState("story"));
+
+  assert.equal(harness.api.getGameState().world.mode, "story");
+  assert.equal(harness.api.getGameState().char.level, 1);
+  assert.equal(harness.api.getAppState().gameTime, 0);
+  assert.equal(harness.api.getAppState().recoveryNeeded, true);
+  assert.equal(harness.storage.get("save_story"), corruptedSave);
+});
+
+test("rejects parsed data that is not a valid game save payload", () => {
+  const invalidPayloads = ["null", "[]", "{}", '{"gameState":{}}'];
+
+  for (const serialized of invalidPayloads) {
+    const harness = createGameHarness({ save_story: serialized });
+
+    assert.equal(harness.api.parseSavePayload(serialized), null);
+    assert.doesNotThrow(() => harness.api.initializeGameState("story"));
+    assert.equal(harness.api.getGameState().world.mode, "story");
+    assert.equal(harness.api.getAppState().recoveryNeeded, true);
+    assert.equal(harness.storage.get("save_story"), serialized);
+  }
+});
+
+test("accepts a structurally valid save payload", () => {
+  const harness = createGameHarness();
+  harness.api.initializeGameState("story");
+  harness.api.saveGame();
+
+  const serialized = harness.storage.get("save_story");
+  assert.ok(harness.api.parseSavePayload(serialized));
+});
