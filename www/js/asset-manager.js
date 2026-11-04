@@ -1190,9 +1190,22 @@ class AssetManager {
     }
 
     const startedAt = performance.now();
+    const pendingId = "script:" + path;
+    window.__originPendingResources = window.__originPendingResources || {};
+    window.__originPendingResources[pendingId] = { type: "script", path, phase: "resolving-url", startedAt: new Date().toISOString() };
     window.RuntimeDiagnostics?.record("asset-manager.script.start", { path });
-    const localUrl = await this.getAssetUrl(path);
-    
+    let localUrl;
+    try {
+      const resolveStartedAt = performance.now();
+      localUrl = await this.getAssetUrl(path);
+      window.__originPendingResources[pendingId].phase = "waiting-for-load-event";
+      window.RuntimeDiagnostics?.record("asset-manager.script.url-resolved", { path, durationMs: Math.round(performance.now() - resolveStartedAt) });
+    } catch (error) {
+      delete window.__originPendingResources[pendingId];
+      window.RuntimeDiagnostics?.record("asset-manager.script.url-fail", { path, message: String(error?.message || error) });
+      throw error;
+    }
+
     return new Promise((resolve, reject) => {
 
       const script = document.createElement("script");
@@ -1207,12 +1220,14 @@ class AssetManager {
         //console.log("✅ Script loaded:", path);
 
         this.loadedScripts.add(path);
+        delete window.__originPendingResources[pendingId];
         window.RuntimeDiagnostics?.record("asset-manager.script.complete", { path, durationMs: Math.round(performance.now() - startedAt) });
 
         resolve();
       };
       
       script.onerror = () => {
+        delete window.__originPendingResources[pendingId];
         window.RuntimeDiagnostics?.record("asset-manager.script.fail", { path, durationMs: Math.round(performance.now() - startedAt) });
 
         console.error(
@@ -1239,8 +1254,21 @@ class AssetManager {
     }
 
     const startedAt = performance.now();
+    const pendingId = "css:" + path;
+    window.__originPendingResources = window.__originPendingResources || {};
+    window.__originPendingResources[pendingId] = { type: "css", path, phase: "resolving-url", startedAt: new Date().toISOString() };
     window.RuntimeDiagnostics?.record("asset-manager.css.start", { path });
-    const localUrl = await this.getAssetUrl(path);
+    let localUrl;
+    try {
+      const resolveStartedAt = performance.now();
+      localUrl = await this.getAssetUrl(path);
+      window.__originPendingResources[pendingId].phase = "waiting-for-load-event";
+      window.RuntimeDiagnostics?.record("asset-manager.css.url-resolved", { path, durationMs: Math.round(performance.now() - resolveStartedAt) });
+    } catch (error) {
+      delete window.__originPendingResources[pendingId];
+      window.RuntimeDiagnostics?.record("asset-manager.css.url-fail", { path, message: String(error?.message || error) });
+      throw error;
+    }
 
     return new Promise((resolve, reject) => {
 
@@ -1256,12 +1284,14 @@ class AssetManager {
         //console.log("✅ CSS loaded:", path);
 
         this.loadedCss.add(path);
+        delete window.__originPendingResources[pendingId];
         window.RuntimeDiagnostics?.record("asset-manager.css.complete", { path, durationMs: Math.round(performance.now() - startedAt) });
 
         resolve();
       };
       
       link.onerror = () => {
+        delete window.__originPendingResources[pendingId];
         window.RuntimeDiagnostics?.record("asset-manager.css.fail", { path, durationMs: Math.round(performance.now() - startedAt) });
 
         console.error("❌ Failed loading CSS:", path);
