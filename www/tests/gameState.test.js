@@ -8,6 +8,51 @@ const gameStateSource = fs.readFileSync(
   path.join(__dirname, "../js/gameState.js"),
   "utf8"
 );
+const menuSource = fs.readFileSync(
+  path.join(__dirname, "../js/menu.js"),
+  "utf8"
+);
+
+function createMenuHarness(saveStory, mode = "story") {
+  const start = menuSource.indexOf("function checkIsStorySave()");
+  const end = menuSource.indexOf("\\nfunction checkIsSave", start);
+  assert.notEqual(start, -1, "checkIsStorySave should exist");
+  assert.notEqual(end, -1, "checkIsSave should follow checkIsStorySave");
+
+  const localStorage = {
+    getItem(key) {
+      return key === "save_story" ? saveStory : null;
+    }
+  };
+  const context = vm.createContext({
+    localStorage,
+    gameState: { world: { mode } },
+    appState: { recoveryNeeded: false },
+    parseSavePayload: (serialized) => {
+      try {
+        const parsed = JSON.parse(serialized);
+        if (!parsed || typeof parsed !== "object" || Array.isArray(parsed) ||
+            !parsed.gameState || typeof parsed.gameState !== "object" ||
+            !parsed.gameState.world || typeof parsed.gameState.world !== "object") {
+          return null;
+        }
+        return parsed;
+      } catch {
+        return null;
+      }
+    },
+    console
+  });
+
+  vm.runInContext(
+    menuSource.slice(start, end) +
+      "\\nglobalThis.__checkIsStorySave = checkIsStorySave;",
+    context,
+    { filename: "menu.js" }
+  );
+
+  return context;
+}
 
 function createGameHarness(initialStorage = {}) {
   const values = new Map(Object.entries(initialStorage));
@@ -140,4 +185,24 @@ test("accepts a structurally valid save payload", () => {
 
   const serialized = harness.storage.get("save_story");
   assert.ok(harness.api.parseSavePayload(serialized));
+});
+
+
+test("story-save menu check safely rejects malformed JSON", () => {
+  const context = createMenuHarness("{broken");
+
+  assert.doesNotThrow(() => context.__checkIsStorySave());
+  assert.equal(context.__checkIsStorySave(), false);
+  assert.equal(context.appState.recoveryNeeded, true);
+});
+
+test("story-save menu check accepts a valid save payload", () => {
+  const serialized = JSON.stringify({
+    gameState: { world: { startNewCampaign: true } },
+    meta: { gameTime: 0, savedAtReal: Date.now() }
+  });
+  const context = createMenuHarness(serialized);
+
+  assert.equal(context.__checkIsStorySave(), true);
+  assert.equal(context.appState.recoveryNeeded, false);
 });
