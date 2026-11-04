@@ -1013,6 +1013,10 @@ function openOptions() {
       ${t("menu_resetgame")}
     </button>
 
+    <button class="item-button" id="export-save-backup">
+      EXPORT SAVE BACKUP
+    </button>
+
     <button class="item-button" data-action="back">
       ${t("menu_back")}
     </button>
@@ -1046,6 +1050,16 @@ function openOptions() {
     confirmReset();
   });
 
+  document.getElementById("export-save-backup").addEventListener("click", () => {
+    playSound("menu", 1, 1, 0.65);
+    try {
+      downloadSaveBackup();
+    } catch (error) {
+      console.error("Save backup export failed", error);
+      window.RuntimeDiagnostics?.captureError(error, "save-backup-export");
+    }
+  });
+
   // ========================
   // BACK
   // ========================
@@ -1066,6 +1080,44 @@ function openOptions() {
   });
 }
 
+
+
+// Exports raw save strings without parsing, changing, or deleting them.
+function buildSaveBackup() {
+  const keys = ["save_story", "save_expedition", "save_adventure"];
+  const saves = {};
+
+  keys.forEach(key => {
+    saves[key] = localStorage.getItem(key);
+  });
+
+  return {
+    format: "origin-save-backup",
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    saves
+  };
+}
+
+function downloadSaveBackup() {
+  const backup = buildSaveBackup();
+  const blob = new Blob(
+    [JSON.stringify(backup, null, 2)],
+    { type: "application/json" }
+  );
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  const stamp = new Date().toISOString().replace(/[:.]/g, "-");
+
+  link.href = url;
+  link.download = "origin-save-backup-" + stamp + ".json";
+  link.style.display = "none";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+
+  window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
 
 
 function openAbout() {
