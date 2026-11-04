@@ -645,20 +645,25 @@ function newCampaign(selectedClass, characterName) {
 function checkIsStorySave() {
   let mode = gameState.world.mode;
   const saveStory = localStorage.getItem("save_story");
-  
-  if(!saveStory) return false;
-  
-  const save = saveStory;
-  const parsed = JSON.parse(save);
+
+  if (!saveStory) return false;
+
+  const parsed = parseSavePayload(saveStory);
+  if (!parsed) {
+    appState.recoveryNeeded = true;
+    console.warn("Invalid story save found; keeping the original data for recovery");
+    return false;
+  }
+
   const startNewCampaign = parsed.gameState.world.startNewCampaign;
-  
+
   if (!startNewCampaign) mode = null;
-  //
+
   if (!mode) {
     console.warn("No story save found");
     return false;
   }
-  
+
   return true;
 }
 
