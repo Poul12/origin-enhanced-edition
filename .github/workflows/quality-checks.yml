@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - "automation/**"
+      - "feature/**"
   pull_request:
   workflow_dispatch:
 
@@ -16,7 +17,7 @@ concurrency:
 
 jobs:
   static-checks:
-    name: JavaScript and data validation
+    name: JavaScript, data validation and baseline tests
     runs-on: ubuntu-latest
 
     steps:
@@ -27,6 +28,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+
+      - name: Run baseline tests
+        run: npm test --prefix www
 
       - name: Check JavaScript syntax
         shell: bash
@@ -73,6 +77,4 @@ jobs:
           for path in files:
               ET.parse(path)
               print(f"Valid XML: {path}")
-
-          print(f"Validated {len(files)} XML files.")
           PY
