@@ -564,8 +564,12 @@ test("replacing a buff clears the previous timeout and uses the new duration", (
 function createNonStoryMenuHarness(mode, serialized) {
   const start = menuSource.indexOf("function startNewGame(mode)");
   const end = menuSource.indexOf("\nfunction newCampaign", start);
+  const checkStart = menuSource.indexOf("function checkIsSave(");
+  const checkEnd = menuSource.indexOf("\nfunction startExpeditionMode", checkStart);
   assert.notEqual(start, -1, "startNewGame should exist");
-  assert.notEqual(end, -1, "newCampaign should follow the menu save helpers");
+  assert.notEqual(end, -1, "newCampaign should follow startNewGame");
+  assert.notEqual(checkStart, -1, "checkIsSave should exist");
+  assert.notEqual(checkEnd, -1, "startExpeditionMode should follow checkIsSave");
 
   const calls = { storyUI: 0, expeditionUI: 0, boot: 0, save: 0 };
   const localStorage = {
@@ -613,6 +617,7 @@ function createNonStoryMenuHarness(mode, serialized) {
 
   vm.runInContext(
     menuSource.slice(start, end) +
+      "\n" + menuSource.slice(checkStart, checkEnd) +
       "\nglobalThis.__checkIsSave = checkIsSave; globalThis.__startNewGame = startNewGame;",
     context,
     { filename: "menu.js" }
