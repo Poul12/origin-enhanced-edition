@@ -206,3 +206,179 @@ test("story-save menu check accepts a valid save payload", () => {
   assert.equal(context.__checkIsStorySave(), true);
   assert.equal(context.appState.recoveryNeeded, false);
 });
+
+
+const skillsCombatSource = fs.readFileSync(
+  path.join(__dirname, "../live/js/skills-combat.js"),
+  "utf8"
+);
+
+function createBuffHarness({ now = 100000, gameTime = 5000, activeBuffs = {} } = {}) {
+  let currentTime = now;
+  let nextTimerId = 1;
+  const timers = new Map();
+  const applied = [];
+  const removed = [];
+  const gameState = { combat: { activeBuffs } };
+  const appState = { gameTime };
+
+  class FakeDate extends Date {
+    static now() {
+      return currentTime;
+    }
+  }
+
+  function setTimeoutFake(callback, delay = 0) {
+    const id = nextTimerId++;
+    timers.set(id, { callback, dueAt: currentTime + Math.max(0, Number(delay) || 0) });
+    return id;
+  }
+
+  function clearTimeoutFake(id) {
+    timers.delete(id);
+  }
+
+  const start = skillsCombatSource.indexOf("function addTemporaryBuff(");
+  const end = skillsCombatSource.indexOf("\\nconst whirlwindState", start);
+  assert.notEqual(start, -1, "addTemporaryBuff should exist");
+  assert.notEqual(end, -1, "whirlwindState should follow buff helpers");
+
+  const context = vm.createContext({
+    Date: FakeDate,
+    setTimeout: setTimeoutFake,
+    clearTimeout: clearTimeoutFake,
+    gameState,
+    appState,
+    getGameTime: () => appState.gameTime,
+    saveGame() {},
+    updatePlayerDmg(value) { applied.push(["dmg", value]); },
+    updatePlayerDef(value) { applied.push(["def", value]); },
+    renderStats() {},
+    currentBuff: { dmg: 0, def: 0 },
+    console
+  });
+
+  vm.runInContext(
+    skillsCombatSource.slice(start, end) +
+      "\\nglobalThis.__buffTestApi = { addTemporaryBuff, restoreBuffsAfterReload, removeBuff };",
+    context,
+    { filename: "skills-combat.js" }
+  );
+
+  function advanceRealTime(ms) {
+    currentTime += ms;
+    let due;
+    do {
+      due = [...timers.entries()]
+        .filter(([, timer]) => timer.dueAt <= currentTime)
+        .sort((a, b) => a[1].dueAt - b[1].dueAt)[0];
+      if (due) {
+        timers.delete(due[0]);
+        due[1].callback();
+      }
+    } while (due);
+  }
+
+  return {
+    api: context.__buffTestApi,
+    gameState,
+    appState,
+    applied,
+    removed,
+    timers,
+    advanceRealTime,
+    getNow: () => currentTime
+  };
+}
+
+test("temporary buff expiry uses the same real-time clock as its timeout", () => {
+  const harness = createBuffHarness({ now: 100000, gameTime: 5000 });
+
+  harness.api.addTemporaryBuff({
+    stat: "dmg",
+    value: 1.25,
+    durationSec: 10,
+    source: "test"
+  });
+
+  assert.equal(
+    harness.gameState.combat.activeBuffs.dmg.expiresAt,
+    110000,
+    "expiresAt should use Date.now(), matching the timeout clock"
+  );
+});
+
+test("restores a buff when its real-time expiry is still in the future", () => {
+  const harness = createBuffHarness({
+    now: 100000,
+    gameTime: 5000,
+    activeBuffs: {
+      dmg: { value: 1.25, expiresAt: 106000, source: "test" }
+    }
+  });
+
+  harness.api.restoreBuffsAfterReload();
+
+  assert.ok(harness.gameState.combat.activeBuffs.dmg);
+  assert.equal(harness.timers.size, 1);
+  assert.deepEqual(harness.applied, [["dmg", 1.25]]);
+});
+
+test("does not restore a buff that expired while the game was offline", () => {
+  const harness = createBuffHarness({
+    now: 200000,
+    gameTime: 105000,
+    activeBuffs: {
+      dmg: { value: 1.25, expiresAt: 150000, source: "test" }
+    }
+  });
+
+  harness.api.restoreBuffsAfterReload();
+
+  assert.ok(harness.gameState.combat.activeBuffs.dmg);
+  assert.equal(harness.timers.size, 0);
+  assert.equal(harness.applied.length, 0);
+});
+
+test("buff duration continues during pause even when gameTime is frozen", () => {
+  const harness = createBuffHarness({ now: 100000, gameTime: 5000 });
+
+  harness.api.addTemporaryBuff({
+    stat: "def",
+    value: 1.5,
+    durationSec: 5,
+    source: "test"
+  });
+
+  harness.advanceRealTime(5000);
+
+  assert.equal(harness.appState.gameTime, 5000);
+  assert.equal(harness.gameState.combat.activeBuffs.def, undefined);
+});
+
+test("replacing a buff clears the previous timeout and uses the new duration", () => {
+  const harness = createBuffHarness({ now: 100000, gameTime: 5000 });
+
+  harness.api.addTemporaryBuff({
+    stat: "dmg",
+    value: 1.1,
+    durationSec: 5,
+    source: "first"
+  });
+  harness.advanceRealTime(2000);
+  harness.api.addTemporaryBuff({
+    stat: "dmg",
+    value: 1.4,
+    durationSec: 10,
+    source: "second"
+  });
+
+  assert.equal(harness.timers.size, 1);
+  assert.equal(harness.gameState.combat.activeBuffs.dmg.value, 1.4);
+
+  harness.advanceRealTime(3000);
+  assert.ok(harness.gameState.combat.activeBuffs.dmg);
+
+  harness.advanceRealTime(7000);
+  assert.equal(harness.gameState.combat.activeBuffs.dmg, undefined);
+});
