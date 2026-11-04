@@ -563,7 +563,7 @@ test("replacing a buff clears the previous timeout and uses the new duration", (
 
 function createNonStoryMenuHarness(mode, serialized) {
   const start = menuSource.indexOf("function startNewGame(mode)");
-  const end = menuSource.indexOf("\\nfunction newCampaign", start);
+  const end = menuSource.indexOf("\nfunction newCampaign", start);
   assert.notEqual(start, -1, "startNewGame should exist");
   assert.notEqual(end, -1, "newCampaign should follow the menu save helpers");
 
@@ -613,7 +613,7 @@ function createNonStoryMenuHarness(mode, serialized) {
 
   vm.runInContext(
     menuSource.slice(start, end) +
-      "\\nglobalThis.__checkIsSave = checkIsSave; globalThis.__startNewGame = startNewGame;",
+      "\nglobalThis.__checkIsSave = checkIsSave; globalThis.__startNewGame = startNewGame;",
     context,
     { filename: "menu.js" }
   );
