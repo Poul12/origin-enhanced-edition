@@ -54,7 +54,7 @@ function createMenuHarness(saveStory, mode = "story") {
   return context;
 }
 
-function createGameHarness(initialStorage = {}) {
+function createGameHarness(initialStorage = {}, now = Date.now()) {
   const values = new Map(Object.entries(initialStorage));
 
   const localStorage = {
@@ -72,9 +72,15 @@ function createGameHarness(initialStorage = {}) {
     }
   };
 
+  class FixedDate extends Date {
+    static now() {
+      return now;
+    }
+  }
+
   const context = vm.createContext({
     localStorage,
-    Date,
+    Date: FixedDate,
     console
   });
 
@@ -138,6 +144,97 @@ test("saves and restores game state and game-time metadata", () => {
   assert.equal(restored.api.getGameState().char.level, 7);
   assert.equal(restored.api.getGameState().inventory[0].id, "test-item");
   assert.ok(restored.api.getAppState().gameTime >= 123456);
+});
+
+test("restores zero game time when save metadata is missing", () => {
+  const now = 10000;
+  const harness = createGameHarness({}, now);
+  const payload = { gameState: harness.api.createNewGameState() };
+
+  harness.storage.set("save_story", JSON.stringify(payload));
+  harness.api.initializeGameState("story");
+
+  assert.equal(harness.api.getAppState().gameTime, 0);
+  assert.equal(harness.api.getAppState().recoveryNeeded, false);
+});
+
+test("rejects invalid saved game-time metadata without rejecting the save", () => {
+  const now = 10000;
+  const invalidValues = [null, "1200", -5, {}, []];
+
+  for (const gameTime of invalidValues) {
+    const harness = createGameHarness({}, now);
+    const payload = {
+      gameState: harness.api.createNewGameState(),
+      meta: { gameTime, savedAtReal: now }
+    };
+
+    harness.storage.set("save_story", JSON.stringify(payload));
+    harness.api.initializeGameState("story");
+
+    assert.equal(harness.api.getAppState().gameTime, 0, `gameTime ${JSON.stringify(gameTime)} should fall back to zero`);
+    assert.equal(harness.api.getAppState().recoveryNeeded, false);
+  }
+});
+
+test("uses the current time when savedAtReal metadata is missing or invalid", () => {
+  const now = 10000;
+  const invalidValues = [undefined, null, 0, "9000", -1, {}, []];
+
+  for (const savedAtReal of invalidValues) {
+    const harness = createGameHarness({}, now);
+    const meta = { gameTime: 2500 };
+    if (savedAtReal !== undefined) meta.savedAtReal = savedAtReal;
+
+    harness.storage.set("save_story", JSON.stringify({
+      gameState: harness.api.createNewGameState(),
+      meta
+    }));
+    harness.api.initializeGameState("story");
+
+    assert.equal(harness.api.getAppState().gameTime, 2500, `savedAtReal ${JSON.stringify(savedAtReal)} should not add offline time`);
+    assert.equal(harness.api.getAppState().recoveryNeeded, false);
+  }
+});
+
+test("does not subtract game time when savedAtReal is in the future", () => {
+  const now = 10000;
+  const harness = createGameHarness({}, now);
+
+  harness.storage.set("save_story", JSON.stringify({
+    gameState: harness.api.createNewGameState(),
+    meta: { gameTime: 3000, savedAtReal: now + 5000 }
+  }));
+  harness.api.initializeGameState("story");
+
+  assert.equal(harness.api.getAppState().gameTime, 3000);
+  assert.equal(harness.api.getAppState().recoveryNeeded, false);
+});
+
+test("does not subtract game time when the device clock moved backwards", () => {
+  const now = 8000;
+  const harness = createGameHarness({}, now);
+
+  harness.storage.set("save_story", JSON.stringify({
+    gameState: harness.api.createNewGameState(),
+    meta: { gameTime: 4000, savedAtReal: 10000 }
+  }));
+  harness.api.initializeGameState("story");
+
+  assert.equal(harness.api.getAppState().gameTime, 4000);
+  assert.equal(harness.api.getAppState().recoveryNeeded, false);
+});
+
+test("adds valid elapsed real time to saved game time", () => {
+  const harness = createGameHarness({}, 12000);
+
+  harness.storage.set("save_story", JSON.stringify({
+    gameState: harness.api.createNewGameState(),
+    meta: { gameTime: 4000, savedAtReal: 10000 }
+  }));
+  harness.api.initializeGameState("story");
+
+  assert.equal(harness.api.getAppState().gameTime, 6000);
 });
 
 test("writes each supported mode to its own save key and updates save metadata", () => {
