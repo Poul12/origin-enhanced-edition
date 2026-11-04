@@ -1060,7 +1060,7 @@ function removeDmgBuff() {
 
 function addTemporaryBuff({ stat, value, durationSec, source = "unknown" }) {
   const durationMs = durationSec * 1000;
-  const expiresAt = getGameTime() + durationMs;
+  const expiresAt = Date.now() + durationMs;
 
   // jeśli buff na ten stat już istnieje – nadpisz
   removeBuff(stat);
@@ -1140,11 +1140,18 @@ function restoreBuffsAfterReload() {
   if (!buffs) return;
 
   const now = Date.now();
+  let removedExpiredBuff = false;
 
   for (const stat in buffs) {
     const { value, expiresAt, source } = buffs[stat];
 
-    if (expiresAt <= now) continue;
+    // Older saves stored gameTime here, not a Unix timestamp.
+    // Such values cannot be migrated reliably, so discard only the stale buff.
+    if (!Number.isFinite(expiresAt) || expiresAt < 1_000_000_000_000 || expiresAt <= now) {
+      delete buffs[stat];
+      removedExpiredBuff = true;
+      continue;
+    }
 
     const remainingMs = expiresAt - now;
 
@@ -1157,6 +1164,8 @@ function restoreBuffsAfterReload() {
 
     applyBuff(stat, value);
   }
+
+  if (removedExpiredBuff) saveBuffsToStorage();
 }
 
 const whirlwindState = {
