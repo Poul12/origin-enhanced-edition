@@ -35,7 +35,7 @@ function createGameHarness(initialStorage = {}) {
 
   vm.runInContext(
     gameStateSource +
-      "\n;globalThis.__gameTestApi = { initializeGameState, createNewGameState, saveGame, getSaveKey };",
+      "\n;globalThis.__gameTestApi = { initializeGameState, createNewGameState, saveGame, getSaveKey, getGameState: () => gameState, getAppState: () => appState };",
     context,
     { filename: "gameState.js" }
   );
@@ -52,10 +52,10 @@ test("initializes a fresh Story save when no save exists", () => {
 
   harness.api.initializeGameState();
 
-  assert.equal(harness.context.gameState.world.mode, "story");
-  assert.equal(harness.context.appState.gameTime, 0);
-  assert.ok(harness.context.gameState.char);
-  assert.ok(Array.isArray(harness.context.gameState.inventory));
+  assert.equal(harness.api.getGameState().world.mode, "story");
+  assert.equal(harness.api.getAppState().gameTime, 0);
+  assert.ok(harness.api.getGameState().char);
+  assert.ok(Array.isArray(harness.api.getGameState().inventory));
 });
 
 test("selects the correct save key and mode for every supported game mode", () => {
@@ -64,7 +64,7 @@ test("selects the correct save key and mode for every supported game mode", () =
 
     harness.api.initializeGameState(mode);
 
-    assert.equal(harness.context.gameState.world.mode, mode);
+    assert.equal(harness.api.getGameState().world.mode, mode);
     assert.equal(harness.api.getSaveKey(), `save_${mode}`);
   }
 });
@@ -73,8 +73,8 @@ test("saves and restores game state and game-time metadata", () => {
   const harness = createGameHarness();
 
   harness.api.initializeGameState("story");
-  harness.context.gameState.char.level = 7;
-  harness.context.gameState.inventory.push({ id: "test-item", quantity: 2 });
+  harness.api.getGameState().char.level = 7;
+  harness.api.getGameState().inventory.push({ id: "test-item", quantity: 2 });
   harness.context.appState.gameTime = 123456;
   harness.api.saveGame();
 
@@ -90,8 +90,8 @@ test("saves and restores game state and game-time metadata", () => {
   const restored = createGameHarness({ save_story: serialized });
   restored.api.initializeGameState("story");
 
-  assert.equal(restored.context.gameState.char.level, 7);
-  assert.equal(restored.context.gameState.inventory[0].id, "test-item");
+  assert.equal(restored.api.getGameState().char.level, 7);
+  assert.equal(restored.api.getGameState().inventory[0].id, "test-item");
   assert.ok(restored.context.appState.gameTime >= 123456);
 });
 
