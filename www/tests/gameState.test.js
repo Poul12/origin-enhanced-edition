@@ -649,3 +649,38 @@ test("starting Expedition does not overwrite a corrupted save after recovery is 
   assert.equal(harness.calls.boot, 0);
   assert.equal(harness.calls.save, 0);
 });
+
+
+test("save backup exports all raw slots, including malformed data, without changing storage", () => {
+  const original = {
+    save_story: "{malformed story save",
+    save_expedition: JSON.stringify({ gameState: { world: { mode: "expedition" } } }),
+    save_adventure: null
+  };
+  const values = new Map(Object.entries(original));
+  const localStorage = {
+    getItem(key) { return values.has(key) ? values.get(key) : null; },
+    setItem() { throw new Error("Export must not write to localStorage"); },
+    removeItem() { throw new Error("Export must not remove localStorage values"); }
+  };
+  const start = menuSource.indexOf("function buildSaveBackup()");
+  const end = menuSource.indexOf("\nfunction downloadSaveBackup", start);
+  assert.notEqual(start, -1, "buildSaveBackup should exist");
+  assert.notEqual(end, -1, "downloadSaveBackup should follow buildSaveBackup");
+
+  const context = vm.createContext({ localStorage, Date });
+  vm.runInContext(
+    menuSource.slice(start, end) + "\nglobalThis.__buildSaveBackup = buildSaveBackup;",
+    context,
+    { filename: "menu.js" }
+  );
+
+  const backup = context.__buildSaveBackup();
+
+  assert.equal(backup.format, "origin-save-backup");
+  assert.equal(backup.version, 1);
+  assert.equal(backup.saves.save_story, original.save_story);
+  assert.equal(backup.saves.save_expedition, original.save_expedition);
+  assert.equal(backup.saves.save_adventure, null);
+  assert.deepEqual([...values.entries()], Object.entries(original));
+});
