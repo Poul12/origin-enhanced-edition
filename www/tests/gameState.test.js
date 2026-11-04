@@ -239,7 +239,7 @@ function createBuffHarness({ now = 100000, gameTime = 5000, activeBuffs = {} } =
   }
 
   const start = skillsCombatSource.indexOf("function addTemporaryBuff(");
-  const end = skillsCombatSource.indexOf("\\nconst whirlwindState", start);
+  const end = skillsCombatSource.indexOf("\nconst whirlwindState", start);
   assert.notEqual(start, -1, "addTemporaryBuff should exist");
   assert.notEqual(end, -1, "whirlwindState should follow buff helpers");
 
@@ -260,7 +260,7 @@ function createBuffHarness({ now = 100000, gameTime = 5000, activeBuffs = {} } =
 
   vm.runInContext(
     skillsCombatSource.slice(start, end) +
-      "\\nglobalThis.__buffTestApi = { addTemporaryBuff, restoreBuffsAfterReload, removeBuff };",
+      "\nglobalThis.__buffTestApi = { addTemporaryBuff, restoreBuffsAfterReload, removeBuff };",
     context,
     { filename: "skills-combat.js" }
   );
