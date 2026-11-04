@@ -559,3 +559,88 @@ test("replacing a buff clears the previous timeout and uses the new duration", (
   harness.advanceRealTime(7000);
   assert.equal(harness.gameState.combat.activeBuffs.dmg, undefined);
 });
+
+
+function createNonStoryMenuHarness(mode, serialized) {
+  const start = menuSource.indexOf("function startNewGame(mode)");
+  const end = menuSource.indexOf("\\nfunction newCampaign", start);
+  assert.notEqual(start, -1, "startNewGame should exist");
+  assert.notEqual(end, -1, "newCampaign should follow the menu save helpers");
+
+  const calls = { storyUI: 0, expeditionUI: 0, boot: 0, save: 0 };
+  const localStorage = {
+    getItem(key) {
+      return key === `save_${mode}` ? serialized : null;
+    },
+    removeItem() {
+      throw new Error("A corrupted save must not be removed");
+    }
+  };
+  const context = vm.createContext({
+    localStorage,
+    gameState: { world: { mode: "story" } },
+    appState: { recoveryNeeded: false },
+    parseSavePayload(value) {
+      try {
+        const parsed = JSON.parse(value);
+        if (!parsed || typeof parsed !== "object" || Array.isArray(parsed) ||
+            !parsed.gameState || typeof parsed.gameState !== "object" ||
+            !parsed.gameState.world || typeof parsed.gameState.world !== "object") return null;
+        return parsed;
+      } catch {
+        return null;
+      }
+    },
+    initializeGameState(requestedMode) {
+      context.appState.recoveryNeeded = true;
+      context.gameState.world.mode = requestedMode;
+    },
+    createNewGameState() {
+      throw new Error("A new game must not be created during save recovery");
+    },
+    setStoryUI() { calls.storyUI++; },
+    setExpeditionUI() { calls.expeditionUI++; },
+    bootGame() { calls.boot++; },
+    saveGame() { calls.save++; },
+    startExpeditionMode() {
+      context.__checkIsSave("expedition");
+    },
+    openSelectClass() {
+      throw new Error("Class selection must not open while recovering an existing save");
+    },
+    console
+  });
+
+  vm.runInContext(
+    menuSource.slice(start, end) +
+      "\\nglobalThis.__checkIsSave = checkIsSave; globalThis.__startNewGame = startNewGame;",
+    context,
+    { filename: "menu.js" }
+  );
+
+  return { context, calls };
+}
+
+test("does not boot or replace corrupted Expedition and Adventure saves", () => {
+  for (const mode of ["expedition", "adventure"]) {
+    const corruptedSave = "{broken " + mode + " save";
+    const harness = createNonStoryMenuHarness(mode, corruptedSave);
+
+    assert.equal(harness.context.__checkIsSave(mode), true);
+    assert.equal(harness.context.appState.recoveryNeeded, true);
+    assert.equal(harness.calls.storyUI, 0);
+    assert.equal(harness.calls.expeditionUI, 0);
+    assert.equal(harness.calls.boot, 0);
+    assert.equal(harness.calls.save, 0);
+  }
+});
+
+test("starting Expedition does not overwrite a corrupted save after recovery is required", () => {
+  const corruptedSave = "{broken expedition save";
+  const harness = createNonStoryMenuHarness("expedition", corruptedSave);
+
+  assert.doesNotThrow(() => harness.context.__startNewGame("expedition"));
+  assert.equal(harness.context.appState.recoveryNeeded, true);
+  assert.equal(harness.calls.boot, 0);
+  assert.equal(harness.calls.save, 0);
+});
