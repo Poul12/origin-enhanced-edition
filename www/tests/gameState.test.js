@@ -15,7 +15,7 @@ const menuSource = fs.readFileSync(
 
 function createMenuHarness(saveStory, mode = "story") {
   const start = menuSource.indexOf("function checkIsStorySave()");
-  const end = menuSource.indexOf("\\nfunction checkIsSave", start);
+  const end = menuSource.indexOf("\nfunction checkIsSave", start);
   assert.notEqual(start, -1, "checkIsStorySave should exist");
   assert.notEqual(end, -1, "checkIsSave should follow checkIsStorySave");
 
@@ -46,7 +46,7 @@ function createMenuHarness(saveStory, mode = "story") {
 
   vm.runInContext(
     menuSource.slice(start, end) +
-      "\\nglobalThis.__checkIsStorySave = checkIsStorySave;",
+      "\nglobalThis.__checkIsStorySave = checkIsStorySave;",
     context,
     { filename: "menu.js" }
   );
