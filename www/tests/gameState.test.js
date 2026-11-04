@@ -140,6 +140,40 @@ test("saves and restores game state and game-time metadata", () => {
   assert.ok(restored.api.getAppState().gameTime >= 123456);
 });
 
+test("writes each supported mode to its own save key and updates save metadata", () => {
+  const cases = [
+    { mode: "story", key: "save_story" },
+    { mode: "expedition", key: "save_expedition" },
+    { mode: "adventure", key: "save_adventure" }
+  ];
+
+  for (const { mode, key } of cases) {
+    const harness = createGameHarness();
+
+    harness.api.initializeGameState(mode);
+    harness.api.getGameState().char.level = 9;
+    harness.api.getAppState().gameTime = 456789;
+    harness.api.saveGame();
+
+    assert.ok(harness.storage.has(key), `${key} should be written for ${mode}`);
+    assert.equal(harness.storage.has("save_story") && key !== "save_story", false);
+    assert.equal(harness.storage.has("save_expedition") && key !== "save_expedition", false);
+    assert.equal(harness.storage.has("save_adventure") && key !== "save_adventure", false);
+    assert.equal(harness.storage.get("last_mode"), mode);
+
+    const payload = JSON.parse(harness.storage.get(key));
+    assert.equal(payload.gameState.world.mode, mode);
+    assert.equal(payload.gameState.char.level, 9);
+    assert.equal(payload.meta.gameTime, 456789);
+
+    const appState = harness.api.getAppState();
+    assert.equal(appState.saveStoryExists, key === "save_story");
+    assert.equal(appState.saveExpeditionExists, key === "save_expedition");
+    assert.equal(appState.saveAdventureExists, key === "save_adventure");
+    assert.equal(appState.saveExists, true);
+  }
+});
+
 test("does not write a persistent save in Sandbox mode", () => {
   const harness = createGameHarness();
 
