@@ -836,9 +836,21 @@ function initializeGameState(mode = "story") {
   mergeDeep(gameState, parsed.gameState);
   gameState.world.mode = mode;
 
-  const savedGameTime = parsed.meta?.gameTime || 0;
-  const savedAtReal = parsed.meta?.savedAtReal || Date.now();
-  const offlineMs = Date.now() - savedAtReal;
+  const now = Date.now();
+  const rawGameTime = parsed.meta?.gameTime;
+  const rawSavedAtReal = parsed.meta?.savedAtReal;
+
+  const savedGameTime =
+    Number.isFinite(rawGameTime) && rawGameTime >= 0
+      ? rawGameTime
+      : 0;
+
+  const savedAtReal =
+    Number.isFinite(rawSavedAtReal) && rawSavedAtReal > 0
+      ? rawSavedAtReal
+      : now;
+
+  const offlineMs = Math.max(0, now - savedAtReal);
 
   appState.gameTime = savedGameTime + offlineMs;
 }
