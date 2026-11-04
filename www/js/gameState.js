@@ -779,6 +779,33 @@ function setAffixesForCodex() {
   }
 }
 
+function parseSavePayload(serialized) {
+  if (typeof serialized !== "string" || !serialized) return null;
+
+  let parsed;
+  try {
+    parsed = JSON.parse(serialized);
+  } catch (error) {
+    return null;
+  }
+
+  if (
+    !parsed ||
+    typeof parsed !== "object" ||
+    Array.isArray(parsed) ||
+    !parsed.gameState ||
+    typeof parsed.gameState !== "object" ||
+    Array.isArray(parsed.gameState) ||
+    !parsed.gameState.world ||
+    typeof parsed.gameState.world !== "object" ||
+    Array.isArray(parsed.gameState.world)
+  ) {
+    return null;
+  }
+
+  return parsed;
+}
+
 function initializeGameState(mode = "story") {
   let key = "save_story";
 
@@ -786,31 +813,31 @@ function initializeGameState(mode = "story") {
   if (mode === "adventure") key = "save_adventure";
 
   const save = localStorage.getItem(key);
-  //console.log(`mode, key, save`, mode, key, save);
-
+  appState.recoveryNeeded = false;
 
   if (!save) {
-    //console.log(`no save`, save);
-
     gameState = createNewGameState();
-    //setAffixesForCodex();
     gameState.world.mode = mode;
     appState.gameTime = 0;
     return;
   }
 
-  const parsed = JSON.parse(save);
+  const parsed = parseSavePayload(save);
 
   gameState = createNewGameState();
 
-  //setAffixesForCodex();
-  
+  if (!parsed) {
+    appState.recoveryNeeded = true;
+    gameState.world.mode = mode;
+    appState.gameTime = 0;
+    return;
+  }
+
   mergeDeep(gameState, parsed.gameState);
   gameState.world.mode = mode;
 
   const savedGameTime = parsed.meta?.gameTime || 0;
   const savedAtReal = parsed.meta?.savedAtReal || Date.now();
-
   const offlineMs = Date.now() - savedAtReal;
 
   appState.gameTime = savedGameTime + offlineMs;
