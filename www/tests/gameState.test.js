@@ -75,7 +75,7 @@ test("saves and restores game state and game-time metadata", () => {
   harness.api.initializeGameState("story");
   harness.api.getGameState().char.level = 7;
   harness.api.getGameState().inventory.push({ id: "test-item", quantity: 2 });
-  harness.context.appState.gameTime = 123456;
+  harness.api.getAppState().gameTime = 123456;
   harness.api.saveGame();
 
   const serialized = harness.storage.get("save_story");
@@ -92,14 +92,14 @@ test("saves and restores game state and game-time metadata", () => {
 
   assert.equal(restored.api.getGameState().char.level, 7);
   assert.equal(restored.api.getGameState().inventory[0].id, "test-item");
-  assert.ok(restored.context.appState.gameTime >= 123456);
+  assert.ok(restored.api.getAppState().gameTime >= 123456);
 });
 
 test("does not write a persistent save in Sandbox mode", () => {
   const harness = createGameHarness();
 
   harness.api.initializeGameState("story");
-  harness.context.gameState.world.mode = "sandbox";
+  harness.api.getGameState().world.mode = "sandbox";
   harness.api.saveGame();
 
   assert.equal(harness.storage.has("save_story"), false);
