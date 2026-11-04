@@ -9,28 +9,46 @@ window.liveRuntimePromise = new Promise((resolve) => {
   window._resolveRuntime = resolve;
 });
 
+function appTrace(stage, details = {}) {
+  window.RuntimeDiagnostics?.record("app." + stage, details);
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
+  const startupStartedAt = performance.now();
+  appTrace("domcontentloaded.start", { readyState: document.readyState });
   //initAssets();
   
   Analytics.gameStarted();
+  appTrace("analytics.initialized");
   
   initializeGameState();
-  if(await resumeAfterReload()) return;
+  appTrace("game-state.initialized");
+  if(await resumeAfterReload()) {
+    appTrace("resume-after-reload.completed");
+    return;
+  }
   
   enterMenu();
+  appTrace("menu.entered");
   detectLanguage();
   applyTranslations();
   renderMenuView();
+  appTrace("menu.rendered");
   
   runtimeHanlderError();
   
+  appTrace("bootstrap.start");
   bootstrap();
   
+  const runtimeWaitStartedAt = performance.now();
+  appTrace("live-runtime.wait.start");
   await window.liveRuntimePromise;
+  appTrace("live-runtime.wait.complete", { durationMs: Math.round(performance.now() - runtimeWaitStartedAt) });
 
   //setAffixesForCodex();
   
   document.body.classList.remove("boot-hidden");
+  appTrace("startup.visible", { durationMs: Math.round(performance.now() - startupStartedAt) });
    
   console.log({
     width: window.innerWidth,
@@ -46,24 +64,36 @@ async function preloadCssAssets() {
 }
 
 async function loadLiveRuntime() {
-  await Promise.all([
-    liveCssLoadPath(),
-    liveJsLoadPath(),
-  ]);
+  const startedAt = performance.now();
+  appTrace("live-runtime.load.start");
+  try {
+    await Promise.all([liveCssLoadPath(), liveJsLoadPath()]);
+    appTrace("live-runtime.load.complete", { durationMs: Math.round(performance.now() - startedAt) });
+  } catch (error) {
+    window.RuntimeDiagnostics?.captureError(error, "live-runtime-load");
+    appTrace("live-runtime.load.fail", { durationMs: Math.round(performance.now() - startedAt), message: String(error?.message || error) });
+    throw error;
+  }
 }
 
 async function bootstrap() {
+  const startedAt = performance.now();
+  appTrace("bootstrap.update-internet.start");
   await assetManager.updateInternetStatus();
+  appTrace("bootstrap.update-internet.complete", { durationMs: Math.round(performance.now() - startedAt), hasInternet: assetManager.hasInternet });
   
   window.liveRuntimePromise =
   //liveJsLoadPath()
   loadLiveRuntime()
   .then(() => {
     window.liveRuntimeReady = true;
+    appTrace("bootstrap.runtime-ready");
     window._resolveRuntime(); // 🔥 TO WAŻNE
     console.log("✅ Live runtime ready");
   })
   .catch(err => {
+    appTrace("bootstrap.runtime-failed", { message: String(err?.message || err) });
+    window.RuntimeDiagnostics?.captureError(err, "bootstrap-live-runtime");
     console.error("❌ Live runtime failed", err);
     window.liveRuntimeReady = false;
     throw err;

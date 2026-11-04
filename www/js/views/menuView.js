@@ -723,6 +723,9 @@ function setLoaderFinalizing() {
 
 
 async function enterGame() {
+  const launcherStartedAt = performance.now();
+  const launcherTrace = (stage, details = {}) => window.RuntimeDiagnostics?.record("launcher." + stage, details);
+  launcherTrace("enter.start", { firstEnter: !appState.hasEnteredGameBefore, mode: gameState?.world?.mode || "" });
   appState.mode = "game";
   //console.error("enter enterGame");
 
@@ -788,6 +791,7 @@ async function enterGame() {
     //console.error(`window.liveRuntimeReady1`, window.liveRuntimeReady);
     
     if (!window.liveRuntimeReady) {
+      launcherTrace("live-runtime.wait.start");
       showGameLoader();
 
       //console.error(`window.liveRuntimeReady2`, window.liveRuntimeReady);
@@ -804,6 +808,7 @@ async function enterGame() {
       await nextFrame();
       
       await window.liveRuntimePromise;
+      launcherTrace("live-runtime.wait.complete");
     }
     
     showGameLoader();
@@ -822,22 +827,32 @@ async function enterGame() {
     });*/
 
     const syncStart = performance.now();
+    launcherTrace("asset-sync.start");
     
     const result = await assetManager.init({
       onProgress: updateLoaderProgress
     });
 
+    launcherTrace("asset-sync.complete", { mode: result?.mode || "unknown", durationMs: Math.round(performance.now() - syncStart) });
     if (result?.mode === "error") {
       showLoaderError(result.error);
       return;
     }
     
+    launcherTrace("preload.start");
+    const preloadStartedAt = performance.now();
     await assetManager.preloadAssets(HUD_ASSETS);
+    launcherTrace("preload.group.complete", { group: "HUD" });
     await assetManager.preloadAssets(MAP_ASSETS);
+    launcherTrace("preload.group.complete", { group: "MAP" });
     await assetManager.preloadAssets(ITEMS_ASSETS);
+    launcherTrace("preload.group.complete", { group: "ITEMS" });
     //await assetManager.preloadAssets(LEGENDARY_SPRITES);
     await assetManager.preloadAssets(INVENTORY_ASSETS);
+    launcherTrace("preload.group.complete", { group: "INVENTORY" });
     await assetManager.preloadAssets(SKILLS_ASSETS);
+    launcherTrace("preload.group.complete", { group: "SKILLS" });
+    launcherTrace("preload.complete", { durationMs: Math.round(performance.now() - preloadStartedAt) });
 
     //await liveJsLoadPath();
     
@@ -851,6 +866,7 @@ async function enterGame() {
     
     
     if (assetManager.requiresReload()) {
+      launcherTrace("patch.reload-required");
 
       updateLoaderProgress({
         downloadedBytes: 0,
@@ -892,14 +908,19 @@ async function enterGame() {
     
     // Map rendering includes asynchronous template, asset and region setup.
     // Keep the boot loader visible until the complete navigation has finished.
+    launcherTrace("map-navigation.start");
     await navigate("map");
+    launcherTrace("map-navigation.complete");
 
     hideGameLoader();
     game.classList.add("ready");
 
     appState.hasEnteredGameBefore = true;
+    launcherTrace("enter.complete", { durationMs: Math.round(performance.now() - launcherStartedAt) });
 
   } catch (err) {
+    launcherTrace("enter.fail", { durationMs: Math.round(performance.now() - launcherStartedAt), message: String(err?.message || err) });
+    window.RuntimeDiagnostics?.captureError(err, "launcher-enter-game");
 
     console.error("❌ GAME BOOT FAILED", err);
 

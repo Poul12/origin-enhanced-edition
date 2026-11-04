@@ -3,6 +3,39 @@
   <meta charset="UTF-8">  
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <title>RPG Looter</title>
+  <script>
+    // Capture failures and resource timing before the first stylesheet is requested.
+    (function () {
+      const queue = window.__originEarlyEvents = window.__originEarlyEvents || [];
+      const emit = (type, details) => {
+        const entry = { type, details, at: new Date().toISOString() };
+        if (window.RuntimeDiagnostics?.record) window.RuntimeDiagnostics.record(type, details);
+        else { queue.push(entry); if (queue.length > 80) queue.shift(); }
+      };
+      const resourceDetails = target => ({
+        tag: String(target.tagName || "resource").toLowerCase(),
+        url: String(target.src || target.href || "").split("?")[0].split("#")[0],
+        id: target.id || ""
+      });
+      window.addEventListener("error", event => {
+        if (!event.target || event.target === window || window.RuntimeDiagnostics) return;
+        emit("resource.early-error", resourceDetails(event.target));
+      }, true);
+      window.addEventListener("load", event => {
+        const target = event.target;
+        if (!target || !/^(SCRIPT|LINK)$/.test(target.tagName || "")) return;
+        const details = resourceDetails(target);
+        const entry = performance.getEntriesByName(target.href || target.src).slice(-1)[0];
+        details.durationMs = entry ? Math.round(entry.duration) : null;
+        emit("resource.loaded", details);
+      }, true);
+      document.addEventListener("readystatechange", () => emit("document.ready-state", { readyState: document.readyState }));
+      document.addEventListener("DOMContentLoaded", () => emit("document.domcontentloaded", { readyState: document.readyState }), { once: true });
+      window.addEventListener("load", () => emit("document.load", { readyState: document.readyState }), { once: true });
+      window.addEventListener("pageshow", event => emit("document.early-pageshow", { persisted: !!event.persisted }));
+      emit("document.early-start", { readyState: document.readyState, timeOrigin: Math.round(performance.timeOrigin || 0) });
+    })();
+  </script>
   <link rel="stylesheet" href="css/main.css" />
   <link rel="stylesheet" href="css/menu.css">
   <!-- <link rel="stylesheet" href="css/map.css">

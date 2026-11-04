@@ -261,6 +261,28 @@
         }
       },
       counters: Object.assign({}, state.counters),
+      timing: {
+        timeOrigin: Math.round(performance.timeOrigin || 0),
+        navigation: (() => {
+          const nav = performance.getEntriesByType("navigation")[0];
+          if (!nav) return null;
+          return {
+            domInteractive: Math.round(nav.domInteractive),
+            domContentLoaded: Math.round(nav.domContentLoadedEventEnd),
+            loadEventEnd: Math.round(nav.loadEventEnd),
+            durationMs: Math.round(nav.duration)
+          };
+        })()
+      },
+      resources: performance.getEntriesByType("resource")
+        .filter(entry => entry.initiatorType === "script" || entry.initiatorType === "link" || entry.name.includes("manifest.json"))
+        .slice(-100)
+        .map(entry => ({
+          url: safeUrl(entry.name),
+          initiatorType: entry.initiatorType,
+          durationMs: Math.round(entry.duration),
+          transferSize: entry.transferSize || 0
+        })),
       errors: state.errors.slice(),
       lastEvents: state.events.slice()
     };
@@ -288,6 +310,24 @@
   }
 
   restore();
+
+  // Merge events captured in <head> before this diagnostics script was loaded.
+  const earlyEvents = Array.isArray(window.__originEarlyEvents) ? window.__originEarlyEvents.splice(0) : [];
+  earlyEvents.forEach(entry => {
+    if (entry.type === "resource.early-error") {
+      state.counters.resourceErrors += 1;
+      addError({
+        source: "resource-load",
+        name: "ResourceLoadError",
+        message: "Failed to load " + (entry.details?.tag || "resource"),
+        stack: "",
+        extra: entry.details || {}
+      });
+      record("resource.error", entry.details || {});
+    } else {
+      record(entry.type, entry.details || {});
+    }
+  });
 
   window.RuntimeDiagnostics = {
     record,

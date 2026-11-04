@@ -546,6 +546,8 @@ class AssetManager {
 
   
   async loadRemoteManifest() {
+    const startedAt = performance.now();
+    window.RuntimeDiagnostics?.record("asset-manager.manifest.start", { url: this.remoteManifestUrl });
 
     try {
 
@@ -576,6 +578,7 @@ class AssetManager {
       }
 
       this.remoteManifest = json;
+      window.RuntimeDiagnostics?.record("asset-manager.manifest.complete", { durationMs: Math.round(performance.now() - startedAt), version: String(json.version || ""), files: json.files.length });
 
     //  console.log("✅ Remote manifest loaded:", this.remoteManifest);
 
@@ -599,6 +602,7 @@ class AssetManager {
       return this.remoteManifest;
 
     } catch (err) {
+      window.RuntimeDiagnostics?.record("asset-manager.manifest.fail", { durationMs: Math.round(performance.now() - startedAt), message: String(err?.message || err), type: err?.type || "" });
 
       // jeśli to już AssetError
       if (err instanceof AssetError) {
@@ -859,8 +863,12 @@ class AssetManager {
 
   
   async preloadAssets(paths) {
+    const startedAt = performance.now();
+    window.RuntimeDiagnostics?.record("asset-manager.preload.start", { count: paths.length, first: paths.slice(0, 8) });
 
     for (const path of paths) {
+      const pathStartedAt = performance.now();
+      window.RuntimeDiagnostics?.record("asset-manager.preload-item.start", { path });
 
       // already resolved
       if (this.resolvedAssets.has(path)) {
@@ -870,9 +878,11 @@ class AssetManager {
       const url = await this.getAssetUrl(path);
 
       this.resolvedAssets.set(path, url);
+      window.RuntimeDiagnostics?.record("asset-manager.preload-item.complete", { path, durationMs: Math.round(performance.now() - pathStartedAt) });
 
       //console.log("✅ PRELOADED:", path);
     }
+    window.RuntimeDiagnostics?.record("asset-manager.preload.complete", { count: paths.length, durationMs: Math.round(performance.now() - startedAt) });
   }
   
   getResolvedAsset(path) {
@@ -945,6 +955,7 @@ class AssetManager {
   }
   
   async syncAssets(files, onProgress) {
+    const syncStartedAt = performance.now();
 
     if (!navigator.onLine) {
       throw new AssetError(
@@ -974,8 +985,10 @@ class AssetManager {
     }
     
     const totalFiles = files.length;
+    const totalBytesPlanned = files.reduce((sum, file) => sum + (file.size || 0), 0);
+    window.RuntimeDiagnostics?.record("asset-manager.sync.start", { totalFiles, totalBytes: totalBytesPlanned });
     
-    const totalBytes = files.reduce((sum, file) => sum + (file.size || 0), 0);
+    const totalBytes = totalBytesPlanned;
     
     let downloadedBytes = 0;
 
@@ -993,6 +1006,8 @@ class AssetManager {
       
       //currentFile++;
 
+      const fileStartedAt = performance.now();
+      window.RuntimeDiagnostics?.record("asset-manager.file.start", { path: file.path, index: currentFile + 1, total: totalFiles });
       try {
 
        // console.log("📥 Downloading:", file.path);
@@ -1108,10 +1123,12 @@ class AssetManager {
           
           phase: "downloading"
         });
+        window.RuntimeDiagnostics?.record("asset-manager.file.complete", { path: file.path, durationMs: Math.round(performance.now() - fileStartedAt), downloadedBytes: fileSize });
         
        // console.log("✅ Cached:", file.path);
 
       } catch (err) {
+        window.RuntimeDiagnostics?.record("asset-manager.file.fail", { path: file.path, durationMs: Math.round(performance.now() - fileStartedAt), message: String(err?.message || err) });
 
         console.error("❌ Download failed:", file.path, err);
 
@@ -1142,6 +1159,7 @@ class AssetManager {
       }
     }
 
+    window.RuntimeDiagnostics?.record("asset-manager.sync.complete", { totalFiles, durationMs: Math.round(performance.now() - syncStartedAt) });
     // FINALIZATION
     onProgress?.({
       currentFile: totalFiles,
@@ -1166,12 +1184,13 @@ class AssetManager {
 
     // 🔥 already loaded
     if (this.loadedScripts.has(path)) {
-
+      window.RuntimeDiagnostics?.record("asset-manager.script.cached", { path });
       console.log("⚠️ Script already loaded:", path);
-
       return;
     }
 
+    const startedAt = performance.now();
+    window.RuntimeDiagnostics?.record("asset-manager.script.start", { path });
     const localUrl = await this.getAssetUrl(path);
     
     return new Promise((resolve, reject) => {
@@ -1188,11 +1207,13 @@ class AssetManager {
         //console.log("✅ Script loaded:", path);
 
         this.loadedScripts.add(path);
+        window.RuntimeDiagnostics?.record("asset-manager.script.complete", { path, durationMs: Math.round(performance.now() - startedAt) });
 
         resolve();
       };
       
       script.onerror = () => {
+        window.RuntimeDiagnostics?.record("asset-manager.script.fail", { path, durationMs: Math.round(performance.now() - startedAt) });
 
         console.error(
           "❌ Failed loading script:", path);
@@ -1208,6 +1229,7 @@ class AssetManager {
   async loadPatchedCss(path) {
 
     if (this.loadedCss?.has(path)) {
+      window.RuntimeDiagnostics?.record("asset-manager.css.cached", { path });
       console.log("⚠️ CSS already loaded:", path);
       return;
     }
@@ -1216,6 +1238,8 @@ class AssetManager {
       this.loadedCss = new Set();
     }
 
+    const startedAt = performance.now();
+    window.RuntimeDiagnostics?.record("asset-manager.css.start", { path });
     const localUrl = await this.getAssetUrl(path);
 
     return new Promise((resolve, reject) => {
@@ -1232,11 +1256,13 @@ class AssetManager {
         //console.log("✅ CSS loaded:", path);
 
         this.loadedCss.add(path);
+        window.RuntimeDiagnostics?.record("asset-manager.css.complete", { path, durationMs: Math.round(performance.now() - startedAt) });
 
         resolve();
       };
       
       link.onerror = () => {
+        window.RuntimeDiagnostics?.record("asset-manager.css.fail", { path, durationMs: Math.round(performance.now() - startedAt) });
 
         console.error("❌ Failed loading CSS:", path);
 
@@ -1464,6 +1490,8 @@ class AssetManager {
   }
   
   async init({ onProgress, onError } = {}) {
+    const initStartedAt = performance.now();
+    window.RuntimeDiagnostics?.record("asset-manager.init.start", {});
 
     try{
       //console.log("🚀 AssetManager init...");
@@ -1475,6 +1503,7 @@ class AssetManager {
       this.setupNetworkListeners();
       
       this.loadLocalManifest();
+      window.RuntimeDiagnostics?.record("asset-manager.local-manifest.complete", { files: this.localManifest?.files?.length || 0 });
 
       this.isFirstInstall = !this.localManifest?.files?.length;
       
@@ -1576,10 +1605,12 @@ class AssetManager {
 
       //console.log("✅ AssetManager ready");
 
+      window.RuntimeDiagnostics?.record("asset-manager.init.complete", { mode: "online", durationMs: Math.round(performance.now() - initStartedAt) });
       return {
         mode: "online"
       };
     } catch (err) {
+      window.RuntimeDiagnostics?.record("asset-manager.init.fail", { durationMs: Math.round(performance.now() - initStartedAt), message: String(err?.message || err), type: err?.type || "" });
 
       console.error("❌ AssetManager INIT FAILED:", err);
 
@@ -1683,6 +1714,8 @@ class AssetManager {
   }
 
   async updateInternetStatus() {
+    const startedAt = performance.now();
+    window.RuntimeDiagnostics?.record("asset-manager.internet-check.start", {});
 
     try {
 
@@ -1701,6 +1734,7 @@ class AssetManager {
       this.hasInternet = false;
     }
 
+    window.RuntimeDiagnostics?.record("asset-manager.internet-check.complete", { hasInternet: this.hasInternet, durationMs: Math.round(performance.now() - startedAt) });
    // console.log("🌍 Internet status:", this.hasInternet);
   }
     
