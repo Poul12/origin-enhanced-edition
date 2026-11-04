@@ -358,6 +358,36 @@
     });
   });
 
+  // A delayed heartbeat helps distinguish a blocked main thread from a slow resource.
+  let heartbeatExpectedAt = performance.now() + 1000;
+  window.setInterval(() => {
+    const actualAt = performance.now();
+    const delayMs = Math.round(actualAt - heartbeatExpectedAt);
+    if (delayMs > 1500) {
+      record("diagnostics.heartbeat.delayed", {
+        delayMs,
+        visibilityState: document.visibilityState
+      });
+    }
+    heartbeatExpectedAt = actualAt + 1000;
+  }, 1000);
+
+  if (typeof PerformanceObserver !== "undefined") {
+    try {
+      const longTaskObserver = new PerformanceObserver(list => {
+        list.getEntries().forEach(entry => {
+          record("diagnostics.long-task", {
+            durationMs: Math.round(entry.duration),
+            startTimeMs: Math.round(entry.startTime)
+          });
+        });
+      });
+      longTaskObserver.observe({ type: "longtask", buffered: true });
+    } catch {
+      record("diagnostics.long-task.unsupported", {});
+    }
+  }
+
   if (typeof console !== "undefined" && typeof console.error === "function") {
     const originalError = console.error.bind(console);
     console.error = function () {
