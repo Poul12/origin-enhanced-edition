@@ -617,7 +617,7 @@ function startNewGame(mode) {
       break;
 
   }
-  saveGame();
+  if (!appState.recoveryNeeded) saveGame();
 }
 
 function newCampaign(selectedClass, characterName) {
@@ -678,6 +678,11 @@ function checkIsSave(mode) {
   }
 
   initializeGameState(mode);
+
+  if (appState.recoveryNeeded) {
+    console.warn("Cannot load game: save recovery is required");
+    return true;
+  }
   
   if(gameState.world.isStartNewWorld) document.getElementById(`fight-menu-btn`).classList.remove('disabled');
   
