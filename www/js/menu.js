@@ -1062,7 +1062,8 @@ function openOptions() {
     } catch (error) {
       console.error("Save backup export failed", error);
       window.RuntimeDiagnostics?.captureError(error, "save-backup-export");
-      alert("Could not export the save backup. Please try again.");
+      const errorDetails = error?.message || String(error || "Unknown error");
+      alert("Could not export the save backup.\n\nDiagnostic details:\n" + errorDetails);
     }
   });
 
