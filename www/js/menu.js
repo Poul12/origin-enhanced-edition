@@ -1184,30 +1184,49 @@ function downloadSaveBackup() {
     capacitor?.isNativePlatform?.() &&
     capacitor.getPlatform?.() === "android"
   ) {
-    if (typeof capacitor.registerPlugin !== "function") {
-      throw new Error("Capacitor plugin registration is unavailable.");
+    const plugins = capacitor.Plugins || {};
+    const filesystem = plugins.Filesystem;
+    const share = plugins.Share;
+
+    if (!filesystem || !share) {
+      throw new Error(
+        "Required native plugin is unavailable. Filesystem: " +
+        Boolean(filesystem) + ", Share: " + Boolean(share)
+      );
     }
-    const filesystem = capacitor.registerPlugin("Filesystem");
-    const share = capacitor.registerPlugin("Share");
 
     return (async () => {
-      const { uri } = await filesystem.writeFile({
-        path: filename,
-        data: serialized,
-        directory: "CACHE",
-        encoding: "utf8"
-      });
+      let fileUri;
+
+      try {
+        const result = await filesystem.writeFile({
+          path: filename,
+          data: serialized,
+          directory: "CACHE",
+          encoding: "utf8",
+          recursive: true
+        });
+        fileUri = result?.uri;
+
+        if (!fileUri) {
+          throw new Error("Filesystem.writeFile did not return a file URI.");
+        }
+      } catch (error) {
+        error.message = "Save backup file creation failed: " + (error.message || error);
+        throw error;
+      }
 
       try {
         await share.share({
           title: filename,
           text: "Origin save backup",
-          url: uri,
+          files: [fileUri],
           dialogTitle: "Export save backup"
         });
       } catch (error) {
         // Closing the Android share sheet is not an export failure.
         if (String(error?.message || "").toLowerCase().includes("cancel")) return;
+        error.message = "Android share sheet failed: " + (error.message || error);
         throw error;
       }
     })();
