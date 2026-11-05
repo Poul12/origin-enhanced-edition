@@ -38,7 +38,7 @@ jobs:
 
       - name: Verify Capacitor dependencies
         run: |
-          npm ls @capacitor/core @capacitor/cli @capacitor/android @capacitor/filesystem
+          npm ls @capacitor/core @capacitor/cli @capacitor/android @capacitor/filesystem @capacitor/share
           npx cap --version
 
       - name: Synchronize Capacitor Android project
