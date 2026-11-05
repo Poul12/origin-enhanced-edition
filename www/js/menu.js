@@ -1171,16 +1171,6 @@ function buildSaveBackup() {
   };
 }
 
-async function loadNativeBackupPlugin(src) {
-  await new Promise((resolve, reject) => {
-    const script = document.createElement("script");
-    script.src = src;
-    script.onload = resolve;
-    script.onerror = () => reject(new Error("Could not load native backup plugin: " + src));
-    document.head.appendChild(script);
-  });
-}
-
 async function downloadSaveBackup() {
   const backup = buildSaveBackup();
   const serialized = JSON.stringify(backup, null, 2);
@@ -1194,19 +1184,13 @@ async function downloadSaveBackup() {
     capacitor?.isNativePlatform?.() &&
     capacitor.getPlatform?.() === "android"
   ) {
-    let plugins = capacitor.Plugins || {};
-    if (!plugins.Filesystem) {
-      await loadNativeBackupPlugin("js/vendor/capacitor-filesystem.js");
+    if (typeof capacitor.registerPlugin !== "function") {
+      throw new Error("Capacitor plugin registration is unavailable.");
     }
-    if (!plugins.Share) {
-      await loadNativeBackupPlugin("js/vendor/capacitor-share.js");
-    }
-    plugins = capacitor.Plugins || {};
-    if (!plugins.Filesystem || !plugins.Share) {
-      throw new Error("Capacitor Filesystem or Share plugin is unavailable.");
-    }
+    const filesystem = capacitor.registerPlugin("Filesystem");
+    const share = capacitor.registerPlugin("Share");
 
-    const { uri } = await plugins.Filesystem.writeFile({
+    const { uri } = await filesystem.writeFile({
       path: filename,
       data: serialized,
       directory: "CACHE",
@@ -1214,7 +1198,7 @@ async function downloadSaveBackup() {
     });
 
     try {
-      await plugins.Share.share({
+      await share.share({
         title: filename,
         text: "Origin save backup",
         files: [uri],
