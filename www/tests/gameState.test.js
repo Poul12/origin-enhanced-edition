@@ -807,7 +807,7 @@ test("imports populated slots byte-for-byte and leaves null slots unchanged", ()
   const result = harness.api.restoreSaveBackup(backup);
 
   assert.equal(result.success, true);
-  assert.deepEqual(result.importedKeys, ["save_story", "save_expedition"]);
+  assert.deepEqual(Array.from(result.importedKeys), ["save_story", "save_expedition"]);
   assert.equal(harness.storage.get("save_story"), story);
   assert.equal(harness.storage.get("save_expedition"), expedition);
   assert.equal(harness.storage.get("save_adventure"), existingAdventure);
