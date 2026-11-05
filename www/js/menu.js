@@ -1017,6 +1017,11 @@ function openOptions() {
       EXPORT SAVE BACKUP
     </button>
 
+    <button class="item-button" id="import-save-backup" ${appState.mode === "boot" ? "" : "disabled"}>
+      IMPORT SAVE BACKUP
+    </button>
+    <input id="import-save-backup-file" type="file" accept="application/json,.json" style="display:none">
+
     <button class="item-button" data-action="back">
       ${t("menu_back")}
     </button>
@@ -1057,6 +1062,72 @@ function openOptions() {
     } catch (error) {
       console.error("Save backup export failed", error);
       window.RuntimeDiagnostics?.captureError(error, "save-backup-export");
+    }
+  });
+
+  const importButton = document.getElementById("import-save-backup");
+  const importFileInput = document.getElementById("import-save-backup-file");
+
+  importButton.addEventListener("click", () => {
+    if (appState.mode !== "boot") return;
+    importFileInput.value = "";
+    importFileInput.click();
+  });
+
+  importFileInput.addEventListener("change", async event => {
+    if (appState.mode !== "boot") return;
+
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const serialized = await file.text();
+      const backup = parseSaveBackup(serialized);
+
+      if (!backup) {
+        alert("Invalid save backup. No game data was changed.");
+        return;
+      }
+
+      const saveKeys = ["save_story", "save_expedition", "save_adventure"];
+      const importKeys = saveKeys.filter(key => backup.saves[key] !== null);
+
+      if (importKeys.length === 0) {
+        alert("This backup does not contain any saves to import.");
+        return;
+      }
+
+      const overwriteKeys = importKeys.filter(key => localStorage.getItem(key) !== null);
+      const labels = {
+        save_story: "Story",
+        save_expedition: "Expedition",
+        save_adventure: "Adventure"
+      };
+      const importList = importKeys.map(key => labels[key]).join(", ");
+      const overwriteList = overwriteKeys.length
+        ? "\nExisting saves to be replaced: " + overwriteKeys.map(key => labels[key]).join(", ")
+        : "\nNo existing saves will be replaced.";
+      const message =
+        "Import save backup?\nSaves to import: " + importList +
+        overwriteList +
+        "\nEmpty slots in the backup will be left unchanged.\nContinue?";
+
+      showMenuCustomConfirm(message, () => {
+        const result = restoreSaveBackup(backup);
+
+        if (!result.success) {
+          console.error("Save backup import failed", result.error);
+          alert("Import failed. Existing saves were restored where possible. No game was started.");
+          return;
+        }
+
+        alert("Save backup imported successfully. The game will now reload.");
+        location.reload();
+      });
+    } catch (error) {
+      console.error("Save backup import failed", error);
+      window.RuntimeDiagnostics?.captureError(error, "save-backup-import");
+      alert("Could not read the backup file. No game data was changed.");
     }
   });
 
@@ -1117,6 +1188,81 @@ function downloadSaveBackup() {
   link.remove();
 
   window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+
+// Validates the exported backup envelope and every non-empty raw save slot.
+function parseSaveBackup(serialized) {
+  if (typeof serialized !== "string" || !serialized) return null;
+
+  let backup;
+  try {
+    backup = JSON.parse(serialized);
+  } catch (error) {
+    return null;
+  }
+
+  if (
+    !backup ||
+    typeof backup !== "object" ||
+    Array.isArray(backup) ||
+    backup.format !== "origin-save-backup" ||
+    backup.version !== 1 ||
+    !backup.saves ||
+    typeof backup.saves !== "object" ||
+    Array.isArray(backup.saves)
+  ) {
+    return null;
+  }
+
+  const keys = ["save_story", "save_expedition", "save_adventure"];
+
+  for (const key of keys) {
+    if (!Object.prototype.hasOwnProperty.call(backup.saves, key)) return null;
+
+    const rawSave = backup.saves[key];
+    if (rawSave === null) continue;
+    if (typeof rawSave !== "string" || !parseSavePayload(rawSave)) return null;
+  }
+
+  return backup;
+}
+
+
+// Restores only populated slots. Null slots are deliberately never written or cleared.
+function restoreSaveBackup(backup) {
+  const keys = ["save_story", "save_expedition", "save_adventure"];
+  const importKeys = keys.filter(key => backup?.saves?.[key] !== null);
+  const previousValues = new Map();
+
+  if (!backup || !backup.saves || importKeys.length === 0) {
+    return { success: false, error: new Error("No valid save slots to import") };
+  }
+
+  keys.forEach(key => {
+    previousValues.set(key, localStorage.getItem(key));
+  });
+
+  try {
+    importKeys.forEach(key => {
+      localStorage.setItem(key, backup.saves[key]);
+    });
+    updateSaveState();
+    return { success: true, importedKeys: importKeys };
+  } catch (error) {
+    for (const key of importKeys) {
+      try {
+        const previousValue = previousValues.get(key);
+        if (previousValue === null) localStorage.removeItem(key);
+        else localStorage.setItem(key, previousValue);
+      } catch (rollbackError) {
+        console.error("Save backup rollback failed for " + key, rollbackError);
+      }
+    }
+
+    updateSaveState();
+    return { success: false, error };
+  }
 }
 
 
