@@ -1171,7 +1171,7 @@ function buildSaveBackup() {
   };
 }
 
-async function downloadSaveBackup() {
+function downloadSaveBackup() {
   const backup = buildSaveBackup();
   const serialized = JSON.stringify(backup, null, 2);
   const stamp = new Date().toISOString().replace(/[:.]/g, "-");
@@ -1190,26 +1190,27 @@ async function downloadSaveBackup() {
     const filesystem = capacitor.registerPlugin("Filesystem");
     const share = capacitor.registerPlugin("Share");
 
-    const { uri } = await filesystem.writeFile({
-      path: filename,
-      data: serialized,
-      directory: "CACHE",
-      encoding: "utf8"
-    });
-
-    try {
-      await share.share({
-        title: filename,
-        text: "Origin save backup",
-        files: [uri],
-        dialogTitle: "Export save backup"
+    return (async () => {
+      const { uri } = await filesystem.writeFile({
+        path: filename,
+        data: serialized,
+        directory: "CACHE",
+        encoding: "utf8"
       });
-    } catch (error) {
-      // Closing the Android share sheet is not an export failure.
-      if (String(error?.message || "").toLowerCase().includes("cancel")) return;
-      throw error;
-    }
-    return;
+
+      try {
+        await share.share({
+          title: filename,
+          text: "Origin save backup",
+          files: [uri],
+          dialogTitle: "Export save backup"
+        });
+      } catch (error) {
+        // Closing the Android share sheet is not an export failure.
+        if (String(error?.message || "").toLowerCase().includes("cancel")) return;
+        throw error;
+      }
+    })();
   }
 
   // Keep the existing browser download behavior unchanged.
