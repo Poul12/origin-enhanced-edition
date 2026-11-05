@@ -684,3 +684,149 @@ test("save backup exports all raw slots, including malformed data, without chang
   assert.equal(backup.saves.save_adventure, null);
   assert.deepEqual([...values.entries()], Object.entries(original));
 });
+
+
+function createBackupHarness(initialStorage = {}, options = {}) {
+  const values = new Map(Object.entries(initialStorage));
+  const writes = [];
+  let writeCount = 0;
+  const localStorage = {
+    getItem(key) {
+      return values.has(key) ? values.get(key) : null;
+    },
+    setItem(key, value) {
+      writeCount++;
+      writes.push([key, String(value)]);
+      if (options.failOnWrite === writeCount) throw new Error("Simulated storage write failure");
+      values.set(key, String(value));
+    },
+    removeItem(key) {
+      values.delete(key);
+    }
+  };
+
+  const start = menuSource.indexOf("function parseSaveBackup(");
+  const restoreStart = menuSource.indexOf("function restoreSaveBackup(", start);
+  const end = menuSource.indexOf("\n\nfunction openAbout(", restoreStart);
+  assert.notEqual(start, -1, "parseSaveBackup should exist");
+  assert.notEqual(restoreStart, -1, "restoreSaveBackup should exist");
+  assert.notEqual(end, -1, "backup helpers should end before openAbout");
+
+  const context = vm.createContext({
+    localStorage,
+    parseSavePayload(serialized) {
+      try {
+        const parsed = JSON.parse(serialized);
+        return parsed && typeof parsed === "object" && !Array.isArray(parsed) &&
+          parsed.gameState && typeof parsed.gameState === "object" &&
+          parsed.gameState.world && typeof parsed.gameState.world === "object"
+          ? parsed
+          : null;
+      } catch {
+        return null;
+      }
+    },
+    updateSaveState() {},
+    console
+  });
+
+  vm.runInContext(
+    menuSource.slice(start, end) +
+      "\nglobalThis.__backupApi = { parseSaveBackup, restoreSaveBackup };",
+    context,
+    { filename: "menu.js" }
+  );
+
+  return {
+    api: context.__backupApi,
+    storage: values,
+    writes
+  };
+}
+
+function makeValidBackup(saves = {}) {
+  const validSave = JSON.stringify({
+    gameState: { world: { mode: "story" }, char: { level: 4 } },
+    meta: { gameTime: 1234, savedAtReal: 1000 }
+  });
+
+  return {
+    format: "origin-save-backup",
+    version: 1,
+    exportedAt: "2026-11-05T07:09:01.023Z",
+    saves: {
+      save_story: null,
+      save_expedition: null,
+      save_adventure: null,
+      ...saves
+    },
+    validSave
+  };
+}
+
+test("validates a version 1 backup and all populated raw save slots", () => {
+  const backup = makeValidBackup({ save_story: makeValidBackup().validSave });
+  const harness = createBackupHarness();
+
+  const parsed = harness.api.parseSaveBackup(JSON.stringify(backup));
+
+  assert.ok(parsed);
+  assert.equal(parsed.format, "origin-save-backup");
+  assert.equal(parsed.saves.save_story, backup.saves.save_story);
+});
+
+test("rejects malformed backup envelopes and invalid populated save slots", () => {
+  const harness = createBackupHarness();
+  const valid = makeValidBackup({ save_story: makeValidBackup().validSave });
+  const invalidBackups = [
+    "{broken",
+    "null",
+    JSON.stringify({ format: "other", version: 1, saves: valid.saves }),
+    JSON.stringify({ format: "origin-save-backup", version: 2, saves: valid.saves }),
+    JSON.stringify({ format: "origin-save-backup", version: 1, saves: { save_story: null } }),
+    JSON.stringify({ ...valid, saves: { ...valid.saves, save_story: "{broken save" } }),
+    JSON.stringify({ ...valid, saves: { ...valid.saves, save_adventure: 42 } })
+  ];
+
+  for (const serialized of invalidBackups) {
+    assert.equal(harness.api.parseSaveBackup(serialized), null);
+  }
+});
+
+test("imports populated slots byte-for-byte and leaves null slots unchanged", () => {
+  const story = JSON.stringify({ gameState: { world: { mode: "story" }, marker: "backup" } });
+  const expedition = JSON.stringify({ gameState: { world: { mode: "expedition" }, marker: "expedition" } });
+  const existingAdventure = "existing adventure save";
+  const backup = makeValidBackup({
+    save_story: story,
+    save_expedition: expedition,
+    save_adventure: null
+  });
+  const harness = createBackupHarness({ save_story: "old story", save_adventure: existingAdventure });
+
+  const result = harness.api.restoreSaveBackup(backup);
+
+  assert.equal(result.success, true);
+  assert.deepEqual(result.importedKeys, ["save_story", "save_expedition"]);
+  assert.equal(harness.storage.get("save_story"), story);
+  assert.equal(harness.storage.get("save_expedition"), expedition);
+  assert.equal(harness.storage.get("save_adventure"), existingAdventure);
+});
+
+test("rolls back previously written slots if a storage write fails", () => {
+  const oldStory = "old story";
+  const oldExpedition = "old expedition";
+  const story = JSON.stringify({ gameState: { world: { mode: "story" } } });
+  const expedition = JSON.stringify({ gameState: { world: { mode: "expedition" } } });
+  const backup = makeValidBackup({ save_story: story, save_expedition: expedition });
+  const harness = createBackupHarness(
+    { save_story: oldStory, save_expedition: oldExpedition },
+    { failOnWrite: 2 }
+  );
+
+  const result = harness.api.restoreSaveBackup(backup);
+
+  assert.equal(result.success, false);
+  assert.equal(harness.storage.get("save_story"), oldStory);
+  assert.equal(harness.storage.get("save_expedition"), oldExpedition);
+});
