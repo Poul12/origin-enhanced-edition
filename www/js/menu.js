@@ -1055,13 +1055,14 @@ function openOptions() {
     confirmReset();
   });
 
-  document.getElementById("export-save-backup").addEventListener("click", () => {
+  document.getElementById("export-save-backup").addEventListener("click", async () => {
     playSound("menu", 1, 1, 0.65);
     try {
-      downloadSaveBackup();
+      await downloadSaveBackup();
     } catch (error) {
       console.error("Save backup export failed", error);
       window.RuntimeDiagnostics?.captureError(error, "save-backup-export");
+      alert("Could not export the save backup. Please try again.");
     }
   });
 
@@ -1170,18 +1171,51 @@ function buildSaveBackup() {
   };
 }
 
-function downloadSaveBackup() {
+async function downloadSaveBackup() {
   const backup = buildSaveBackup();
-  const blob = new Blob(
-    [JSON.stringify(backup, null, 2)],
-    { type: "application/json" }
-  );
+  const serialized = JSON.stringify(backup, null, 2);
+  const stamp = new Date().toISOString().replace(/[:.]/g, "-");
+  const filename = "origin-save-backup-" + stamp + ".json";
+  const capacitor = window.Capacitor;
+  const plugins = capacitor?.Plugins;
+
+  // Android WebView does not reliably handle browser-generated anchor downloads.
+  // Use Capacitor's native file and share APIs in the APK.
+  if (
+    capacitor?.isNativePlatform?.() &&
+    capacitor.getPlatform?.() === "android" &&
+    plugins?.Filesystem &&
+    plugins?.Share
+  ) {
+    const { uri } = await plugins.Filesystem.writeFile({
+      path: filename,
+      data: serialized,
+      directory: "CACHE",
+      encoding: "utf8"
+    });
+
+    try {
+      await plugins.Share.share({
+        title: filename,
+        text: "Origin save backup",
+        files: [uri],
+        dialogTitle: "Export save backup"
+      });
+    } catch (error) {
+      // Closing the Android share sheet is not an export failure.
+      if (String(error?.message || "").toLowerCase().includes("cancel")) return;
+      throw error;
+    }
+    return;
+  }
+
+  // Keep the existing browser download behavior unchanged.
+  const blob = new Blob([serialized], { type: "application/json" });
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
-  const stamp = new Date().toISOString().replace(/[:.]/g, "-");
 
   link.href = url;
-  link.download = "origin-save-backup-" + stamp + ".json";
+  link.download = filename;
   link.style.display = "none";
   document.body.appendChild(link);
   link.click();
