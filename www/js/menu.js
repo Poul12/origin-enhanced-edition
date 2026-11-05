@@ -654,10 +654,8 @@ function checkIsStorySave() {
     return false;
   }
 
-  const savedWorld = parsed.gameState.world;
   const hasStoryCampaign =
-    savedWorld.mode === "story" &&
-    savedWorld.startNewCampaign === true;
+    parsed.gameState.world.startNewCampaign === true;
 
   if (!hasStoryCampaign) {
     console.warn("No story save found");
