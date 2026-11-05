@@ -1171,22 +1171,41 @@ function buildSaveBackup() {
   };
 }
 
+async function loadNativeBackupPlugin(src) {
+  await new Promise((resolve, reject) => {
+    const script = document.createElement("script");
+    script.src = src;
+    script.onload = resolve;
+    script.onerror = () => reject(new Error("Could not load native backup plugin: " + src));
+    document.head.appendChild(script);
+  });
+}
+
 async function downloadSaveBackup() {
   const backup = buildSaveBackup();
   const serialized = JSON.stringify(backup, null, 2);
   const stamp = new Date().toISOString().replace(/[:.]/g, "-");
   const filename = "origin-save-backup-" + stamp + ".json";
   const capacitor = window.Capacitor;
-  const plugins = capacitor?.Plugins;
 
   // Android WebView does not reliably handle browser-generated anchor downloads.
-  // Use Capacitor's native file and share APIs in the APK.
+  // Load the Capacitor plugin bridges on demand so the browser build stays unchanged.
   if (
     capacitor?.isNativePlatform?.() &&
-    capacitor.getPlatform?.() === "android" &&
-    plugins?.Filesystem &&
-    plugins?.Share
+    capacitor.getPlatform?.() === "android"
   ) {
+    let plugins = capacitor.Plugins || {};
+    if (!plugins.Filesystem) {
+      await loadNativeBackupPlugin("js/vendor/capacitor-filesystem.js");
+    }
+    if (!plugins.Share) {
+      await loadNativeBackupPlugin("js/vendor/capacitor-share.js");
+    }
+    plugins = capacitor.Plugins || {};
+    if (!plugins.Filesystem || !plugins.Share) {
+      throw new Error("Capacitor Filesystem or Share plugin is unavailable.");
+    }
+
     const { uri } = await plugins.Filesystem.writeFile({
       path: filename,
       data: serialized,
