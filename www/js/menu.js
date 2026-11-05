@@ -1202,7 +1202,7 @@ function downloadSaveBackup() {
         await share.share({
           title: filename,
           text: "Origin save backup",
-          files: [uri],
+          url: uri,
           dialogTitle: "Export save backup"
         });
       } catch (error) {
