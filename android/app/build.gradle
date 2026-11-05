@@ -1,5 +1,18 @@
 apply plugin: 'com.android.application'
 
+// Release signing is enabled only when all four signing properties are supplied.
+// Debug builds remain usable locally without a release keystore.
+def releaseSigningEnvKeys = [
+    'ANDROID_KEYSTORE_FILE',
+    'ANDROID_KEYSTORE_PASSWORD',
+    'ANDROID_KEY_ALIAS',
+    'ANDROID_KEY_PASSWORD'
+]
+def hasReleaseSigningProperties = releaseSigningEnvKeys.every { key ->
+    def value = System.getenv(key)
+    value != null && !value.trim().isEmpty()
+}
+
 android {
     namespace "com.poul12.rpglooter"
     compileSdk rootProject.ext.compileSdkVersion
@@ -7,8 +20,8 @@ android {
         applicationId "com.poul12.rpglooter"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 2
-        versionName "1.0.1"
+        versionCode 3
+        versionName "1.0.2"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
@@ -16,11 +29,45 @@ android {
             ignoreAssetsPattern '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+
+    signingConfigs {
+        release {
+            if (hasReleaseSigningProperties) {
+                storeFile file(System.getenv('ANDROID_KEYSTORE_FILE'))
+                storePassword System.getenv('ANDROID_KEYSTORE_PASSWORD')
+                keyAlias System.getenv('ANDROID_KEY_ALIAS')
+                keyPassword System.getenv('ANDROID_KEY_PASSWORD')
+            }
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
+            if (hasReleaseSigningProperties) {
+                signingConfig signingConfigs.release
+            }
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+}
+
+// Fail release builds early if persistent signing configuration is missing.
+// This task is attached only to the release build path; assembleDebug is unaffected.
+def requireReleaseSigning = tasks.register('requireReleaseSigning') {
+    doLast {
+        if (!hasReleaseSigningProperties) {
+            throw new GradleException('Release signing is not configured. Supply ANDROID_KEYSTORE_FILE, ANDROID_KEYSTORE_PASSWORD, ANDROID_KEY_ALIAS and ANDROID_KEY_PASSWORD.')
+        }
+        def keystorePath = System.getenv('ANDROID_KEYSTORE_FILE')
+        if (!new File(keystorePath).isFile()) {
+            throw new GradleException('Release keystore file is missing at the configured ANDROID_KEYSTORE_FILE path.')
+        }
+    }
+}
+tasks.configureEach { task ->
+    if (task.name == 'preReleaseBuild') {
+        task.dependsOn(requireReleaseSigning)
     }
 }
 
