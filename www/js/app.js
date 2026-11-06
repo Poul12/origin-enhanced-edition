@@ -67,6 +67,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   
   initializeGameState();
   appTrace("game-state.initialized");
+
+  // Register runtime failure handling before either normal startup or reload
+  // recovery can begin loading the live scripts.
+  runtimeHanlderError();
+
   if(await resumeAfterReload()) {
     stopStartupWatchdog();
     appTrace("resume-after-reload.completed");
@@ -79,8 +84,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   applyTranslations();
   renderMenuView();
   appTrace("menu.rendered");
-  
-  runtimeHanlderError();
 
   appTrace("bootstrap.start");
   bootstrap();
