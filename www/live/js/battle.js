@@ -9,6 +9,10 @@ let potionStreak = null;
 // Keep at most one reengage countdown interval per enemy across option re-renders.
 const reengageCountdownIntervals = new WeakMap();
 
+function isEnemyReengageLocked(enemy, now = Date.now()) {
+  return Boolean(enemy?.reengageLockedUntil && enemy.reengageLockedUntil > now);
+}
+
 const slotTypeWeights = [
   { type: "enemy",   weight: 86 },
   { type: "chest",   weight: 7 },
@@ -24,8 +28,15 @@ function loadState() {
   restoreBuffsAfterReload();
   restoreFirecampState();
   
-  const btn = document.getElementById("bypass-btn");
-  btn.style.backgroundColor = world.bypassEnemyCheck ? "limegreen" : "red";
+  const energyState = gameState.resources.energyState;
+  const btn = document.getElementById("energy-test-btn");
+  if (btn) {
+    btn.style.backgroundColor = energyState.noEnergyUse ? "limegreen" : "red";
+    btn.textContent = energyState.noEnergyUse ? "E✓" : "E";
+    btn.title = energyState.noEnergyUse
+      ? "Tryb testowy energii: aktywny"
+      : "Tryb testowy energii: wyłączony";
+  }
   
   showNavigateButtons();
   if (world.bossDefeatedState.isBossDefeated && world.currentStepIndex + 1 >= world.locationSteps.length) {
@@ -98,15 +109,19 @@ function loadState() {
 }
 
 
-function toggleBypass() {
-  const world = gameState.world;
-  const resources = gameState.resources;
+function toggleEnergyTestMode() {
+  const energyState = gameState.resources.energyState;
+  energyState.noEnergyUse = !energyState.noEnergyUse;
 
-  world.bypassEnemyCheck = !world.bypassEnemyCheck;
-  resources.energyState.noEnergyUse = !resources.energyState.noEnergyUse;
-  const btn = document.getElementById("bypass-btn");
-  btn.style.backgroundColor = world.bypassEnemyCheck ? "limegreen" : "red";
-  //console.log(`🧪 Tryb testowy ${world.bypassEnemyCheck ? "AKTYWNY" : "WYŁĄCZONY"}`);
+  const btn = document.getElementById("energy-test-btn");
+  if (btn) {
+    btn.style.backgroundColor = energyState.noEnergyUse ? "limegreen" : "red";
+    btn.textContent = energyState.noEnergyUse ? "E✓" : "E";
+    btn.title = energyState.noEnergyUse
+      ? "Tryb testowy energii: aktywny"
+      : "Tryb testowy energii: wyłączony";
+  }
+
   saveGame();
 }
 
@@ -388,10 +403,10 @@ function renderActionButtons(opt, div, i) {
     const isRunestoneGuardian = enemy.name === "runic_stone_guardian" && enemy.currentHp <= 2000;
   
     const now = Date.now();
-      if (enemy.reengageLockedUntil && enemy.reengageLockedUntil > now) {
+      if (isEnemyReengageLocked(enemy, now)) {
           let remaining = Math.ceil((enemy.reengageLockedUntil - now) / 1000);
           actionBtn.disabled = true;
-          div.classList.add("used");
+          div.classList.add("used", "disabled");
           actionBtn.classList.remove("hidden");
           actionBtn.innerText = `(${remaining}s)`;
 
@@ -412,7 +427,7 @@ function renderActionButtons(opt, div, i) {
                       skillsOn();
                       actionBtn.disabled = false;
                       opt.used = false;
-                      div.classList.remove("used");
+                      div.classList.remove("used", "disabled");
                       actionBtn.classList.add("hidden");
                   }
               }
@@ -1100,6 +1115,8 @@ function slotClicked(i) {
   if(world.inCombat) return;
     
   const opt = world.exploreOptions[i];
+  if (!opt || isEnemyReengageLocked(opt.enemyData)) return;
+
   const slots = document.querySelectorAll(".explore-slot");
   const slot = slots[i];
   const enemy = world.exploreOptions[i].enemyData;
