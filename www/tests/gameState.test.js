@@ -894,3 +894,48 @@ test("imported Story backup survives simulated app reload and restores the same 
   ]);
   assert.equal(gameAfterReload.api.getAppState().recoveryNeeded, false);
 });
+
+
+test("Continue boots the imported Story state instead of a previous local save", () => {
+  const importedSave = JSON.stringify({
+    gameState: {
+      world: { mode: "story", currentLevel: 23, currentLocation: "imported-region" },
+      char: { level: 19, playerName: "RestoredHero" },
+      inventory: [{ id: "restored-relic", quantity: 1 }]
+    },
+    meta: { gameTime: 456000, savedAtReal: 1000 }
+  });
+  const harness = createGameHarness({ save_story: importedSave }, 2000);
+  const calls = { storyUI: 0, boot: 0 };
+
+  harness.context.setStoryUI = () => { calls.storyUI++; };
+  harness.context.bootGame = () => { calls.boot++; };
+
+  const start = menuSource.indexOf("function continueGame(mode = `story`)");
+  const end = menuSource.indexOf("\n\n/*function continueGame()", start);
+  assert.notEqual(start, -1, "continueGame should exist");
+  assert.notEqual(end, -1, "continueGame should have a clear boundary");
+
+  vm.runInContext(
+    menuSource.slice(start, end) + "\nglobalThis.__continueImportedStory = continueGame;",
+    harness.context,
+    { filename: "menu.js" }
+  );
+
+  harness.context.__continueImportedStory("story");
+
+  const restored = harness.api.getGameState();
+  assert.equal(calls.storyUI, 1);
+  assert.equal(calls.boot, 1);
+  assert.equal(restored.world.currentLevel, 23);
+  assert.equal(restored.world.currentLocation, "imported-region");
+  assert.equal(restored.char.level, 19);
+  assert.equal(restored.char.playerName, "RestoredHero");
+  assert.deepEqual(JSON.parse(JSON.stringify(restored.inventory)), [
+    { id: "restored-relic", quantity: 1 }
+  ]);
+
+  const afterContinue = JSON.parse(harness.storage.get("save_story"));
+  assert.equal(afterContinue.gameState.world.currentLevel, 23);
+  assert.equal(afterContinue.gameState.char.playerName, "RestoredHero");
+});
