@@ -101,7 +101,12 @@ jobs:
           test -x "$AAPT"
           "$APKSIGNER" verify --verbose --print-certs "$APK_PATH"
           BADGING=$("$AAPT" dump badging "$APK_PATH")
-          printf '%s\n' "$BADGING" | grep -F "package: name='com.poul12.rpglooter' versionCode='4' versionName='1.0.3'"
+          VERSION_CODE=$(sed -nE 's/^[[:space:]]*versionCode[[:space:]]+([0-9]+).*$/\1/p' android/app/build.gradle | head -n 1)
+          VERSION_NAME=$(sed -nE 's/^[[:space:]]*versionName[[:space:]]+"([^"]+)".*$/\1/p' android/app/build.gradle | head -n 1)
+          test -n "$VERSION_CODE"
+          test -n "$VERSION_NAME"
+          EXPECTED_PACKAGE="package: name='com.poul12.rpglooter' versionCode='$VERSION_CODE' versionName='$VERSION_NAME'"
+          printf '%s\n' "$BADGING" | grep -F "$EXPECTED_PACKAGE"
           APK_SIZE=$(stat -c%s "$APK_PATH")
           test "$APK_SIZE" -gt 0
           echo "APK_PATH=$APK_PATH" >> "$GITHUB_ENV"
