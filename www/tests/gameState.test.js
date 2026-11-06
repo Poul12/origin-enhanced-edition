@@ -830,3 +830,67 @@ test("rolls back previously written slots if a storage write fails", () => {
   assert.equal(harness.storage.get("save_story"), oldStory);
   assert.equal(harness.storage.get("save_expedition"), oldExpedition);
 });
+
+
+test("story-save menu check accepts imported saves without startNewCampaign", () => {
+  const payloads = [
+    { gameState: { world: { mode: "story" }, char: { level: 4 } } },
+    { gameState: { world: { mode: "story", startNewCampaign: false }, char: { level: 5 } } },
+    { gameState: { world: { startNewCampaign: true }, char: { level: 6 } } }
+  ];
+
+  for (const payload of payloads) {
+    const context = createMenuHarness(JSON.stringify(payload));
+    assert.equal(context.__checkIsStorySave(), true);
+    assert.equal(context.appState.recoveryNeeded, false);
+  }
+});
+
+test("story-save menu check rejects a different explicitly stored mode", () => {
+  const serialized = JSON.stringify({
+    gameState: { world: { mode: "adventure" }, char: { level: 4 } }
+  });
+  const context = createMenuHarness(serialized);
+
+  assert.equal(context.__checkIsStorySave(), false);
+  assert.equal(context.appState.recoveryNeeded, false);
+});
+
+test("imported Story backup survives simulated app reload and restores the same game state", () => {
+  const originalSave = JSON.stringify({
+    gameState: {
+      world: { mode: "story", currentLevel: 17, currentLocation: "backup-location" },
+      char: { level: 12, playerName: "BackupHero" },
+      inventory: [{ id: "backup-item", quantity: 3 }]
+    },
+    meta: { gameTime: 98765, savedAtReal: 1000 }
+  });
+  const backup = makeValidBackup({ save_story: originalSave });
+  const importer = createBackupHarness({ save_story: "previous-local-save" });
+
+  const validated = importer.api.parseSaveBackup(JSON.stringify(backup));
+  assert.ok(validated, "backup envelope and nested save should validate");
+
+  const imported = importer.api.restoreSaveBackup(validated);
+  assert.equal(imported.success, true);
+  assert.equal(importer.storage.get("save_story"), originalSave, "raw serialized save must remain byte-for-byte identical");
+
+  // A new harness represents a fresh WebView/application process after reload.
+  const reloadedStorage = Object.fromEntries(importer.storage.entries());
+  const menuAfterReload = createMenuHarness(reloadedStorage.save_story);
+  assert.equal(menuAfterReload.__checkIsStorySave(), true, "Continue should be eligible after reload");
+
+  const gameAfterReload = createGameHarness(reloadedStorage);
+  gameAfterReload.api.initializeGameState("story");
+  const restored = gameAfterReload.api.getGameState();
+
+  assert.equal(restored.world.mode, "story");
+  assert.equal(restored.world.currentLevel, 17);
+  assert.equal(restored.world.currentLocation, "backup-location");
+  assert.equal(restored.char.level, 12);
+  assert.equal(restored.char.playerName, "BackupHero");
+  assert.deepEqual(JSON.parse(JSON.stringify(restored.inventory)), [
+    { id: "backup-item", quantity: 3 }
+  ]);
+  assert.equal(gameAfterReload.api.getAppState().recoveryNeeded, false);
+});
