@@ -867,8 +867,9 @@ function destroyBattleView() {
   }
     
   const container = document.getElementById("explore-options");
-  container.removeEventListener("click", handleBattleOptionClick);
-  
+  container?.removeEventListener("click", handleBattleOptionClick);
+
+  document.removeEventListener("click", handleBattleClick);
   document.removeEventListener("click", handleSkillClick);
 
   window.removeEventListener("enemy-attack-windup", handleEnemyWindup);
