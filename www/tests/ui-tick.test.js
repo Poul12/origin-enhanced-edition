@@ -12,6 +12,13 @@ const locationSource = fs.readFileSync(
   "utf8"
 );
 
+function functionSource(source, name) {
+  const start = source.indexOf(`function ${name}(`);
+  assert.notEqual(start, -1, `missing function ${name}`);
+  const next = source.indexOf("\nfunction ", start + 1);
+  return source.slice(start, next === -1 ? source.length : next);
+}
+
 test("shop button state is updated by a small event-driven helper, not a permanent RAF loop", () => {
   assert.match(animationsSource, /function updateShopMenuButtonState\(\)/);
   assert.match(animationsSource, /shopMenuBtn\.classList\.add\('disabled'\)/);
@@ -21,11 +28,7 @@ test("shop button state is updated by a small event-driven helper, not a permane
 });
 
 test("shop button state is refreshed when a location is initialized or its step changes", () => {
-  const firstStep = locationSource.match(/function loadFirstStep\(\) \{[\s\S]*?\n\}/)?.[0] || "";
-  const nextStep = locationSource.match(/function rollOptions\(\) \{[\s\S]*?\n\}/)?.[0] || "";
-  const loadStep = locationSource.match(/function loadStep\(index\) \{[\s\S]*?\n\}/)?.[0] || "";
-
-  assert.match(firstStep, /updateShopMenuButtonState\(\)/);
-  assert.match(nextStep, /updateShopMenuButtonState\(\)/);
-  assert.match(loadStep, /updateShopMenuButtonState\(\)/);
+  for (const name of ["loadFirstStep", "rollOptions", "loadStep"]) {
+    assert.match(functionSource(locationSource, name), /updateShopMenuButtonState\(\)/, name);
+  }
 });
