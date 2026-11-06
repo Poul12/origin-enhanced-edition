@@ -103,6 +103,21 @@ test("startup reveals the rendered menu while internet check and live runtime ar
   assert.equal(harness.context.liveRuntimeReady, true);
 });
 
+test("offline startup still reveals the menu and can finish with cached runtime assets", async () => {
+  const harness = createAppHarness({
+    internetPromise: Promise.resolve().then(() => {
+      harness.context.assetManager.hasInternet = false;
+    })
+  });
+
+  await harness.start();
+  assert.equal(harness.classes.has("boot-hidden"), false);
+  await harness.context.liveRuntimePromise;
+
+  assert.equal(harness.context.assetManager.hasInternet, false);
+  assert.equal(harness.context.liveRuntimeReady, true);
+});
+
 test("runtime load failure remains rejected and is recorded after the menu is visible", async () => {
   const js = deferred();
   const harness = createAppHarness({ jsPromise: js.promise });
