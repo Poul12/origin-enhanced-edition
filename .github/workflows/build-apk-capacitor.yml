@@ -101,7 +101,7 @@ jobs:
           test -x "$AAPT"
           "$APKSIGNER" verify --verbose --print-certs "$APK_PATH"
           BADGING=$("$AAPT" dump badging "$APK_PATH")
-          printf '%s\n' "$BADGING" | grep -F "package: name='com.poul12.rpglooter' versionCode='3' versionName='1.0.2'"
+          printf '%s\n' "$BADGING" | grep -F "package: name='com.poul12.rpglooter' versionCode='4' versionName='1.0.3'"
           APK_SIZE=$(stat -c%s "$APK_PATH")
           test "$APK_SIZE" -gt 0
           echo "APK_PATH=$APK_PATH" >> "$GITHUB_ENV"
