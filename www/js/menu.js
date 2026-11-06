@@ -654,11 +654,13 @@ function checkIsStorySave() {
     return false;
   }
 
-  const hasStoryCampaign =
-    parsed.gameState.world.startNewCampaign === true;
-
-  if (!hasStoryCampaign) {
-    console.warn("No story save found");
+  // The save slot is the primary mode discriminator: saveGame() writes
+  // Story to save_story, while Adventure and Expedition use their own keys.
+  // Older/imported Story saves may not contain startNewCampaign at all.
+  // Still reject an explicitly conflicting mode if a payload was misplaced.
+  const savedMode = parsed.gameState.world.mode;
+  if (savedMode && savedMode !== "story") {
+    console.warn("The save_story slot contains a save for a different mode");
     return false;
   }
 
