@@ -33,7 +33,9 @@ test("battle view teardown removes its delegated click listener", () => {
 
 test("map view teardown removes HUD layout listeners", () => {
   const init = functionSource(mapView, "initMapView");
-  const destroy = functionSource(mapView, "destroyMapView");
+  const destroyStart = mapView.indexOf("function destroyMapView(");
+  const destroyEnd = mapView.indexOf(String.fromCharCode(10) + "function ", destroyStart + 1);
+  const destroy = mapView.slice(destroyStart, destroyEnd === -1 ? mapView.length : destroyEnd);
 
   assert.ok(init.includes('window.addEventListener("load", updateHUDLayout)'));
   assert.ok(init.includes('window.addEventListener("resize", updateHUDLayout)'));
@@ -43,7 +45,9 @@ test("map view teardown removes HUD layout listeners", () => {
 
 test("map view teardown cancels delayed HUD layout updates", () => {
   const init = functionSource(mapView, "initMapView");
-  const destroy = functionSource(mapView, "destroyMapView");
+  const destroyStart = mapView.indexOf("function destroyMapView(");
+  const destroyEnd = mapView.indexOf(String.fromCharCode(10) + "function ", destroyStart + 1);
+  const destroy = mapView.slice(destroyStart, destroyEnd === -1 ? mapView.length : destroyEnd);
 
   assert.ok(init.includes("mapHudLayoutTimeouts = ["));
   assert.ok(destroy.includes("mapHudLayoutTimeouts.forEach(clearTimeout)"));
@@ -51,12 +55,13 @@ test("map view teardown cancels delayed HUD layout updates", () => {
 });
 
 test("battle view teardown cancels every tracked reengage countdown", () => {
-  assert.ok(battle.includes("const reengageCountdownIntervals = new Map()"));
+  assert.ok(battle.includes("const reengageCountdownIntervals = new WeakMap()"));
+  assert.ok(battle.includes("const activeReengageCountdownIntervals = new Set()"));
 
   const cleanup = functionSource(battle, "clearReengageCountdownIntervals");
-  assert.ok(cleanup.includes("for (const interval of reengageCountdownIntervals.values())"));
+  assert.ok(cleanup.includes("for (const interval of activeReengageCountdownIntervals)"));
   assert.ok(cleanup.includes("clearInterval(interval)"));
-  assert.ok(cleanup.includes("reengageCountdownIntervals.clear()"));
+  assert.ok(cleanup.includes("activeReengageCountdownIntervals.clear()"));
 
   const destroy = functionSource(battleView, "destroyBattleView");
   assert.ok(destroy.includes("clearReengageCountdownIntervals()"));
