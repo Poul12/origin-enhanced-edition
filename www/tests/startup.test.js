@@ -125,7 +125,11 @@ test("startGame does not initialize the engine until liveRuntimePromise resolves
   assert.notEqual(end, -1);
 
   const context = {
-    window: { liveRuntimePromise: gate.promise },
+    window: { liveRuntimePromise: gate.promise, liveRuntimeReady: false },
+    appState: { hasEnteredGameBefore: false },
+    showGameLoader: () => calls.push("loader"),
+    updateLoaderProgress: () => calls.push("progress"),
+    t: key => key,
     stopGameEngine: () => calls.push("stop"),
     startGameEngine: () => calls.push("engine"),
     setStartTime: () => calls.push("time"),
@@ -135,10 +139,10 @@ test("startGame does not initialize the engine until liveRuntimePromise resolves
   vm.runInContext(menuSource.slice(start, end) + "\nglobalThis.__startGame = startGame;", context);
 
   const starting = context.__startGame();
-  assert.deepEqual(calls, []);
+  assert.deepEqual(calls, ["loader", "progress"]);
   gate.resolve();
   await starting;
-  assert.deepEqual(calls, ["stop", "engine", "time", "enter"]);
+  assert.deepEqual(calls, ["loader", "progress", "stop", "engine", "time", "enter"]);
 });
 
 test("startGame does not initialize the engine when runtime loading fails", async () => {
@@ -147,7 +151,11 @@ test("startGame does not initialize the engine when runtime loading fails", asyn
   const start = menuSource.indexOf("async function startGame()");
   const end = menuSource.indexOf("\n\n\nasync function bootGame()", start);
   const context = {
-    window: { liveRuntimePromise: gate.promise },
+    window: { liveRuntimePromise: gate.promise, liveRuntimeReady: false },
+    appState: { hasEnteredGameBefore: false },
+    showGameLoader: () => calls.push("loader"),
+    updateLoaderProgress: () => calls.push("progress"),
+    t: key => key,
     stopGameEngine: () => calls.push("stop"),
     startGameEngine: () => calls.push("engine"),
     setStartTime: () => calls.push("time"),
@@ -159,7 +167,7 @@ test("startGame does not initialize the engine when runtime loading fails", asyn
   const starting = context.__startGame();
   gate.reject(new Error("runtime unavailable"));
   await assert.rejects(starting, /runtime unavailable/);
-  assert.deepEqual(calls, []);
+  assert.deepEqual(calls, ["loader", "progress"]);
 });
 
 test("resumeAfterReload waits for bootstrap runtime before continuing the saved game", async () => {
