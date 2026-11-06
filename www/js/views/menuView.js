@@ -723,6 +723,9 @@ function setLoaderFinalizing() {
 
 
 async function enterGame() {
+  // Guard every entry path, including quick returns to an already-open game.
+  await window.liveRuntimePromise;
+
   const launcherStartedAt = performance.now();
   const launcherTrace = (stage, details = {}) => window.RuntimeDiagnostics?.record("launcher." + stage, details);
   launcherTrace("enter.start", { firstEnter: !appState.hasEnteredGameBefore, mode: gameState?.world?.mode || "" });
