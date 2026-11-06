@@ -7,7 +7,15 @@ let selectedSource = null;
 let potionStreak = null;
 
 // Keep at most one reengage countdown interval per enemy across option re-renders.
-const reengageCountdownIntervals = new WeakMap();
+// Map is intentional here: view teardown must be able to iterate and cancel every timer.
+const reengageCountdownIntervals = new Map();
+
+function clearReengageCountdownIntervals() {
+  for (const interval of reengageCountdownIntervals.values()) {
+    clearInterval(interval);
+  }
+  reengageCountdownIntervals.clear();
+}
 
 function isEnemyReengageLocked(enemy, now = Date.now()) {
   return Boolean(enemy?.reengageLockedUntil && enemy.reengageLockedUntil > now);
