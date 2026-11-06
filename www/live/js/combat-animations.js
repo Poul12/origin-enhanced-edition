@@ -662,48 +662,13 @@ function animateEnemyHpBar(slotIndex, fromHp, toHp, maxHp, allEnemiesDead) {
   requestAnimationFrame(frame);
 }
 
-let lastUiTimestamp = null;
-let uiRafId = null;
+function updateShopMenuButtonState() {
+  if (!shopMenuBtn || !isLocationWithTown()) return;
 
-function startUiTick() {
-  if (uiRafId !== null) return;
-  
-  function tick(timestamp) {
-    if (lastUiTimestamp === null) {
-      lastUiTimestamp = timestamp;
-    }
-    
-    const deltaTime = (timestamp - lastUiTimestamp) / 1000;
-    lastUiTimestamp = timestamp;
-    
-    //updateEnemyCooldownUI(timestamp);
-    //updateTimedBlockUI(timestamp);
-    /*updateStaminaOrb();
-    updateShieldUI(timestamp);
-    updateBlockState(timestamp);
-    applyDevensiveBlockRegen(deltaTime);
-    updatePoise(deltaTime);*/
-    //updateGuardUI(guardStacks);
-    
-    if (shopMenuBtn && isLocationWithTown()) {
-      if (gameState.world.currentStepIndex != 0) {
-        shopMenuBtn.classList.add('disabled');
-      } else {
-        shopMenuBtn.classList.remove('disabled');
-      }
-    }
-    
-    uiRafId = requestAnimationFrame(tick);
-  }
-  lastUiTimestamp = null;
-  uiRafId = requestAnimationFrame(tick);
-}
-
-function stopUiTick() {
-  if (uiRafId !== null) {
-    cancelAnimationFrame(uiRafId);
-    uiRafId = null;
-    lastUiTimestamp = null;
+  if (gameState.world.currentStepIndex !== 0) {
+    shopMenuBtn.classList.add('disabled');
+  } else {
+    shopMenuBtn.classList.remove('disabled');
   }
 }
 
