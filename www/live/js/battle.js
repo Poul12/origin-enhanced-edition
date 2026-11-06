@@ -6,15 +6,15 @@ let selectedSource = null;
 //let isInitializing = false;
 let potionStreak = null;
 
-// Keep at most one reengage countdown interval per enemy across option re-renders.
-// Map is intentional here: view teardown must be able to iterate and cancel every timer.
-const reengageCountdownIntervals = new Map();
+// Keep the per-enemy lookup weak; track active timer IDs separately for teardown.
+const reengageCountdownIntervals = new WeakMap();
+const activeReengageCountdownIntervals = new Set();
 
 function clearReengageCountdownIntervals() {
-  for (const interval of reengageCountdownIntervals.values()) {
+  for (const interval of activeReengageCountdownIntervals) {
     clearInterval(interval);
   }
-  reengageCountdownIntervals.clear();
+  activeReengageCountdownIntervals.clear();
 }
 
 function isEnemyReengageLocked(enemy, now = Date.now()) {
@@ -417,6 +417,7 @@ function renderActionButtons(opt, div, i) {
           const previousInterval = reengageCountdownIntervals.get(enemy);
           if (previousInterval) {
               clearInterval(previousInterval);
+              activeReengageCountdownIntervals.delete(previousInterval);
           }
 
           const interval = setInterval(() => {
@@ -426,6 +427,7 @@ function renderActionButtons(opt, div, i) {
                   actionBtn.innerText = `(${remaining}s)`;
               } else {
                   clearInterval(interval);
+                  activeReengageCountdownIntervals.delete(interval);
                   if (reengageCountdownIntervals.get(enemy) === interval) {
                       reengageCountdownIntervals.delete(enemy);
                       skillsOn();
@@ -438,6 +440,7 @@ function renderActionButtons(opt, div, i) {
           }, 1000);
 
           reengageCountdownIntervals.set(enemy, interval);
+          activeReengageCountdownIntervals.add(interval);
       } else if (opt.enemyData.currentHp <= 0 || isRunestoneGuardian) {
           opt.used = true;
           div.classList.add("used");
