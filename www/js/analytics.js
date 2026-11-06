@@ -1,100 +1,197 @@
-const SUPABASE_URL = "https://wziijmhfcknespnvqodl.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_0diurq5vOJhLqOaT44FFMA_f71m0-Yr";
+/* Origin analytics.
+ * Supabase is loaded asynchronously after the page load event so a CDN outage
+ * cannot block DOM parsing, DOMContentLoaded, or the game runtime.
+ */
+var Analytics = (function () {
+  "use strict";
 
-const supabaseClient = window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_PUBLISHABLE_KEY
-);
+  const SUPABASE_URL = "https://wziijmhfcknespnvqodl.supabase.co";
+  const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_0diur5qvOJhLqOaT44FFMA_f71m0-Yr";
+  const SUPABASE_SCRIPT_URL = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
+  const pendingEvents = [];
 
+  let supabaseClient = null;
+  let supabaseLoadPromise = null;
+  let flushScheduled = false;
+  let flushInProgress = false;
+  let loadListenerAttached = false;
 
-const Analytics = {
+  function warn(message, error) {
+    console.warn("[Analytics] " + message, error || "");
+  }
 
-    getPlayerId() {
+  function getPlayerId() {
+    let playerId = window.localStorage.getItem("rpglooter_player_id");
 
-        let playerId = localStorage.getItem("rpglooter_player_id");
+    if (!playerId) {
+      playerId = window.crypto && typeof window.crypto.randomUUID === "function"
+        ? window.crypto.randomUUID()
+        : "player-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2);
+      window.localStorage.setItem("rpglooter_player_id", playerId);
+    }
 
-        if (!playerId) {
+    return playerId;
+  }
 
-            playerId = crypto.randomUUID();
+  function createSupabaseClient() {
+    if (supabaseClient) return Promise.resolve(supabaseClient);
 
-            localStorage.setItem(
-                "rpglooter_player_id",
-                playerId
-            );
-        }
+    if (window.supabase && typeof window.supabase.createClient === "function") {
+      try {
+        supabaseClient = window.supabase.createClient(
+          SUPABASE_URL,
+          SUPABASE_PUBLISHABLE_KEY
+        );
+        return Promise.resolve(supabaseClient);
+      } catch (error) {
+        return Promise.reject(error);
+      }
+    }
 
-        return playerId;
-    },
+    if (supabaseLoadPromise) return supabaseLoadPromise;
 
+    supabaseLoadPromise = new Promise(function (resolve, reject) {
+      const script = document.createElement("script");
+      script.src = SUPABASE_SCRIPT_URL;
+      script.async = true;
 
-    async send(event, extra = {}) {
-
+      script.onload = function () {
         try {
+          if (!window.supabase || typeof window.supabase.createClient !== "function") {
+            throw new Error("Supabase library loaded without createClient");
+          }
 
-            const { error } = await supabaseClient
-                .from("game_events")
-                .insert({
-                    event: event,
-
-                    player_id: this.getPlayerId(),
-
-                    character_name:
-                        gameState?.char?.playerName || null,
-                    
-                    game_version:
-                        typeof GAME_VERSION !== "undefined"
-                            ? GAME_VERSION
-                            : null,
-
-                    platform:
-                        window.Capacitor
-                            ? "android"
-                            : "web",
-
-                    language:
-                        navigator.language || null,
-
-                    ...extra
-                });
-
-
-            if (error) {
-                console.warn(
-                    "[Analytics]",
-                    error.message
-                );
-            }
-
+          supabaseClient = window.supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_PUBLISHABLE_KEY
+          );
+          resolve(supabaseClient);
         } catch (error) {
-
-            console.warn(
-                "[Analytics] Failed:",
-                error
-            );
+          reject(error);
         }
-    },
+      };
 
+      script.onerror = function () {
+        reject(new Error("Could not load the Supabase library"));
+      };
 
-    /*gameStarted() {
-        return this.send("game_started");
-    },*/
-    
-    gameStarted() {
+      (document.head || document.body).appendChild(script);
+    }).catch(function (error) {
+      supabaseLoadPromise = null;
+      throw error;
+    });
 
-      if (sessionStorage.getItem("analytics_game_started")) {
-        return;
+    return supabaseLoadPromise;
+  }
+
+  async function flushPendingEvents() {
+    if (flushInProgress || pendingEvents.length === 0 || navigator.onLine === false) {
+      return;
+    }
+
+    flushInProgress = true;
+
+    try {
+      const client = await createSupabaseClient();
+
+      while (pendingEvents.length > 0) {
+        const payload = pendingEvents[0];
+        const { error } = await client
+          .from("game_events")
+          .insert(payload);
+
+        pendingEvents.shift();
+
+        if (error) {
+          warn("Insert failed:", error.message || error);
+        }
+      }
+    } catch (error) {
+      // Keep queued events so a later online event or analytics event can retry.
+      warn("Delivery deferred:", error);
+    } finally {
+      flushInProgress = false;
+    }
+  }
+
+  function scheduleFlush() {
+    if (pendingEvents.length === 0 || flushScheduled || flushInProgress ||
+        navigator.onLine === false) {
+      return;
+    }
+
+    if (document.readyState !== "complete") {
+      if (!loadListenerAttached) {
+        loadListenerAttached = true;
+        window.addEventListener("load", function () {
+          loadListenerAttached = false;
+          scheduleFlush();
+        }, { once: true });
+      }
+      return;
+    }
+
+    flushScheduled = true;
+
+    const run = function () {
+      flushScheduled = false;
+      flushPendingEvents();
+    };
+
+    if (typeof window.requestIdleCallback === "function") {
+      window.requestIdleCallback(run, { timeout: 5000 });
+    } else {
+      window.setTimeout(run, 1000);
+    }
+  }
+
+  window.addEventListener("online", scheduleFlush);
+
+  return {
+    getPlayerId: getPlayerId,
+
+    send: function (event, extra) {
+      try {
+        const payload = {
+          event: event,
+          player_id: getPlayerId(),
+          character_name: typeof gameState !== "undefined"
+            ? gameState?.char?.playerName || null
+            : null,
+          game_version: typeof GAME_VERSION !== "undefined" ? GAME_VERSION : null,
+          platform: window.Capacitor ? "android" : "web",
+          language: navigator.language || null,
+          ...(extra || {})
+        };
+
+        pendingEvents.push(payload);
+        if (pendingEvents.length > 100) pendingEvents.shift();
+        scheduleFlush();
+      } catch (error) {
+        warn("Could not queue event:", error);
       }
 
-      sessionStorage.setItem(
-        "analytics_game_started",
-        "1"
-      );
+      return Promise.resolve();
+    },
+
+    gameStarted: function () {
+      try {
+        if (window.sessionStorage.getItem("analytics_game_started")) {
+          return Promise.resolve();
+        }
+
+        window.sessionStorage.setItem("analytics_game_started", "1");
+      } catch (error) {
+        warn("Could not access session storage:", error);
+      }
 
       return this.send("game_started");
     },
-    
-    newGameCreated() {
-        return this.send("new_game_created");
-    }
 
-};
+    newGameCreated: function () {
+      return this.send("new_game_created");
+    }
+  };
+})();
+
+window.Analytics = Analytics;
