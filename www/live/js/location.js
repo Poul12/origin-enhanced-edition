@@ -783,7 +783,7 @@ function loadFirstStep() {
   highlightCurrentStep();
  // syncStepEnemies(world.currentStepIndex);
   unlockActions();
-  startUiTick();
+  updateShopMenuButtonState();
   
   //world.isFightMenuBlocked = false;
   document.getElementById(`fight-menu-btn`).classList.remove('disabled');
@@ -1176,6 +1176,7 @@ function rollOptions() {
   world.locationSteps[world.currentStepIndex].visited = true;
   world.currentStepIndex++;
   world.locationSteps[world.currentStepIndex].unlocked = true;
+  updateShopMenuButtonState();
   
  // syncStepEnemies(world.currentStepIndex);
   
@@ -1217,6 +1218,7 @@ function loadStep(index) {
   const world = gameState.world;
 
   world.currentStepIndex = index;
+  updateShopMenuButtonState();
   const step = world.locationSteps[index];
   
   world.exploreOptions = step.exploreOptions || step.contents.map(randomOpt);
