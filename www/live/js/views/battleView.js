@@ -856,6 +856,9 @@ function openStore() {
 
 function destroyBattleView() {
   //stopUiTick();
+  if (typeof clearReengageCountdownIntervals === "function") {
+    clearReengageCountdownIntervals();
+  }
   detachQuestTabs();
   detachPotionEvents();
   //console.log("battle destroy");
