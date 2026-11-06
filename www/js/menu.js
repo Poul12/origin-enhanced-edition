@@ -845,6 +845,17 @@ function continueGame(mode = `story`) {
 }*/
 
 async function startGame() {
+  // If the player starts immediately, keep visible feedback while the live
+  // runtime finishes loading instead of leaving the screen behind the menu.
+  if (!window.liveRuntimeReady && !appState.hasEnteredGameBefore) {
+    showGameLoader();
+    updateLoaderProgress({
+      percent: 100,
+      currentName: `${t("launcher_preparing")}`,
+      phase: "finalizing"
+    });
+  }
+
   // Never initialize gameplay systems until every live script and stylesheet
   // has finished loading. This also protects taps made immediately after boot.
   await window.liveRuntimePromise;
