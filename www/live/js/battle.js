@@ -6,6 +6,9 @@ let selectedSource = null;
 //let isInitializing = false;
 let potionStreak = null;
 
+// Keep at most one reengage countdown interval per enemy across option re-renders.
+const reengageCountdownIntervals = new WeakMap();
+
 const slotTypeWeights = [
   { type: "enemy",   weight: 86 },
   { type: "chest",   weight: 7 },
@@ -392,20 +395,30 @@ function renderActionButtons(opt, div, i) {
           actionBtn.classList.remove("hidden");
           actionBtn.innerText = `(${remaining}s)`;
 
+          const previousInterval = reengageCountdownIntervals.get(enemy);
+          if (previousInterval) {
+              clearInterval(previousInterval);
+          }
+
           const interval = setInterval(() => {
               remaining--;
               updateSkillButtonsFatigueState();
               if (remaining > 0) {
                   actionBtn.innerText = `(${remaining}s)`;
               } else {
-                 clearInterval(interval);
-                 skillsOn();
-                 actionBtn.disabled = false;
-                 opt.used = false;
-                 div.classList.remove("used");
-                 actionBtn.classList.add("hidden");
+                  clearInterval(interval);
+                  if (reengageCountdownIntervals.get(enemy) === interval) {
+                      reengageCountdownIntervals.delete(enemy);
+                      skillsOn();
+                      actionBtn.disabled = false;
+                      opt.used = false;
+                      div.classList.remove("used");
+                      actionBtn.classList.add("hidden");
+                  }
               }
           }, 1000);
+
+          reengageCountdownIntervals.set(enemy, interval);
       } else if (opt.enemyData.currentHp <= 0 || isRunestoneGuardian) {
           opt.used = true;
           div.classList.add("used");
