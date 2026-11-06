@@ -19,7 +19,7 @@ const battle = fs.readFileSync(
 function functionSource(source, name) {
   const start = source.indexOf(`function ${name}(`);
   assert.notEqual(start, -1, `missing function ${name}`);
-  const next = source.indexOf("\\nfunction ", start + 1);
+  const next = source.indexOf(String.fromCharCode(10) + "function ", start + 1);
   return source.slice(start, next === -1 ? source.length : next);
 }
 
