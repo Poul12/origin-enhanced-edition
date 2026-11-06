@@ -856,6 +856,9 @@ function openStore() {
 
 function destroyBattleView() {
   //stopUiTick();
+  if (typeof clearReengageCountdownIntervals === "function") {
+    clearReengageCountdownIntervals();
+  }
   detachQuestTabs();
   detachPotionEvents();
   //console.log("battle destroy");
@@ -867,8 +870,9 @@ function destroyBattleView() {
   }
     
   const container = document.getElementById("explore-options");
-  container.removeEventListener("click", handleBattleOptionClick);
-  
+  container?.removeEventListener("click", handleBattleOptionClick);
+
+  document.removeEventListener("click", handleBattleClick);
   document.removeEventListener("click", handleSkillClick);
 
   window.removeEventListener("enemy-attack-windup", handleEnemyWindup);
