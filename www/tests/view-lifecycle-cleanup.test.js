@@ -27,37 +27,37 @@ test("battle view teardown removes its delegated click listener", () => {
   const add = functionSource(battleView, "addBattleListeners");
   const destroy = functionSource(battleView, "destroyBattleView");
 
-  assert.match(add, /document\\.addEventListener\\("click", handleBattleClick\\)/);
-  assert.match(destroy, /document\\.removeEventListener\\("click", handleBattleClick\\)/);
+  assert.ok(add.includes('document.addEventListener("click", handleBattleClick)'));
+  assert.ok(destroy.includes('document.removeEventListener("click", handleBattleClick)'));
 });
 
 test("map view teardown removes HUD layout listeners", () => {
   const init = functionSource(mapView, "initMapView");
   const destroy = functionSource(mapView, "destroyMapView");
 
-  assert.match(init, /window\\.addEventListener\\("load", updateHUDLayout\\)/);
-  assert.match(init, /window\\.addEventListener\\("resize", updateHUDLayout\\)/);
-  assert.match(destroy, /window\\.removeEventListener\\("load", updateHUDLayout\\)/);
-  assert.match(destroy, /window\\.removeEventListener\\("resize", updateHUDLayout\\)/);
+  assert.ok(init.includes('window.addEventListener("load", updateHUDLayout)'));
+  assert.ok(init.includes('window.addEventListener("resize", updateHUDLayout)'));
+  assert.ok(destroy.includes('window.removeEventListener("load", updateHUDLayout)'));
+  assert.ok(destroy.includes('window.removeEventListener("resize", updateHUDLayout)'));
 });
 
 test("map view teardown cancels delayed HUD layout updates", () => {
   const init = functionSource(mapView, "initMapView");
   const destroy = functionSource(mapView, "destroyMapView");
 
-  assert.match(init, /mapHudLayoutTimeouts\\s*=\\s*\\[/);
-  assert.match(destroy, /mapHudLayoutTimeouts\\.forEach\\(clearTimeout\\)/);
-  assert.match(destroy, /mapHudLayoutTimeouts\\s*=\\s*\\[\\]/);
+  assert.ok(init.includes("mapHudLayoutTimeouts = ["));
+  assert.ok(destroy.includes("mapHudLayoutTimeouts.forEach(clearTimeout)"));
+  assert.ok(destroy.includes("mapHudLayoutTimeouts = []"));
 });
 
 test("battle view teardown cancels every tracked reengage countdown", () => {
-  assert.match(battle, /const reengageCountdownIntervals = new Map\\(\\)/);
+  assert.ok(battle.includes("const reengageCountdownIntervals = new Map()"));
 
   const cleanup = functionSource(battle, "clearReengageCountdownIntervals");
-  assert.match(cleanup, /for \\(const interval of reengageCountdownIntervals\\.values\\(\\)\\)/);
-  assert.match(cleanup, /clearInterval\\(interval\\)/);
-  assert.match(cleanup, /reengageCountdownIntervals\\.clear\\(\\)/);
+  assert.ok(cleanup.includes("for (const interval of reengageCountdownIntervals.values())"));
+  assert.ok(cleanup.includes("clearInterval(interval)"));
+  assert.ok(cleanup.includes("reengageCountdownIntervals.clear()"));
 
   const destroy = functionSource(battleView, "destroyBattleView");
-  assert.match(destroy, /clearReengageCountdownIntervals\\(\\)/);
+  assert.ok(destroy.includes("clearReengageCountdownIntervals()"));
 });
