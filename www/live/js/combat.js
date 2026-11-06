@@ -164,6 +164,8 @@ async function startCombat(i) {
   const masteryBar = document.getElementById("mastery-bar-container");
   const expBar = document.getElementById("exp-bar-container");
   const style = getCurrentWeaponStyle();
+  const selectedOpt = world.exploreOptions[i];
+  if (!selectedOpt || isEnemyReengageLocked(selectedOpt.enemyData)) return;
 
   masteryBar.classList.remove(`hidden`);
   //console.log(`masteryBar`, masteryBar);
@@ -571,10 +573,8 @@ function renderCombat(renderPotion = false) {
     dlg.innerHTML = `
       <div id="combat-enemy-section"></div>
 
-      <div id="test-holder" class="hidden">
-        <button class="menu-item" onclick="toggleBypass()" id="bypass-btn" title="Test">T
-          <!-- <img data-src="img/icons/menu-market-icon.png" alt="Zamknij" class="menu-icon" />-->
-        </button>
+      <div id="test-holder">
+        <button class="menu-item" type="button" onclick="toggleEnergyTestMode()" id="energy-test-btn" title="Tryb testowy energii">E</button>
       </div>
     
       <div id="focus-holder">
@@ -809,6 +809,7 @@ function renderCombat(renderPotion = false) {
   
   //console.error(`attack-button`,  document.getElementById("attack-button"));
   dlg.classList.remove("hidden");
+  updateEnergyTestButton();
 }
 
 
@@ -2164,6 +2165,8 @@ function showOtherNonCombatElements(enemy) {
   
   progressBar.style.opacity = `1`;
   arrows.style.opacity =`1`;
+  const testBtn = document.getElementById("test-holder");
+  if (testBtn) testBtn.style.opacity = "1";
   if(world.mode === `story`) {
     questBtn.style.opacity = `1`;
   } else {
