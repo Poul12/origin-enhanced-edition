@@ -144,8 +144,6 @@ async function bootstrap() {
     window.liveRuntimeReady = false;
     throw err;
   });
-
-  return window.liveRuntimePromise;
 }
 
 async function resumeAfterReload() {
