@@ -4,10 +4,7 @@
 });*/
 
 window.liveRuntimeReady = false;
-
-window.liveRuntimePromise = new Promise((resolve) => {
-  window._resolveRuntime = resolve;
-});
+window.liveRuntimePromise = Promise.resolve();
 
 function appTrace(stage, details = {}) {
   window.__originStartupStage = stage;
@@ -84,17 +81,12 @@ document.addEventListener("DOMContentLoaded", async () => {
   appTrace("menu.rendered");
   
   runtimeHanlderError();
-  
+
   appTrace("bootstrap.start");
   bootstrap();
-  
-  const runtimeWaitStartedAt = performance.now();
-  appTrace("live-runtime.wait.start");
-  await window.liveRuntimePromise;
-  appTrace("live-runtime.wait.complete", { durationMs: Math.round(performance.now() - runtimeWaitStartedAt) });
 
-  //setAffixesForCodex();
-  
+  // The menu is independent of the live game runtime. Reveal it as soon as
+  // its DOM is ready; game entry waits for liveRuntimePromise in startGame().
   document.body.classList.remove("boot-hidden");
   stopStartupWatchdog();
   appTrace("startup.visible", { durationMs: Math.round(performance.now() - startupStartedAt) });
@@ -127,27 +119,30 @@ async function loadLiveRuntime() {
 
 async function bootstrap() {
   const startedAt = performance.now();
-  appTrace("bootstrap.update-internet.start");
-  await assetManager.updateInternetStatus();
-  appTrace("bootstrap.update-internet.complete", { durationMs: Math.round(performance.now() - startedAt), hasInternet: assetManager.hasInternet });
-  
-  window.liveRuntimePromise =
-  //liveJsLoadPath()
-  loadLiveRuntime()
-  .then(() => {
+
+  // Assign the complete startup promise synchronously. Menu actions can
+  // safely await it even if the user taps before the internet check finishes.
+  window.liveRuntimePromise = (async () => {
+    appTrace("bootstrap.update-internet.start");
+    await assetManager.updateInternetStatus();
+    appTrace("bootstrap.update-internet.complete", {
+      durationMs: Math.round(performance.now() - startedAt),
+      hasInternet: assetManager.hasInternet
+    });
+
+    await loadLiveRuntime();
     window.liveRuntimeReady = true;
     appTrace("bootstrap.runtime-ready");
-    window._resolveRuntime(); // 🔥 TO WAŻNE
     console.log("✅ Live runtime ready");
-  })
-  .catch(err => {
+  })().catch(err => {
     appTrace("bootstrap.runtime-failed", { message: String(err?.message || err) });
     window.RuntimeDiagnostics?.captureError(err, "bootstrap-live-runtime");
     console.error("❌ Live runtime failed", err);
     window.liveRuntimeReady = false;
     throw err;
   });
-  
+
+  return window.liveRuntimePromise;
 }
 
 async function resumeAfterReload() {
