@@ -39,8 +39,8 @@ test("map view teardown removes HUD layout listeners", () => {
 
   assert.ok(init.includes('window.addEventListener("load", updateHUDLayout)'));
   assert.ok(init.includes('window.addEventListener("resize", updateHUDLayout)'));
-  assert.ok(destroy.includes('window.removeEventListener("load", updateHUDLayout)'));
-  assert.ok(destroy.includes('window.removeEventListener("resize", updateHUDLayout)'));
+  assert.ok(destroy.includes('window.removeEventListener('load', updateHUDLayout)'));
+  assert.ok(destroy.includes('window.removeEventListener('resize', updateHUDLayout)'));
 });
 
 test("map view teardown cancels delayed HUD layout updates", () => {
