@@ -13,6 +13,18 @@ function isEnemyReengageLocked(enemy, now = Date.now()) {
   return Boolean(enemy?.reengageLockedUntil && enemy.reengageLockedUntil > now);
 }
 
+function updateEnergyTestButton() {
+  const energyState = gameState.resources.energyState;
+  const btn = document.getElementById("energy-test-btn");
+  if (!btn) return;
+
+  btn.style.backgroundColor = energyState.noEnergyUse ? "limegreen" : "red";
+  btn.textContent = energyState.noEnergyUse ? "E✓" : "E";
+  btn.title = energyState.noEnergyUse
+    ? "Tryb testowy energii: aktywny"
+    : "Tryb testowy energii: wyłączony";
+}
+
 const slotTypeWeights = [
   { type: "enemy",   weight: 86 },
   { type: "chest",   weight: 7 },
@@ -28,15 +40,7 @@ function loadState() {
   restoreBuffsAfterReload();
   restoreFirecampState();
   
-  const energyState = gameState.resources.energyState;
-  const btn = document.getElementById("energy-test-btn");
-  if (btn) {
-    btn.style.backgroundColor = energyState.noEnergyUse ? "limegreen" : "red";
-    btn.textContent = energyState.noEnergyUse ? "E✓" : "E";
-    btn.title = energyState.noEnergyUse
-      ? "Tryb testowy energii: aktywny"
-      : "Tryb testowy energii: wyłączony";
-  }
+  updateEnergyTestButton();
   
   showNavigateButtons();
   if (world.bossDefeatedState.isBossDefeated && world.currentStepIndex + 1 >= world.locationSteps.length) {
@@ -113,15 +117,7 @@ function toggleEnergyTestMode() {
   const energyState = gameState.resources.energyState;
   energyState.noEnergyUse = !energyState.noEnergyUse;
 
-  const btn = document.getElementById("energy-test-btn");
-  if (btn) {
-    btn.style.backgroundColor = energyState.noEnergyUse ? "limegreen" : "red";
-    btn.textContent = energyState.noEnergyUse ? "E✓" : "E";
-    btn.title = energyState.noEnergyUse
-      ? "Tryb testowy energii: aktywny"
-      : "Tryb testowy energii: wyłączony";
-  }
-
+  updateEnergyTestButton();
   saveGame();
 }
 
