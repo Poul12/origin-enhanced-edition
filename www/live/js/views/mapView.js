@@ -606,6 +606,7 @@ async function renderMapView(options = {}) {
 let regionHandlers = [];
 let outsideClickHandler = null;
 let enterWorldHandler = null;
+let mapHudLayoutTimeouts = [];
 
 async function initMapView() {
   //console.log("Map initialized");
@@ -637,12 +638,15 @@ async function initMapView() {
   const restoredRegionOpened = await handleReturnFromRegion();
     
   updateHUDLayout();
-    
+
   window.addEventListener("load", updateHUDLayout);
   window.addEventListener("resize", updateHUDLayout);
-    
-  setTimeout(updateHUDLayout, 100);
-  setTimeout(updateHUDLayout, 300);
+
+  mapHudLayoutTimeouts.forEach(clearTimeout);
+  mapHudLayoutTimeouts = [
+    setTimeout(updateHUDLayout, 100),
+    setTimeout(updateHUDLayout, 300)
+  ];
 
   //window.addEventListener("resize", updateHUDLayoutHandler);
   //window.addEventListener("load", updateHUDLayoutHandler);
@@ -794,6 +798,11 @@ function destroyMapView() {
   }
     
   window.removeEventListener('resize', handleMapResize);
+  window.removeEventListener('load', updateHUDLayout);
+  window.removeEventListener('resize', updateHUDLayout);
+
+  mapHudLayoutTimeouts.forEach(clearTimeout);
+  mapHudLayoutTimeouts = [];
 }
 
 function initRegions() {
