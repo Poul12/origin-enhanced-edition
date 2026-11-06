@@ -845,6 +845,10 @@ function continueGame(mode = `story`) {
 }*/
 
 async function startGame() {
+  // Never initialize gameplay systems until every live script and stylesheet
+  // has finished loading. This also protects taps made immediately after boot.
+  await window.liveRuntimePromise;
+
   stopGameEngine();
   startGameEngine();
   //console.error(`startGame`);
