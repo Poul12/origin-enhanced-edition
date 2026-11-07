@@ -1704,7 +1704,7 @@ class AssetManager {
 
         const url = `${this.remoteBaseUrl}/${file.path}`;
         
-        const response = await fetch(url);
+        const response = await this.fetchWithTimeout(url);
 
         if (!response.ok) {
           throw new Error(
