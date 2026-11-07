@@ -11,7 +11,9 @@ function extractFunction(source, name, isMethod = false) {
   const marker = (isMethod ? "async " : "function ") + name + "(";
   const start = source.indexOf(marker);
   assert.notEqual(start, -1, "missing " + name);
-  const open = source.indexOf("{", start);
+  const signatureEnd = source.indexOf(") {", start);
+  assert.notEqual(signatureEnd, -1, "missing function body for " + name);
+  const open = signatureEnd + 2;
   let depth = 0;
   let quote = null;
   let escaped = false;
