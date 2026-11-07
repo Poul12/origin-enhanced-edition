@@ -54,6 +54,34 @@ function updateSingleStatValue(id, newVal) {
   }, 2000);
  }
 
+let foodTimerInterval = null;
+
+function clearFoodTimerInterval() {
+  if (foodTimerInterval !== null) {
+    clearInterval(foodTimerInterval);
+    foodTimerInterval = null;
+  }
+}
+
+function updateFoodTimers() {
+  const timers = document.querySelectorAll(".food-timer");
+  const foodState = gameState.resources.foodState;
+
+  if (!timers.length || !foodState.active || !foodState.expiresAt) {
+    clearFoodTimerInterval();
+    return;
+  }
+
+  const timeLeft = foodState.expiresAt - Date.now();
+  timers.forEach(timer => {
+    timer.textContent = formatTimeLeft(Math.max(0, timeLeft));
+  });
+
+  if (timeLeft <= 0) {
+    clearFoodTimerInterval();
+  }
+}
+
 let currentFilter = null; // brak filtra na start
 
 let currentTypeFilter = "";
@@ -82,6 +110,8 @@ function setFilter(rarity) {
 
 function renderInventory() {
 //  console.log("render start");
+
+  clearFoodTimerInterval();
   
   const container = document.getElementById("inventory-container");
   if(!container) return;
@@ -217,18 +247,6 @@ function renderInventory() {
           timer.className = "food-timer";
           timer.textContent = formatTimeLeft(timeLeft);
 
-          setInterval(() => {
-            if (!foodState.active || !foodState.expiresAt) return;
-
-            const timeLeft = foodState.expiresAt - Date.now();
-            if (timeLeft <= 0) return;
-
-            document.querySelectorAll(".food-timer").forEach(el => {
-             el.textContent = formatTimeLeft(timeLeft);
-            });
-          }, 1000);
-           
-           
           slot.appendChild(timer);
           } else {
             foodBtn.onclick = (e) => {
@@ -360,6 +378,13 @@ function renderInventory() {
   }
 
   container.appendChild(grid);
+
+  if (gameState.resources.foodState.active && gameState.resources.foodState.expiresAt) {
+    updateFoodTimers();
+    if (document.querySelector(".food-timer")) {
+      foodTimerInterval = setInterval(updateFoodTimers, 1000);
+    }
+  }
     
   const activeSlotData = gameState.world.activeSlot;
    
