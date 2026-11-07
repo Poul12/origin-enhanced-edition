@@ -4,10 +4,7 @@
 });*/
 
 window.liveRuntimeReady = false;
-
-window.liveRuntimePromise = new Promise((resolve) => {
-  window._resolveRuntime = resolve;
-});
+window.liveRuntimePromise = null;
 
 function appTrace(stage, details = {}) {
   window.__originStartupStage = stage;
@@ -63,6 +60,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const stopStartupWatchdog = startStartupWatchdog();
   const startupStartedAt = performance.now();
   appTrace("domcontentloaded.start", { readyState: document.readyState });
+  runtimeHanlderError();
   //initAssets();
   
   Analytics.gameStarted();
@@ -83,14 +81,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   renderMenuView();
   appTrace("menu.rendered");
   
-  runtimeHanlderError();
-  
   appTrace("bootstrap.start");
-  bootstrap();
   
   const runtimeWaitStartedAt = performance.now();
   appTrace("live-runtime.wait.start");
-  await window.liveRuntimePromise;
+  await bootstrap();
   appTrace("live-runtime.wait.complete", { durationMs: Math.round(performance.now() - runtimeWaitStartedAt) });
 
   //setAffixesForCodex();
@@ -125,29 +120,36 @@ async function loadLiveRuntime() {
   }
 }
 
-async function bootstrap() {
+function bootstrap() {
+  // Both the normal startup and reload recovery share one runtime task.
+  if (window.liveRuntimePromise) {
+    return window.liveRuntimePromise;
+  }
+
   const startedAt = performance.now();
-  appTrace("bootstrap.update-internet.start");
-  await assetManager.updateInternetStatus();
-  appTrace("bootstrap.update-internet.complete", { durationMs: Math.round(performance.now() - startedAt), hasInternet: assetManager.hasInternet });
-  
-  window.liveRuntimePromise =
-  //liveJsLoadPath()
-  loadLiveRuntime()
-  .then(() => {
-    window.liveRuntimeReady = true;
-    appTrace("bootstrap.runtime-ready");
-    window._resolveRuntime(); // 🔥 TO WAŻNE
-    console.log("✅ Live runtime ready");
-  })
-  .catch(err => {
-    appTrace("bootstrap.runtime-failed", { message: String(err?.message || err) });
-    window.RuntimeDiagnostics?.captureError(err, "bootstrap-live-runtime");
-    console.error("❌ Live runtime failed", err);
-    window.liveRuntimeReady = false;
-    throw err;
-  });
-  
+  window.liveRuntimePromise = (async () => {
+    try {
+      appTrace("bootstrap.update-internet.start");
+      await assetManager.updateInternetStatus();
+      appTrace("bootstrap.update-internet.complete", {
+        durationMs: Math.round(performance.now() - startedAt),
+        hasInternet: assetManager.hasInternet
+      });
+
+      await loadLiveRuntime();
+      window.liveRuntimeReady = true;
+      appTrace("bootstrap.runtime-ready");
+      console.log("✅ Live runtime ready");
+    } catch (err) {
+      appTrace("bootstrap.runtime-failed", { message: String(err?.message || err) });
+      window.RuntimeDiagnostics?.captureError(err, "bootstrap-live-runtime");
+      console.error("❌ Live runtime failed", err);
+      window.liveRuntimeReady = false;
+      throw err;
+    }
+  })();
+
+  return window.liveRuntimePromise;
 }
 
 async function resumeAfterReload() {
@@ -159,9 +161,7 @@ async function resumeAfterReload() {
   if (resume === "game") {
     gameState.world.mode = resumeMode;
     
-    bootstrap();
-    
-    await window.liveRuntimePromise;
+    await bootstrap();
     
     document.body.classList.remove("boot-hidden");
     
