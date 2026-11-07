@@ -8,9 +8,9 @@ const appSource = fs.readFileSync(path.join(__dirname, "../js/app.js"), "utf8");
 const assetSource = fs.readFileSync(path.join(__dirname, "../js/asset-manager.js"), "utf8");
 
 function extractFunction(source, name, isMethod = false) {
-  const marker = isMethod ? `async ${name}(` : `function ${name}(`;
+  const marker = isMethod ? \`async \${name}(\` : \`function \${name}(\`;
   const start = source.indexOf(marker);
-  assert.notEqual(start, -1, `missing ${name}`);
+  assert.notEqual(start, -1, \`missing \${name}\`);
   const open = source.indexOf("{", start);
   let depth = 0;
   let quote = null;
@@ -20,11 +20,11 @@ function extractFunction(source, name, isMethod = false) {
     const char = source[i];
     if (quote) {
       if (escaped) escaped = false;
-      else if (char === "\\\\") escaped = true;
+      else if (char === "\\") escaped = true;
       else if (char === quote) quote = null;
       continue;
     }
-    if (char === "\"" || char === "'" || char === "`") {
+    if (char === "\"" || char === "'" || char === "\`") {
       quote = char;
       continue;
     }
@@ -34,7 +34,7 @@ function extractFunction(source, name, isMethod = false) {
       return isMethod ? declaration.replace(/^async /, "async function ") : declaration;
     }
   }
-  throw new Error(`unterminated function ${name}`);
+  throw new Error(\`unterminated function \${name}\`);
 }
 
 test("bootstrap shares one runtime promise across repeated callers", async () => {
@@ -51,7 +51,7 @@ test("bootstrap shares one runtime promise across repeated callers", async () =>
     appTrace: () => {},
     console
   };
-  vm.runInNewContext(declaration + "\\nthis.bootstrap = bootstrap;", context);
+  vm.runInNewContext(declaration + "\nthis.bootstrap = bootstrap;", context);
 
   const first = context.bootstrap();
   const second = context.bootstrap();
@@ -73,7 +73,7 @@ test("bootstrap rejects the shared promise and marks runtime unavailable on fail
     appTrace: () => {},
     console
   };
-  vm.runInNewContext(declaration + "\\nthis.bootstrap = bootstrap;", context);
+  vm.runInNewContext(declaration + "\nthis.bootstrap = bootstrap;", context);
 
   const first = context.bootstrap();
   const second = context.bootstrap();
@@ -95,7 +95,7 @@ test("fetchWithTimeout aborts a request that exceeds its deadline", async () => 
       });
     })
   };
-  vm.runInNewContext(declaration + "\\nthis.fetchWithTimeout = fetchWithTimeout;", context);
+  vm.runInNewContext(declaration + "\nthis.fetchWithTimeout = fetchWithTimeout;", context);
 
   await assert.rejects(
     context.fetchWithTimeout("/slow-resource", {}, 5),
@@ -104,11 +104,11 @@ test("fetchWithTimeout aborts a request that exceeds its deadline", async () => 
 });
 
 test("dynamic script and stylesheet loads have finite timeouts and clean pending state", () => {
-  assert.match(assetSource, /asset-manager\\.script\\.timeout/);
-  assert.match(assetSource, /asset-manager\\.css\\.timeout/);
+  assert.match(assetSource, /asset-manager\.script\.timeout/);
+  assert.match(assetSource, /asset-manager\.css\.timeout/);
   assert.match(assetSource, /script load timed out after 15000ms/);
   assert.match(assetSource, /CSS load timed out after 15000ms/);
-  assert.match(assetSource, /delete window\\.__originPendingResources\\[pendingId\\]/);
+  assert.match(assetSource, /delete window\.__originPendingResources\[pendingId\]/);
 });
 
 test("runtime error handlers are registered before reload recovery is attempted", () => {
