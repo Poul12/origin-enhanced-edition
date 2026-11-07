@@ -236,6 +236,8 @@ function updateFilterUI() {
 
 function destroyInventoryView() {
 
+  clearFoodTimerInterval();
+
   filterClickHandlers.forEach(({ element, handler }) => {
     element.removeEventListener("click", handler);
   });
