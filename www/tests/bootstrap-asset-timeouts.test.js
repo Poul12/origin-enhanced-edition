@@ -8,9 +8,9 @@ const appSource = fs.readFileSync(path.join(__dirname, "../js/app.js"), "utf8");
 const assetSource = fs.readFileSync(path.join(__dirname, "../js/asset-manager.js"), "utf8");
 
 function extractFunction(source, name, isMethod = false) {
-  const marker = isMethod ? \`async \${name}(\` : \`function \${name}(\`;
+  const marker = (isMethod ? "async " : "function ") + name + "(";
   const start = source.indexOf(marker);
-  assert.notEqual(start, -1, \`missing \${name}\`);
+  assert.notEqual(start, -1, "missing " + name);
   const open = source.indexOf("{", start);
   let depth = 0;
   let quote = null;
@@ -24,7 +24,7 @@ function extractFunction(source, name, isMethod = false) {
       else if (char === quote) quote = null;
       continue;
     }
-    if (char === "\"" || char === "'" || char === "\`") {
+    if (char === "\"" || char === "'" || char === String.fromCharCode(96)) {
       quote = char;
       continue;
     }
@@ -34,7 +34,7 @@ function extractFunction(source, name, isMethod = false) {
       return isMethod ? declaration.replace(/^async /, "async function ") : declaration;
     }
   }
-  throw new Error(\`unterminated function \${name}\`);
+  throw new Error("unterminated function " + name);
 }
 
 test("bootstrap shares one runtime promise across repeated callers", async () => {
