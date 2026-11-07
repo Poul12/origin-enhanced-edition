@@ -85,7 +85,7 @@ test("bootstrap rejects the shared promise and marks runtime unavailable on fail
 test("fetchWithTimeout aborts a request that exceeds its deadline", async () => {
   const declaration = extractFunction(assetSource, "fetchWithTimeout", true);
   const context = {
-    window,
+    window: { setTimeout, clearTimeout },
     AbortController,
     fetch: (_url, options) => new Promise((_resolve, reject) => {
       options.signal.addEventListener("abort", () => {
@@ -106,7 +106,7 @@ test("fetchWithTimeout aborts a request that exceeds its deadline", async () => 
 test("dynamic script and stylesheet loads have finite timeouts and clean pending state", () => {
   assert.match(assetSource, /asset-manager\.script\.timeout/);
   assert.match(assetSource, /asset-manager\.css\.timeout/);
-  assert.match(assetSource, /script load timed out after 15000ms/);
+  assert.match(assetSource, /Script load timed out after 15000ms/);
   assert.match(assetSource, /CSS load timed out after 15000ms/);
   assert.match(assetSource, /delete window\.__originPendingResources\[pendingId\]/);
 });
