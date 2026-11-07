@@ -111,6 +111,7 @@ test("dynamic script and stylesheet loads have finite timeouts and clean pending
   assert.match(assetSource, /Script load timed out after 15000ms/);
   assert.match(assetSource, /CSS load timed out after 15000ms/);
   assert.match(assetSource, /delete window\.__originPendingResources\[pendingId\]/);
+  assert.equal((assetSource.match(/(?:await )?fetch\(/g) || []).length, 1, "all AssetManager requests must use the timeout helper");
 });
 
 test("runtime error handlers are registered before reload recovery is attempted", () => {
