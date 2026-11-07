@@ -545,6 +545,31 @@ class AssetManager {
   // =====================================================
 
   
+  async fetchWithTimeout(url, options = {}, timeoutMs = 15000) {
+    const controller = new AbortController();
+    let timedOut = false;
+    const timer = window.setTimeout(() => {
+      timedOut = true;
+      controller.abort();
+    }, timeoutMs);
+
+    try {
+      return await fetch(url, {
+        ...options,
+        signal: controller.signal
+      });
+    } catch (error) {
+      if (timedOut) {
+        const timeoutError = new Error(`Request timed out after ${timeoutMs}ms: ${url}`);
+        timeoutError.name = "TimeoutError";
+        throw timeoutError;
+      }
+      throw error;
+    } finally {
+      window.clearTimeout(timer);
+    }
+  }
+
   async loadRemoteManifest() {
     const startedAt = performance.now();
     window.RuntimeDiagnostics?.record("asset-manager.manifest.start", { url: this.remoteManifestUrl });
@@ -553,7 +578,7 @@ class AssetManager {
 
     //  console.log("🌍 Loading remote manifest...");
 
-      const response = await fetch(this.remoteManifestUrl);
+      const response = await this.fetchWithTimeout(this.remoteManifestUrl);
 
       if (!response.ok) {
 
@@ -637,7 +662,7 @@ class AssetManager {
 
       try {
 
-        const response = await fetch(url);
+        const response = await this.fetchWithTimeout(url);
 
         if (!response.ok) {
           throw new Error(
@@ -1215,26 +1240,33 @@ class AssetManager {
       //script.src = `${localUrl}?v=${Date.now()}`;
       script.src = `${localUrl}?v=${version}`;
 
+      const loadTimeout = window.setTimeout(() => {
+        script.remove();
+        delete window.__originPendingResources[pendingId];
+        window.RuntimeDiagnostics?.record("asset-manager.script.timeout", {
+          path,
+          timeoutMs: 15000,
+          durationMs: Math.round(performance.now() - startedAt)
+        });
+        const error = new Error(`Script load timed out after 15000ms: ${path}`);
+        error.name = "TimeoutError";
+        reject(error);
+      }, 15000);
+
       script.onload = () => {
-
-        //console.log("✅ Script loaded:", path);
-
+        window.clearTimeout(loadTimeout);
         this.loadedScripts.add(path);
         delete window.__originPendingResources[pendingId];
         window.RuntimeDiagnostics?.record("asset-manager.script.complete", { path, durationMs: Math.round(performance.now() - startedAt) });
-
         resolve();
       };
       
       script.onerror = () => {
+        window.clearTimeout(loadTimeout);
         delete window.__originPendingResources[pendingId];
         window.RuntimeDiagnostics?.record("asset-manager.script.fail", { path, durationMs: Math.round(performance.now() - startedAt) });
-
-        console.error(
-          "❌ Failed loading script:", path);
-
-        reject(new Error(`Script load failed: ${path}`)
-        );
+        console.error("❌ Failed loading script:", path);
+        reject(new Error(`Script load failed: ${path}`));
       };
       
       document.body.appendChild(script);
@@ -1279,26 +1311,33 @@ class AssetManager {
       link.rel = "stylesheet";
       link.href = `${localUrl}?v=${version}`;
       
+      const loadTimeout = window.setTimeout(() => {
+        link.remove();
+        delete window.__originPendingResources[pendingId];
+        window.RuntimeDiagnostics?.record("asset-manager.css.timeout", {
+          path,
+          timeoutMs: 15000,
+          durationMs: Math.round(performance.now() - startedAt)
+        });
+        const error = new Error(`CSS load timed out after 15000ms: ${path}`);
+        error.name = "TimeoutError";
+        reject(error);
+      }, 15000);
+
       link.onload = () => {
-
-        //console.log("✅ CSS loaded:", path);
-
+        window.clearTimeout(loadTimeout);
         this.loadedCss.add(path);
         delete window.__originPendingResources[pendingId];
         window.RuntimeDiagnostics?.record("asset-manager.css.complete", { path, durationMs: Math.round(performance.now() - startedAt) });
-
         resolve();
       };
       
       link.onerror = () => {
+        window.clearTimeout(loadTimeout);
         delete window.__originPendingResources[pendingId];
         window.RuntimeDiagnostics?.record("asset-manager.css.fail", { path, durationMs: Math.round(performance.now() - startedAt) });
-
         console.error("❌ Failed loading CSS:", path);
-
-        reject(
-          new Error(`CSS load failed: ${path}`)
-        );
+        reject(new Error(`CSS load failed: ${path}`));
       };
       
       document.head.appendChild(link);
@@ -1749,7 +1788,7 @@ class AssetManager {
 
     try {
 
-      const response = await fetch(
+      const response = await this.fetchWithTimeout(
         `${this.remoteBaseUrl}/manifest.json?t=${Date.now()}`,
         {
           method: "HEAD",
