@@ -5,11 +5,11 @@ const vm = require("node:vm");
 const { test } = require("node:test");
 
 const gameStateSource = fs.readFileSync(
-  path.join(__dirname, "../gameState.js"),
+  path.join(__dirname, "../js/gameState.js"),
   "utf8"
 );
 const appSource = fs.readFileSync(
-  path.join(__dirname, "../app.js"),
+  path.join(__dirname, "../js/app.js"),
   "utf8"
 );
 const inventorySource = fs.readFileSync(
