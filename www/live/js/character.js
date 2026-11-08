@@ -309,9 +309,10 @@ function createArchetypeSection(archetype, affixes, isDisabled) {
     wrapper.classList.toggle("expanded");
     
     affixes.forEach(affix => {
-        if (affix.discovered) {
-            codex[affix.name].seen = true;
-        }
+        if (!affix.discovered) return;
+
+        const entry = ensureCombatAffixCodexEntry(affix.name);
+        if (entry) entry.seen = true;
     });
 
     wrapper.querySelector(".combat-archetype-header")
