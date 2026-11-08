@@ -38,6 +38,8 @@ function createCodexContext(initialCodex = {}) {
     ]
   };
 
+  context.window = context;
+
   vm.runInNewContext(
     functionSource(gameStateSource, "ensureCombatAffixCodexEntry") +
       "\n" +
@@ -134,9 +136,10 @@ test("equipping an item with a combat affix creates a missing codex entry safely
 test("codex section marks discovered affixes as seen through the safe-entry helper", () => {
   const section = functionSource(characterSource, "createArchetypeSection");
 
-  assert.ok(section.includes("ensureCombatAffixCodexEntry(affix.name)"));
+  assert.ok(section.includes("window.ensureCombatAffixCodexEntry(affix.name)"));
   assert.ok(section.includes("if (entry) entry.seen = true"));
   assert.ok(!section.includes("codex[affix.name].seen = true"));
+  assert.ok(gameStateSource.includes("window.ensureCombatAffixCodexEntry = ensureCombatAffixCodexEntry;"));
 });
 
 test("codex is synchronized after runtime loading on both normal startup and reload recovery", () => {
@@ -148,4 +151,15 @@ test("codex is synchronized after runtime loading on both normal startup and rel
   const resumeBootstrap = appSource.indexOf("await bootstrap();", resumeStart);
   const resumeSync = appSource.indexOf("setAffixesForCodex();", resumeBootstrap);
   assert.ok(resumeBootstrap > resumeStart && resumeSync > resumeBootstrap);
+});
+
+test("static codex provider and startup scripts use a cache-busting version", () => {
+  const indexSource = fs.readFileSync(path.join(__dirname, "../index.html"), "utf8");
+  assert.match(indexSource, /<script src="js\/gameState\.js\?v=20261108-affix-codex"><\/script>/);
+  assert.match(indexSource, /<script src="js\/app\.js\?v=20261108-affix-codex"><\/script>/);
+});
+
+test("dynamic runtime callers use the explicit window codex API", () => {
+  assert.ok(inventorySource.includes("window.ensureCombatAffixCodexEntry(affixId, stat.archetype)"));
+  assert.ok(characterSource.includes("window.ensureCombatAffixCodexEntry(affix.name)"));
 });

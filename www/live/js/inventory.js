@@ -557,7 +557,7 @@ function discoverItem(item) {
      const affixId = stat.id;
      //let affix = gameState.char.discoveredCombatAffixes[affixId];
 
-      const entry = ensureCombatAffixCodexEntry(affixId, stat.archetype);
+      const entry = window.ensureCombatAffixCodexEntry(affixId, stat.archetype);
       if (!entry) return;
 
       const isDiscovered = entry.discovered === true;

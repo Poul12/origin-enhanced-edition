@@ -796,6 +796,12 @@ function ensureCombatAffixCodexEntry(affixId, archetype = null) {
   return entry;
 }
 
+// Publiczny punkt dostępu dla skryptów runtime ładowanych dynamicznie.
+// Plik jest też uruchamiany w testach Node.js, gdzie obiekt window nie istnieje.
+if (typeof window !== "undefined") {
+  window.ensureCombatAffixCodexEntry = ensureCombatAffixCodexEntry;
+}
+
 function setAffixesForCodex() {
   if (!gameState?.char || !Array.isArray(baseBonuses)) return;
 
