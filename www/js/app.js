@@ -88,7 +88,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   await bootstrap();
   appTrace("live-runtime.wait.complete", { durationMs: Math.round(performance.now() - runtimeWaitStartedAt) });
 
-  //setAffixesForCodex();
+  setAffixesForCodex();
   
   document.body.classList.remove("boot-hidden");
   stopStartupWatchdog();
@@ -162,6 +162,7 @@ async function resumeAfterReload() {
     gameState.world.mode = resumeMode;
     
     await bootstrap();
+    setAffixesForCodex();
     
     document.body.classList.remove("boot-hidden");
     
