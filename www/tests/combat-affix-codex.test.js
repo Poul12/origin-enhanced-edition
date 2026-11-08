@@ -38,6 +38,8 @@ function createCodexContext(initialCodex = {}) {
     ]
   };
 
+  context.window = context;
+
   vm.runInNewContext(
     functionSource(gameStateSource, "ensureCombatAffixCodexEntry") +
       "\n" +
