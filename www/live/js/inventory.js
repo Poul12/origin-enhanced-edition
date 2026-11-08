@@ -557,16 +557,13 @@ function discoverItem(item) {
      const affixId = stat.id;
      //let affix = gameState.char.discoveredCombatAffixes[affixId];
 
-      const codex = gameState.char.combatAffixCodex;
-      
-     // console.error(`affixId, discovered before add`, affixId, gameState.char.combatAffixCodex[affixId]?.discovered);
+      const entry = ensureCombatAffixCodexEntry(affixId, stat.archetype);
+      if (!entry) return;
 
-     //const isDiscovered = gameState.char.discoveredCombatAffixes.has(affixId);
-     const isDiscovered = gameState.char.combatAffixCodex[affixId]?.discovered || false;
-      
-     if (!isDiscovered) {
-       //gameState.char.discoveredCombatAffixes.add(affixId);
-       gameState.char.combatAffixCodex[affixId].discovered = true;
+      const isDiscovered = entry.discovered === true;
+
+      if (!isDiscovered) {
+        entry.discovered = true;
        /*let affix = gameState.char.discoveredCombatAffixes[affixId];
        console.error(`affixId, discovered before add`, affixId, affix);
 

@@ -763,19 +763,45 @@ function getBaseCharacter() {
   mergeDeep(gameState, parsed);
 }*/
 
-function setAffixesForCodex() {
-  //console.log(`enter set affixes`);
-  for (const bonus of baseBonuses) {
+function ensureCombatAffixCodexEntry(affixId, archetype = null) {
+  if (!gameState?.char || !affixId) return null;
 
-    if (bonus.category !== "combat") continue;
-    //console.log(`set affixes`, bonus.id);
+  let codex = gameState.char.combatAffixCodex;
+  if (!codex || typeof codex !== "object" || Array.isArray(codex)) {
+    codex = {};
+    gameState.char.combatAffixCodex = codex;
+  }
 
-    gameState.char.combatAffixCodex[bonus.id] = {
-        id: bonus.id,
-        archetype: bonus.archetype,
-        discovered: false,
-        seen: false,
+  const bonus = Array.isArray(baseBonuses)
+    ? baseBonuses.find(entry => entry.id === affixId && entry.category === "combat")
+    : null;
+
+  let entry = codex[affixId];
+  if (!entry || typeof entry !== "object" || Array.isArray(entry)) {
+    entry = {
+      id: affixId,
+      archetype: bonus?.archetype ?? archetype ?? null,
+      discovered: false,
+      seen: false
     };
+    codex[affixId] = entry;
+    return entry;
+  }
+
+  if (!entry.id) entry.id = affixId;
+  if (!entry.archetype) entry.archetype = bonus?.archetype ?? archetype ?? null;
+  if (typeof entry.discovered !== "boolean") entry.discovered = false;
+  if (typeof entry.seen !== "boolean") entry.seen = false;
+
+  return entry;
+}
+
+function setAffixesForCodex() {
+  if (!gameState?.char || !Array.isArray(baseBonuses)) return;
+
+  for (const bonus of baseBonuses) {
+    if (bonus.category !== "combat" || !bonus.id) continue;
+    ensureCombatAffixCodexEntry(bonus.id, bonus.archetype);
   }
 }
 
