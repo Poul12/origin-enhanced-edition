@@ -283,6 +283,18 @@
           durationMs: Math.round(entry.duration),
           transferSize: entry.transferSize || 0
         })),
+      pendingResources: Object.keys(window.__originPendingResources || {})
+        .slice(-100)
+        .map(id => {
+          const entry = window.__originPendingResources[id] || {};
+          return {
+            id: limitText(id, 200),
+            type: limitText(entry.type || "", 40),
+            path: limitText(entry.path || "", 500),
+            phase: limitText(entry.phase || "", 80),
+            startedAt: limitText(entry.startedAt || "", 80)
+          };
+        }),
       errors: state.errors.slice(),
       lastEvents: state.events.slice()
     };
