@@ -311,7 +311,7 @@ function createArchetypeSection(archetype, affixes, isDisabled) {
     affixes.forEach(affix => {
         if (!affix.discovered) return;
 
-        const entry = ensureCombatAffixCodexEntry(affix.name);
+        const entry = window.ensureCombatAffixCodexEntry(affix.name);
         if (entry) entry.seen = true;
     });
 
