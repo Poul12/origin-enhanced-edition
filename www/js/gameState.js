@@ -796,6 +796,9 @@ function ensureCombatAffixCodexEntry(affixId, archetype = null) {
   return entry;
 }
 
+// Publiczny punkt dostępu dla skryptów runtime ładowanych dynamicznie.
+window.ensureCombatAffixCodexEntry = ensureCombatAffixCodexEntry;
+
 function setAffixesForCodex() {
   if (!gameState?.char || !Array.isArray(baseBonuses)) return;
 
