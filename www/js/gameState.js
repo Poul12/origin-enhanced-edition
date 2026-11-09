@@ -964,6 +964,8 @@ function getLastMode() {
 }
 
 function saveGame() {
+  if (appState.recoveryNeeded) return;
+
   const mode = gameState.world?.mode;
   if (mode === "sandbox") return;
 
