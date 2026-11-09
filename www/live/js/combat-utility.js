@@ -1174,17 +1174,27 @@ function startEnemyFinisherWindup(enemy, slotIndex) {
     duration: CRITICAL_FINISHER_TIME
   });
   
-  enemy.finisherTimeout = setTimeout(() => {
-    if(!gameState.combat.flags.isBlocked) {
-      //console.error(`perform finisher timeout, isCritical`, gameState.combat.flags.isCritical);
+  const timeoutId = setTimeout(() => {
+    if (enemy.finisherTimeout !== timeoutId) return;
+    enemy.finisherTimeout = null;
 
-      performEnemyFinisherAttack(enemy, slotIndex);
-      
-      stopTimedBlockUI();
-      stopBleedTimingUI();
-      stopSpearControlUI();
-    }
+    const world = gameState.world;
+    const isCurrentCombatTarget =
+      world.inCombat &&
+      world.selectedSlotIndex === slotIndex &&
+      world.exploreOptions[slotIndex]?.enemyData === enemy;
+
+    if (!isCurrentCombatTarget || !gameState.combat.flags.isCritical ||
+        gameState.combat.flags.isBlocked) return;
+
+    performEnemyFinisherAttack(enemy, slotIndex);
+
+    stopTimedBlockUI();
+    stopBleedTimingUI();
+    stopSpearControlUI();
   }, CRITICAL_FINISHER_TIME);
+
+  enemy.finisherTimeout = timeoutId;
 }
 
 function performEnemyFinisherAttack(enemy, slotIndex) {
@@ -1267,24 +1277,32 @@ function exitCriticalState() {
 function applyEnemyRecoveryAfterFinisher(enemy, slotIndex) {
   const bar = document.querySelector(".enemy-cooldown-bar");
   const fill = document.getElementById(`enemy-cooldown-fill-${slotIndex}`);
-
-  const RECOVERY_TIME = 1500; // 2 sekundy
+  const RECOVERY_TIME = 1500;
 
   stopEnemyAttack(slotIndex);
 
-  bar.classList.add("recovery");
-  fill.classList.add("recovery");
+  if (bar) bar.classList.add("recovery");
+  if (fill) fill.classList.add("recovery");
 
-  //updateCooldownBar(0, slotIndex);
-  
-  setTimeout(() => {
-    if (!gameState.combat.flags.isCritical) {
-      bar.classList.remove("recovery");
-      fill.classList.remove("recovery");
+  const timeoutId = setTimeout(() => {
+    if (enemy.recoveryTimeout !== timeoutId) return;
+    enemy.recoveryTimeout = null;
 
-      startEnemyAttackTimeline(enemy, slotIndex);
-    }
+    const world = gameState.world;
+    const isCurrentCombatTarget =
+      world.inCombat &&
+      world.selectedSlotIndex === slotIndex &&
+      world.exploreOptions[slotIndex]?.enemyData === enemy;
+
+    if (!isCurrentCombatTarget || gameState.combat.flags.isCritical) return;
+
+    if (bar) bar.classList.remove("recovery");
+    if (fill) fill.classList.remove("recovery");
+
+    startEnemyAttackTimeline(enemy, slotIndex);
   }, RECOVERY_TIME);
+
+  enemy.recoveryTimeout = timeoutId;
 }
 
 function grantCriticalLastStand() {
