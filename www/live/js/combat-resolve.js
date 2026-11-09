@@ -1477,6 +1477,10 @@ async function onFleeSuccess(player, enemy, slotIndex, msg = false){
   // Zamknij sekwencję walki
   world.inCombat = false;
   world.selectedSlotIndex = null;
+
+  // Zatrzymaj koszt blokowania od razu, ale pozostaw pełne sprzątanie
+  // turnOffShieldMode() w dotychczasowym miejscu po animacji ucieczki.
+  isBlocking = false;
   
   // UI
   //showInfoAlert(`Udało Ci się uciec! -${loss} złota. Skille zablokowane na ${FLEE_CFG.FATIGUE_SEC}s.`);
