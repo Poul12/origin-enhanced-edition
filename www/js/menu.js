@@ -622,6 +622,7 @@ function startNewGame(mode) {
 
 function newCampaign(selectedClass, characterName) {
   localStorage.removeItem("save_story");
+  appState.recoveryNeeded = false;
 
   gameState = createNewGameState();
   
