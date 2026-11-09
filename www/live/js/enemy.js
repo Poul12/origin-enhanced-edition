@@ -1683,15 +1683,23 @@ function intentDealsAttack(intent) {
 }
 
 function applyVulnerable(enemy, duration) {
+  if (enemy.vulnerableTimeout) {
+    clearTimeout(enemy.vulnerableTimeout);
+    enemy.vulnerableTimeout = null;
+  }
+
   enemy.vulnerable = true;
-      
   updateStatusEnemyUI(enemy);
-      
-  setTimeout(() => {
-    enemy.vulnerable = false; 
+
+  const timeoutId = setTimeout(() => {
+    if (enemy.vulnerableTimeout !== timeoutId) return;
+
+    enemy.vulnerableTimeout = null;
+    enemy.vulnerable = false;
     updateStatusEnemyUI(enemy);
   }, duration);
-      
+
+  enemy.vulnerableTimeout = timeoutId;
 }
 
 /*function showEnemyIntentUI(enemy) {
@@ -1710,12 +1718,17 @@ function applyVulnerable(enemy, duration) {
 }*/
 
 function resetEnemyAI(enemy) {
+  if (enemy.vulnerableTimeout) {
+    clearTimeout(enemy.vulnerableTimeout);
+    enemy.vulnerableTimeout = null;
+  }
+
   enemy.intent = null;
   enemy.canBeInterrupted = false;
   enemy.vulnerable = false;
-  enemy.isCharged = false; 
+  enemy.isCharged = false;
   enemy.isCharging = false;
-  enemy.isGuarding = false;      
+  enemy.isGuarding = false;
 }
 
 function performEnemyAttack(enemy, slotIndex, options = {}) {  
@@ -1924,6 +1937,17 @@ function performEnemyAttack(enemy, slotIndex, options = {}) {
 function stopEnemyAttack(slotIndex) {
   const fill = document.getElementById(`enemy-cooldown-fill-${slotIndex}`);
   const enemy = gameState.world.exploreOptions[slotIndex]?.enemyData;
+
+  if (enemy?.finisherTimeout) {
+    clearTimeout(enemy.finisherTimeout);
+    enemy.finisherTimeout = null;
+  }
+
+  if (enemy?.recoveryTimeout) {
+    clearTimeout(enemy.recoveryTimeout);
+    enemy.recoveryTimeout = null;
+  }
+
   //const fill = enemy.dom.cooldownFill;
 
   /*console.warn("STOP ENEMY ATTACK CALLED", {
