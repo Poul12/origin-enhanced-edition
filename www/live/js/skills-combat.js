@@ -1244,6 +1244,22 @@ function stopWhirlwind() {
   }
 }
 
+const skillEffectTimeouts = new Map();
+
+function scheduleSkillEffectTimeout(key, callback, durationMs) {
+  const previousTimeout = skillEffectTimeouts.get(key);
+  if (previousTimeout) clearTimeout(previousTimeout);
+
+  const timeoutId = setTimeout(() => {
+    if (skillEffectTimeouts.get(key) !== timeoutId) return;
+    skillEffectTimeouts.delete(key);
+    callback();
+  }, durationMs);
+
+  skillEffectTimeouts.set(key, timeoutId);
+  return timeoutId;
+}
+
 function useSkill(skillId, player, enemy) {
   const effects = getSkillEffectsAtLevel(skillId);
   //console.log("Skill effects: ", effects, skillId);
@@ -1485,9 +1501,8 @@ function useSkill(skillId, player, enemy) {
         gameState.combat.counterStrike.attackValue = actualValue;
         //gainStamina(staminaRecovered);
       
-        setTimeout(() => {
+        scheduleSkillEffectTimeout("counter-strike", () => {
           gameState.combat.counterStrike.isActive = false;
-          //updateStatusPlayerUI(enemy);
         }, durationMs);
       
          
@@ -1546,7 +1561,7 @@ function useSkill(skillId, player, enemy) {
       
         spawnEffect("blood_frenzy", player.dom.slot);
       
-        setTimeout(() => {
+        scheduleSkillEffectTimeout("blood-frenzy", () => {
           gameState.combat.bloodFrenzy.isActive = false;
           gameState.combat.bloodFrenzy.atkSpd = 0;
           updateStatusPlayerUI(enemy);
@@ -1579,9 +1594,8 @@ function useSkill(skillId, player, enemy) {
           }
         }
       
-        setTimeout(() => {
+        scheduleSkillEffectTimeout("blood-pact", () => {
           gameState.combat.bloodPact.isActive = false;
-           
         }, 5500);
       
         break;
@@ -1643,7 +1657,7 @@ function useSkill(skillId, player, enemy) {
       
         spawnEffect("weak_point_apply", enemy.dom.slot);
       
-        setTimeout(() => {
+        scheduleSkillEffectTimeout("weak-point", () => {
           gameState.combat.weakPoint.isActive = false;
           updateStatusPlayerUI(enemy);
         }, durationMs);
@@ -1668,7 +1682,7 @@ function useSkill(skillId, player, enemy) {
       
         spawnEffect("blood_reaver", player.dom.slot);
       
-        setTimeout(() => {
+        scheduleSkillEffectTimeout("blood-reaver", () => {
           gameState.combat.bloodReaver.isActive = false;
           updateStatusPlayerUI(enemy);
         }, durationMs);
@@ -1754,7 +1768,7 @@ function useSkill(skillId, player, enemy) {
 
         spawnEffect("spear_discipline_activate", player.dom.slot);
    
-        setTimeout(() => {
+        scheduleSkillEffectTimeout("spear-discipline", () => {
           gameState.combat.spearDiscipline.isActive = false;
           updateStatusPlayerUI(enemy);
         }, durationMs);
@@ -1824,7 +1838,7 @@ function useSkill(skillId, player, enemy) {
       
         spawnEffect("precision_activate", player.dom.slot);
       
-        setTimeout(() => {
+        scheduleSkillEffectTimeout("precision", () => {
           gameState.combat.precision.buffMultiplier = 1;
         }, durationMs);
       
@@ -1893,10 +1907,9 @@ function useSkill(skillId, player, enemy) {
           spawnEffect("sweep", enemy.dom.slot);
         }
  
-        setTimeout(() => {
+        scheduleSkillEffectTimeout("sweep", () => {
           gameState.combat.sweep.isActive = false;
           gameState.combat.sweep.windup = 0;
-          //updateStatusPlayerUI(enemy);
         }, durationMs);
       
         break;
@@ -1913,10 +1926,9 @@ function useSkill(skillId, player, enemy) {
       
         //updateStatusPlayerUI(enemy);
         showPercentDebuff(`dmg`, 0); 
-        setTimeout(() => {
+        scheduleSkillEffectTimeout("iron-will", () => {
           gameState.combat.ironWill.isActive = false;
           gameState.combat.ironWill.cost = 1;
-          //updateStatusPlayerUI(enemy);
           const { attackPenalty: penaltyDmg } = computeShieldPenalties(player.blockPower);
           const minusValue = (0 - 1) + (1 - penaltyDmg);
           showPercentDebuff(`dmg`, minusValue * 100);
@@ -1984,14 +1996,11 @@ function useSkill(skillId, player, enemy) {
       
         spawnEffect("last_bastion_activate", player.dom.slot);
       
-        setTimeout(() => {
+        scheduleSkillEffectTimeout("last-bastion", () => {
           gameState.combat.lastBastion.isActive = false;
           gameState.combat.lastBastion.attackValue = 0;
-          
-          updateStatusPlayerUI(enemy); 
-          
+          updateStatusPlayerUI(enemy);
           gameState.resources.staminaState.disabled = false;
-          //console.log(`end of last bastion`, lastBastionDuration);
         }, lastBastionDuration * 1000);
       
       break;
