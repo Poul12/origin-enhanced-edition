@@ -645,6 +645,28 @@ function getSpearWindows(player) {
 
 
 function resolveSpearControl(enemy) {
+  if (!enemy) return;
+
+  // Older or restored enemy snapshots may not contain the current spear state.
+  // Critical Warden rescue must still be resolvable without crashing the battle.
+  if (!enemy.spear || typeof enemy.spear !== "object") {
+    enemy.spear = {
+      stacks: 0,
+      slow: 0,
+      windupBonus: 0,
+      pushback: 0,
+      expiresAt: 0,
+      stackControl: 0,
+    };
+  } else {
+    if (!Number.isFinite(enemy.spear.stacks)) enemy.spear.stacks = 0;
+    if (!Number.isFinite(enemy.spear.slow)) enemy.spear.slow = 0;
+    if (!Number.isFinite(enemy.spear.windupBonus)) enemy.spear.windupBonus = 0;
+    if (!Number.isFinite(enemy.spear.pushback)) enemy.spear.pushback = 0;
+    if (!Number.isFinite(enemy.spear.expiresAt)) enemy.spear.expiresAt = 0;
+    if (!Number.isFinite(enemy.spear.stackControl)) enemy.spear.stackControl = 0;
+  }
+
   const result = getTimingResult(); // reuse system
   const now = getGameTime();
 
