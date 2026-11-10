@@ -1106,6 +1106,7 @@ function enterCriticalState() {
   const style = getCurrentWeaponStyle();
 
   combat.flags.isCritical = true;
+  combat.flags.finisherResolved = false;
   gameState.combat.flags.isBlocked = false;
   
   playerBlock.cooldownUntil = 0;
@@ -1202,7 +1203,14 @@ function performEnemyFinisherAttack(enemy, slotIndex) {
   const combat = gameState.combat;
   const player = getPlayerStats();
   
-  if (!combat.flags.isCritical) return;
+  if (!combat.flags.isCritical || combat.flags.finisherResolved) return;
+
+  // Prevent the player's rescue input and the enemy timeout from resolving twice.
+  combat.flags.finisherResolved = true;
+  if (enemy.finisherTimeout) {
+    clearTimeout(enemy.finisherTimeout);
+    enemy.finisherTimeout = null;
+  }
 
   let dmg = applyBlock(enemy.dmg, player, enemy);
   
