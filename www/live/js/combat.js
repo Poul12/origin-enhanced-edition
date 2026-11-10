@@ -816,7 +816,8 @@ function renderCombat(renderPotion = false) {
 function handleAttack() {
   if (!canPerformAction(`attack`)) return;
   
-  if (playerAttackCooldown.isStunActive) {
+  // Critical rescue inputs must not be discarded by the ordinary attack stun.
+  if (playerAttackCooldown.isStunActive && !gameState.combat.flags.isCritical) {
     return;
   }
   
