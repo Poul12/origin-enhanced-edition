@@ -827,6 +827,12 @@ function handleAttack() {
   const now = getGameTime();
 
   let isDefShield = false;
+
+  // Critical State: Warden's attack input resolves the active spear timing bar.
+  if (gameState.combat.flags.isCritical && getCurrentWeaponStyle() === "warden") {
+    resolveSpearControl(enemy);
+    return;
+  }
   
   if (gameState.combat.armorBreakTimingActive) {
     //console.error(`armor break attack`);
@@ -848,12 +854,7 @@ function handleAttack() {
   
   if (gameState.combat.bleedTimingActive) {
     handleBleedAttack(enemy, player);
-    
-   /* attack(isDefShield);
-    spawnEffect("basic", enemy.dom.slot);
-    playHit(`enemy`);*/
-
-    //return;
+    return;
   }
   
   if (enemy.bleedReady) {
