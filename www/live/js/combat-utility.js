@@ -651,6 +651,7 @@ function consumeGuardStacksOnAttack(damage) {
   
   if (gameState.combat.playerBlock.active) return damage;
   
+  const hadGuardStacks = guardStacks > 0;
   let bonus = 1; // +15% per stack
   
   if(guardStacks == 1) bonus = 1.3;
@@ -702,7 +703,7 @@ function consumeGuardStacksOnAttack(damage) {
   //console.error(`consumeGuardStacksOnAttack block bonus`, bonus);
   
   consumeGuardStacks(guardStacks);
-  saveGame();
+  if (hadGuardStacks) saveGame();
   
   return Math.floor(damage * bonus);
 }
