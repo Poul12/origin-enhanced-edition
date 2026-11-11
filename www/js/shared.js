@@ -1564,13 +1564,14 @@ function renderHpBar(hp, maxHp) {
     }
   }
   
-  const hpOrb = document?.getElementById("hp-orb-fill");
+  const hpOrb = document.getElementById("hp-orb-fill");
   const orb = document.querySelector(".hp-orb");
+  const orbLiquid = document.querySelector(".hp-orb .orb-liquid");
   const body = document.body;
 
-  if (hpOrb && maxHp) {
+  if (hpOrb && orb && orbLiquid && maxHp) {
     const percent = Math.min(100, Math.round(100 * hp / maxHp));
-    document.querySelector(".hp-orb .orb-liquid").style.height = percent + "%";
+    orbLiquid.style.height = percent + "%";
     orb.classList.toggle("full", percent >= 99);
 
     const isLowNow = percent < 35;
