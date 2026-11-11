@@ -254,6 +254,7 @@ function getBaseCombatState() {
       value: 0,
     },
     activeRingMode: null,
+    guardStacks: 0,
     armorBreakTimingActive: false,
     bleedTimingActive: false,
     perfectChainStacks: 0,
