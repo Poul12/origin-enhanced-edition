@@ -1045,7 +1045,7 @@ function restoreCombat() {
 
   restoreGuardStacks();
   restoreDefensiveStanceRuntime();
-  restoreSkillCooldowns();
+  if (!gameState.combat.flags.isCritical) restoreSkillCooldowns();
 
   if (gameState.combat.activeRingMode === "spear") {
     updateSpearRing(enemy);
@@ -1710,7 +1710,7 @@ function restoreDefensiveStanceRuntime() {
   const combat = gameState.combat;
   const playerBlock = combat.playerBlock;
 
-  if (!playerBlock?.active || playerBlock.mode !== "defensive") return false;
+  if (combat.flags.isCritical || !playerBlock?.active || playerBlock.mode !== "defensive") return false;
 
   // Restore runtime-only state without replaying activation effects or reapplying bonuses.
   isBlocking = true;
