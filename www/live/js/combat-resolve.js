@@ -1017,7 +1017,9 @@ async function onFleeSuccess(player, enemy, slotIndex, msg = false, options = {}
   if (noPenalty) {
     const energyState = gameState.resources.energyState;
     const recordedRefund = combat.interruptedCombatEnergyRefund;
-    const fallbackRefund = getEnergyCostForSlot(world.exploreOptions[slotIndex].type);
+    const fallbackRefund = energyState.noEnergyUse
+      ? 0
+      : getEnergyCostForSlot(world.exploreOptions[slotIndex].type);
     const energyRefund = Number.isFinite(recordedRefund)
       ? recordedRefund
       : fallbackRefund;
