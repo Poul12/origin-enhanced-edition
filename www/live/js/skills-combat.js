@@ -21,6 +21,8 @@ function restoreSkillCooldowns() {
  // console.error(`enter for in restore skills cooldown`);
    
   for (const skillId in skillCooldowns) {
+    if (skillCooldownState[skillId]) continue;
+
     const endTime = skillCooldowns[skillId];
     const remainingMs = endTime - now;
     //console.error(`remainingMs in restore skills cooldown`, remainingMs);
