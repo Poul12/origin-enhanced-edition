@@ -907,26 +907,19 @@ function showInterruptedCombatPrompt() {
     bootGame();
   });
 
-  endButton.addEventListener("click", async () => {
+  endButton.addEventListener("click", () => {
     if (closing || endButton.disabled) return;
     resumeButton.disabled = true;
     endButton.disabled = true;
 
-    try {
-      await endInterruptedCombatWithoutPenalty();
-      closePrompt();
-    } catch (error) {
-      console.error("Interrupted combat cleanup failed", error);
-      resumeButton.disabled = false;
-      endButton.disabled = false;
-      showInfoAlert(
-        recoveryLanguage === "pl"
-          ? "Nie udało się bezpiecznie zakończyć walki. Zapis nie został celowo usunięty."
-          : "The interrupted battle could not be safely ended. The save was not intentionally removed.",
-        3500,
-        true
-      );
-    }
+    const mode = gameState.world.mode || getLastMode();
+    if (mode === "expedition") setExpeditionUI();
+    else setStoryUI();
+
+    appState.endInterruptedCombatOnEnter = true;
+    closePrompt();
+    playSound("open-slot", 0.4);
+    bootGame();
   });
 
   popup.addEventListener("click", event => {
