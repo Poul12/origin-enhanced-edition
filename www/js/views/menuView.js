@@ -769,6 +769,10 @@ async function enterGame() {
 
     // Do not reveal the game layer until the map view and its popup are ready.
     await navigate("map");
+    if (appState.resumeInterruptedCombatOnEnter) {
+      appState.resumeInterruptedCombatOnEnter = false;
+      await navigate("battle");
+    }
     game.classList.add("ready");
 
     return;
@@ -910,6 +914,10 @@ async function enterGame() {
     // Keep the boot loader visible until the complete navigation has finished.
     launcherTrace("map-navigation.start");
     await navigate("map");
+    if (appState.resumeInterruptedCombatOnEnter) {
+      appState.resumeInterruptedCombatOnEnter = false;
+      await navigate("battle");
+    }
     launcherTrace("map-navigation.complete");
 
     hideGameLoader();
