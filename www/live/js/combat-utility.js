@@ -626,6 +626,22 @@ function applyDevensiveBlockRegen(deltaTime) {
 
 let guardStacks = 0;
 
+function restoreGuardStacks() {
+  const combat = gameState.combat;
+  const savedStacks = Number.isFinite(combat.guardStacks)
+    ? combat.guardStacks
+    : Math.max(
+        combat.guardBonus?.critBonus?.stacks || 0,
+        combat.guardBonus?.defBonus?.stacks || 0,
+        combat.guardBonus?.dmgBonus?.stacks || 0
+      );
+
+  guardStacks = Math.max(0, Math.min(DEFENSIVE_GUARD_STACK_MAX, Math.floor(savedStacks)));
+  combat.guardStacks = guardStacks;
+  updateGuardUI(guardStacks);
+  return guardStacks;
+}
+
 function consumeGuardStacksOnAttack(damage) {
   //console.error(`consumeGuardStacksOnAttack block active`, gameState.combat.playerBlock.active);
 
