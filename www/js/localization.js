@@ -39,11 +39,11 @@ function detectLanguage() {
   const saved = localStorage.getItem("lang");
 
   if (saved) {
-    currentLang = saved;
+    currentLang = saved.toLowerCase().startsWith("pl") ? "pl" : "en";
     return;
   }
 
-  const browserLang = navigator.language.toLowerCase();
+  const browserLang = (navigator.language || "en").toLowerCase();
 
   currentLang = browserLang.startsWith("pl") ? "pl" : "en";
 }
