@@ -1876,7 +1876,8 @@ function activateDefensiveStance() {
   if (gameState.char.combatAffixes[`bleed_duration_while_blocking`]) {
     gameState.combat.blockingBonus.bleedBonus.isActive = true;
   }
-  
+
+  saveGame();
   
   /*if(!combatState.isCritical) {
     lockActions({ duration: 230, reason: "block", allow: [] });
@@ -1918,7 +1919,8 @@ function deactivateDefensiveStance() {
     gameState.combat.blockingBonus.bleedBonus.isActive = false;
   }
 
-  
+  saveGame();
+
   //console.error("Postawa Obronna WYŁĄCZONA");
 }
 
