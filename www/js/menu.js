@@ -870,13 +870,13 @@ function showInterruptedCombatPrompt() {
   popup.setAttribute("aria-labelledby", "interrupted-combat-title");
 
   popup.innerHTML = `
-    <div class="confirm-content interrupted-combat-content">
+    <div class="confirm-content special-slot interrupted-combat-content">
       <div class="interrupted-combat-icon">⚔</div>
       <h2 id="interrupted-combat-title">${recoveryTexts.title}</h2>
       <p>${recoveryTexts.message}</p>
       <div class="custom-confirm-buttons interrupted-combat-buttons">
-        <button class="item-button" type="button" disabled>${recoveryTexts.resume}</button>
-        <button class="item-button" type="button" disabled>${recoveryTexts.end}</button>
+        <button id="interrupted-combat-yes" type="button" disabled>${recoveryTexts.resume}</button>
+        <button id="interrupted-combat-no" type="button" disabled>${recoveryTexts.end}</button>
       </div>
       <p class="interrupted-combat-stage-note">${recoveryTexts.note}</p>
     </div>
