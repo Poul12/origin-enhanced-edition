@@ -1913,6 +1913,7 @@ function performEnemyAttack(enemy, slotIndex, options = {}) {
           //showReward(`${t("stack3_reward")}`);
        }       
     }    
+    if (guardStacks > 0) saveGame();
         
        // Napór Presja Przewaga
    // Iskra Impuls Przeciążenie
