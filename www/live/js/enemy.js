@@ -1840,6 +1840,8 @@ function performEnemyAttack(enemy, slotIndex, options = {}) {
        playHit(`player`); 
     }
         
+    const guardStacksBefore = guardStacks;
+
     if (playerBlock.mode === "defensive" && playerBlock.active) {
       const gainedDef = gameState.char.combatAffixes[`def_per_guard_stack`]?.value;
       const gainedDmg = gameState.char.combatAffixes[`dmg_per_guard_stack`]?.value;
@@ -1913,7 +1915,7 @@ function performEnemyAttack(enemy, slotIndex, options = {}) {
           //showReward(`${t("stack3_reward")}`);
        }       
     }    
-    if (guardStacks > 0) saveGame();
+    if (guardStacks > guardStacksBefore) saveGame();
         
        // Napór Presja Przewaga
    // Iskra Impuls Przeciążenie
