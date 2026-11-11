@@ -817,6 +817,24 @@ function setStoryUI(){
   startGame();
 }*/
 
+// Keep recovery-prompt strings available even when an older cached
+// localization-ui.js is still served by the browser.
+Object.assign(LANG.en, {
+  interrupted_combat_title: "INTERRUPTED BATTLE",
+  interrupted_combat_message: "Your previous battle was interrupted. What would you like to do?",
+  interrupted_combat_resume: "RESUME BATTLE",
+  interrupted_combat_end: "END BATTLE",
+  interrupted_combat_stage_note: "The choices will be enabled when combat recovery is complete."
+});
+
+Object.assign(LANG.pl, {
+  interrupted_combat_title: "PRZERWANA WALKA",
+  interrupted_combat_message: "Poprzednia walka została przerwana. Co chcesz zrobić?",
+  interrupted_combat_resume: "WZNÓW WALKĘ",
+  interrupted_combat_end: "ZAKOŃCZ WALKĘ",
+  interrupted_combat_stage_note: "Wybór będzie dostępny po ukończeniu obsługi odzyskiwania walki."
+});
+
 function showInterruptedCombatPrompt() {
   document.getElementById("interrupted-combat-popup")?.remove();
 
