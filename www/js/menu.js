@@ -817,12 +817,44 @@ function setStoryUI(){
   startGame();
 }*/
 
+function showInterruptedCombatPrompt() {
+  document.getElementById("interrupted-combat-popup")?.remove();
+
+  const popup = document.createElement("div");
+  popup.id = "interrupted-combat-popup";
+  popup.className = "popup interrupted-combat-popup";
+  popup.setAttribute("role", "dialog");
+  popup.setAttribute("aria-modal", "true");
+  popup.setAttribute("aria-labelledby", "interrupted-combat-title");
+
+  popup.innerHTML = `
+    <div class="confirm-content interrupted-combat-content">
+      <div class="interrupted-combat-icon">⚔</div>
+      <h2 id="interrupted-combat-title">${t("interrupted_combat_title")}</h2>
+      <p>${t("interrupted_combat_message")}</p>
+      <div class="custom-confirm-buttons interrupted-combat-buttons">
+        <button class="item-button" type="button" disabled>${t("interrupted_combat_resume")}</button>
+        <button class="item-button" type="button" disabled>${t("interrupted_combat_end")}</button>
+      </div>
+      <p class="interrupted-combat-stage-note">${t("interrupted_combat_stage_note")}</p>
+    </div>
+  `;
+
+  document.body.appendChild(popup);
+}
+
 function continueGame(mode = `story`) {
   
   initializeGameState(mode);
 
   if (appState.recoveryNeeded) {
     console.warn("Cannot continue game: save recovery is required");
+    return false;
+  }
+
+  if (gameState.world?.inCombat === true) {
+    console.warn("Interrupted combat detected; waiting for the player's recovery decision");
+    showInterruptedCombatPrompt();
     return false;
   }
 
