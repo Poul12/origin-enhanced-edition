@@ -88,6 +88,53 @@ function startEnemyAttackTimeline(enemy, slotIndex) {
 }
 
 
+function restoreEnemyAttackTimeline(enemy, slotIndex) {
+  if (!enemy || !Number.isInteger(slotIndex)) return false;
+
+  let state = enemy.attackState;
+  const validPhases = ["cooldown", "windup", "action"];
+
+  if (!state || !validPhases.includes(state.phase)) {
+    startEnemyAttackTimeline(enemy, slotIndex);
+    return true;
+  }
+
+  const fallbackCooldown = calculateCooldown(enemy.atkSpd, enemy) * 1000;
+  if (!Number.isFinite(state.baseCooldown) || state.baseCooldown <= 0) {
+    state.baseCooldown = fallbackCooldown;
+  }
+  if (!Number.isFinite(state.remaining) || state.remaining < 0) {
+    state.remaining = state.phase === "windup"
+      ? Math.max(1, enemy.windupDuration || 600)
+      : state.baseCooldown;
+  }
+  if (!Number.isFinite(state.cooldownDuration) || state.cooldownDuration <= 0) {
+    state.cooldownDuration = state.baseCooldown;
+  }
+  if (!Number.isFinite(state.windupDuration) || state.windupDuration <= 0) {
+    state.windupDuration = enemy.windupDuration || 600;
+  }
+
+  state.slotIndex = slotIndex;
+  enemyAttackTimeline.isRunning = true;
+  enemyAttackTimeline.isPaused = false;
+  enemyAttackTimeline.lastFrameTime = null;
+
+  if (state.phase === "cooldown") {
+    const progress = Math.max(0, Math.min(100,
+      (1 - state.remaining / state.cooldownDuration) * 100
+    ));
+    updateCooldownBar(enemy, progress, slotIndex);
+  } else if (state.phase === "windup") {
+    updateWindupBar(enemy, Math.max(0, Math.min(1,
+      state.remaining / state.windupDuration
+    )), slotIndex);
+  }
+
+  return true;
+}
+
+
 function updateEnemyAttack(delta) {
   const timeline = enemyAttackTimeline;
 
