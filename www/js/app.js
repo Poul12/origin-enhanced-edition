@@ -68,6 +68,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   
   initializeGameState();
   appTrace("game-state.initialized");
+
+  // Language must be ready before resumeAfterReload can display recovery UI.
+  detectLanguage();
+
   if(await resumeAfterReload()) {
     stopStartupWatchdog();
     appTrace("resume-after-reload.completed");
