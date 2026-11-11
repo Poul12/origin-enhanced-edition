@@ -938,7 +938,7 @@ async function winCombat() {
     showStaminaPopup(staminaGained);
   }
   
-  if(combat.flags.isDebuff && combat.stats.energyFatigueStack < 5) combat.stats.energyFatigueStack++;
+  if(!noPenalty && combat.flags.isDebuff && combat.stats.energyFatigueStack < 5) combat.stats.energyFatigueStack++;
    
   //combatState.isDebuff = false;
   finishCombatWithDebuff();
@@ -1287,32 +1287,36 @@ async function attemptFlee() {
   }
 }
 
-async function onFleeSuccess(player, enemy, slotIndex, msg = false){
+async function onFleeSuccess(player, enemy, slotIndex, msg = false, options = {}){
   // Koszt: złoto
   const world = gameState.world;
   const combat = gameState.combat;
-  const penaltyPercent = calculateGoldLossOnFlee(player);
-  //console.log("penaultyGold", penaltyPercent);
+  const noPenalty = options?.noPenalty === true;
+  const penaltyPercent = noPenalty ? 0 : calculateGoldLossOnFlee(player);
   let gold = parseInt(gameState.resources.gold, 10);
-  const loss = Math.floor(gold * penaltyPercent);
+  const loss = noPenalty ? 0 : Math.floor(gold * penaltyPercent);
   gold = Math.max(0, gold - loss);
-  
-  gameState.resources.gold = gold;
-  
-  // Zmęczenie – blok skilli na X sekund
-  const until = nowDateMs() + FLEE_CFG.FATIGUE_SEC * 1000;
-  setPlayerFlag("fleeFatigueUntil", until);
+
+  if (!noPenalty) {
+    gameState.resources.gold = gold;
+
+    // Normal flee fatigue is deliberately skipped for interrupted-combat cleanup.
+    const until = nowDateMs() + FLEE_CFG.FATIGUE_SEC * 1000;
+    setPlayerFlag("fleeFatigueUntil", until);
+  }
 
   const bar = document.getElementById("poise-mode");
   bar.classList.add("hidden");
   
-  updateSkillButtonsFatigueState();
+  if (!noPenalty) updateSkillButtonsFatigueState();
   
   // Zatrzymaj “czas” wroga i pasek (twardy stop)
   stopEnemyAttack(slotIndex);
 
   // Wróg chwilę „poza walką” (opcjonalna blokada re-engage)
-  enemy.reengageLockedUntil = nowDateMs() + FLEE_CFG.REENGAGE_LOCK_SEC * 1000;
+  if (!noPenalty) {
+    enemy.reengageLockedUntil = nowDateMs() + FLEE_CFG.REENGAGE_LOCK_SEC * 1000;
+  }
 
   world.exploreOptions[slotIndex].isAttacked = false;
   
@@ -1459,7 +1463,7 @@ async function onFleeSuccess(player, enemy, slotIndex, msg = false){
   
   syncStepEnemies(world.currentStepIndex);
   
-  spendEnergy(`flee`);
+  if (!noPenalty) spendEnergy(`flee`);
   
   /*const enSlot = document.querySelectorAll('.explore-slot')[world.selectedSlotIndex];
   enSlot.classList.remove("combat-focus");*/
@@ -1485,14 +1489,16 @@ async function onFleeSuccess(player, enemy, slotIndex, msg = false){
   // UI
   //showInfoAlert(`Udało Ci się uciec! -${loss} złota. Skille zablokowane na ${FLEE_CFG.FATIGUE_SEC}s.`);
   
-  let fleeMsg = "succes_flee_info1";
-   
-  if(msg) fleeMsg = "succes_flee_info_app_kill";
-  
-  showInfoAlert(
-  `${t(fleeMsg)}<span style="color:red"> ${loss}${t("succes_flee_info2")}</span>${t("succes_flee_info3")}<span style="color:#0096FF">${t("succes_flee_info4")}</span> 
-   ${t("succes_flee_info5")}<span style="color:orange">${FLEE_CFG.FATIGUE_SEC}s</span>.`,
-  3000, true);
+  if (noPenalty) {
+    showInfoAlert(t("interrupted_combat_ended"), 2200, true);
+  } else {
+    let fleeMsg = msg ? "succes_flee_info_app_kill" : "succes_flee_info1";
+    showInfoAlert(
+      `${t(fleeMsg)}<span style="color:red"> ${loss}${t("succes_flee_info2")}</span>${t("succes_flee_info3")}<span style="color:#0096FF">${t("succes_flee_info4")}</span> 
+       ${t("succes_flee_info5")}<span style="color:orange">${FLEE_CFG.FATIGUE_SEC}s</span>.`,
+      3000, true
+    );
+  }
 
   //lockActions({ duration: 600, reason: "flee", allow: [] });
   
@@ -1548,6 +1554,21 @@ async function onFleeSuccess(player, enemy, slotIndex, msg = false){
   
   //setDebuffPercentHp();
   saveGame();
+}
+
+
+async function endInterruptedCombatWithoutPenalty() {
+  const world = gameState.world;
+  const slotIndex = world?.selectedSlotIndex;
+  const enemy = Number.isInteger(slotIndex)
+    ? world.exploreOptions?.[slotIndex]?.enemyData
+    : null;
+
+  if (!world?.inCombat || !enemy) {
+    throw new Error("Interrupted combat data is incomplete; save was not changed.");
+  }
+
+  await onFleeSuccess(getPlayerStats(), enemy, slotIndex, false, { noPenalty: true });
 }
 
 
