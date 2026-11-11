@@ -824,7 +824,8 @@ Object.assign(LANG.en, {
   interrupted_combat_message: "Your previous battle was interrupted. What would you like to do?",
   interrupted_combat_resume: "RESUME BATTLE",
   interrupted_combat_end: "END BATTLE",
-  interrupted_combat_stage_note: "The choices will be enabled when combat recovery is complete."
+  interrupted_combat_stage_note: "The choices will be enabled when combat recovery is complete.",
+  interrupted_combat_ended: "The interrupted battle has been ended. No gold or resources were lost."
 });
 
 Object.assign(LANG.pl, {
@@ -832,14 +833,13 @@ Object.assign(LANG.pl, {
   interrupted_combat_message: "Poprzednia walka została przerwana. Co chcesz zrobić?",
   interrupted_combat_resume: "WZNÓW WALKĘ",
   interrupted_combat_end: "ZAKOŃCZ WALKĘ",
-  interrupted_combat_stage_note: "Wybór będzie dostępny po ukończeniu obsługi odzyskiwania walki."
+  interrupted_combat_stage_note: "Wybór będzie dostępny po ukończeniu obsługi odzyskiwania walki.",
+  interrupted_combat_ended: "Przerwana walka została zakończona. Nie utracono złota ani zasobów."
 });
 
 function showInterruptedCombatPrompt() {
   document.getElementById("interrupted-combat-popup")?.remove();
 
-  // This prompt uses its own small dictionary instead of the global t()
-  // function so it remains readable even if localization initialization fails.
   const languageSource = (
     localStorage.getItem("lang") ||
     navigator.language ||
@@ -851,15 +851,13 @@ function showInterruptedCombatPrompt() {
         title: "PRZERWANA WALKA",
         message: "Poprzednia walka została przerwana. Co chcesz zrobić?",
         resume: "WZNÓW WALKĘ",
-        end: "ZAKOŃCZ WALKĘ",
-        note: "Wybór będzie dostępny po ukończeniu obsługi odzyskiwania walki."
+        end: "ZAKOŃCZ WALKĘ"
       }
     : {
         title: "INTERRUPTED BATTLE",
         message: "Your previous battle was interrupted. What would you like to do?",
         resume: "RESUME BATTLE",
-        end: "END BATTLE",
-        note: "The choices will be enabled when combat recovery is complete."
+        end: "END BATTLE"
       };
 
   const popup = document.createElement("div");
@@ -874,14 +872,67 @@ function showInterruptedCombatPrompt() {
       <h2 id="interrupted-combat-title">${recoveryTexts.title}</h2>
       <p>${recoveryTexts.message}</p>
       <div class="custom-confirm-buttons interrupted-combat-buttons">
-        <button id="interrupted-combat-yes" type="button" disabled>${recoveryTexts.resume}</button>
-        <button id="interrupted-combat-no" type="button" disabled>${recoveryTexts.end}</button>
+        <button id="interrupted-combat-yes" type="button">${recoveryTexts.resume}</button>
+        <button id="interrupted-combat-no" type="button">${recoveryTexts.end}</button>
       </div>
-      <p class="interrupted-combat-stage-note">${recoveryTexts.note}</p>
     </div>
   `;
 
   document.body.appendChild(popup);
+
+  const resumeButton = popup.querySelector("#interrupted-combat-yes");
+  const endButton = popup.querySelector("#interrupted-combat-no");
+  let closing = false;
+
+  const closePrompt = () => {
+    if (closing) return;
+    closing = true;
+    document.removeEventListener("keydown", handlePromptKeydown);
+    popup.remove();
+  };
+
+  const handlePromptKeydown = event => {
+    if (event.key === "Escape") closePrompt();
+  };
+
+  resumeButton.addEventListener("click", () => {
+    if (closing) return;
+    closePrompt();
+    const mode = gameState.world.mode || getLastMode();
+    if (mode === "expedition") setExpeditionUI();
+    else setStoryUI();
+
+    appState.resumeInterruptedCombatOnEnter = true;
+    playSound("open-slot", 0.4);
+    bootGame();
+  });
+
+  endButton.addEventListener("click", async () => {
+    if (closing || endButton.disabled) return;
+    resumeButton.disabled = true;
+    endButton.disabled = true;
+
+    try {
+      await endInterruptedCombatWithoutPenalty();
+      closePrompt();
+    } catch (error) {
+      console.error("Interrupted combat cleanup failed", error);
+      resumeButton.disabled = false;
+      endButton.disabled = false;
+      showInfoAlert(
+        recoveryLanguage === "pl"
+          ? "Nie udało się bezpiecznie zakończyć walki. Zapis nie został celowo usunięty."
+          : "The interrupted battle could not be safely ended. The save was not intentionally removed.",
+        3500,
+        true
+      );
+    }
+  });
+
+  popup.addEventListener("click", event => {
+    if (event.target === popup) closePrompt();
+  });
+  document.addEventListener("keydown", handlePromptKeydown);
 }
 
 function continueGame(mode = `story`) {
