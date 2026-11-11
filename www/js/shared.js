@@ -1549,15 +1549,20 @@ function renderHpBar(hp, maxHp) {
     hpLabelEl.textContent = `${formatNumber(hp)} / ${formatNumber(maxHp)}`;
   }
 
-  if(gameState.world.inCombat) {
-    const percent = hp / maxHp * 100;
+  if (gameState.world.inCombat) {
+    const playerHealthFill = document.getElementById("player-health-fill");
+    const playerHealthText = document.getElementById("player-health-text");
 
-    document.getElementById("player-health-fill").style.width =
-        percent + "%";
-
-    document.getElementById("player-health-text").innerText =
+    // The global game loop can tick while navigation temporarily displays
+    // the map (or another view) even though the saved combat flag is still true.
+    // Combat-only HUD nodes are not guaranteed to exist outside Battle.
+    if (playerHealthFill && playerHealthText) {
+      const percent = maxHp > 0 ? (hp / maxHp) * 100 : 0;
+      playerHealthFill.style.width = percent + "%";
+      playerHealthText.innerText =
         `${formatNumber(hp)}/${formatNumber(maxHp)}`;
-  }  
+    }
+  }
   
   const hpOrb = document?.getElementById("hp-orb-fill");
   const orb = document.querySelector(".hp-orb");
