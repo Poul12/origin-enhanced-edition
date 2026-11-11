@@ -1845,11 +1845,13 @@ body.low-hp #low-hp-vignette {
 }
 
 #interrupted-combat-yes {
+  font-family: "Uncial Antiqua", "MedievalSharp", fantasy;
   background: #4caf50;
   color: white;
 }
 
 #interrupted-combat-no {
+  font-family: "Uncial Antiqua", "MedievalSharp", fantasy;
   background: #f44336;
   color: white;
 }
