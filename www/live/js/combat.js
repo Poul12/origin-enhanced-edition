@@ -1026,7 +1026,15 @@ function restoreCombat() {
     return false;
   }
 
-  const enemySlot = document.querySelectorAll(".explore-slot")[slotIndex];
+  const selectedSlotSelector = `.explore-slot[data-index="${slotIndex}"]`;
+  const hadRenderedSelectedSlot = !!document.querySelector(selectedSlotSelector);
+
+  // Reapply the normal combat centering transform. On a fresh battle view,
+  // the first render may need to create the slot before the second can center it.
+  renderOptions();
+  if (!hadRenderedSelectedSlot) renderOptions();
+
+  const enemySlot = document.querySelector(selectedSlotSelector);
   if (enemySlot) {
     enemy.dom = {
       slot: enemySlot,
