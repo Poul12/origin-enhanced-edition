@@ -722,7 +722,7 @@ function initBattleView() {
   
   updateLowHpUIBuff();
   
-  checkIfGameWasKilled();
+  // Interrupted combat is handled by the recovery decision before entering the game.
   
   checkIsStepBeforeMiniboss();
 }
@@ -761,18 +761,6 @@ function checkIsStepBeforeMiniboss() {
     }
   }
 }
-
-function checkIfGameWasKilled() {
-  const world = gameState.world;
-  const enemy = world.exploreOptions[world.selectedSlotIndex]?.enemyData;
-  const player = getPlayerStats();
-
-  if(world.inCombat) {
-    //console.log(`world.inCombat`, world.inCombat);
-    onFleeSuccess(player, enemy, world.selectedSlotIndex, true);
-  }
-}
-
 
 function handleBattleOptionClick(e) {
   const npcElement = e.target.closest("[data-type='npc']");
