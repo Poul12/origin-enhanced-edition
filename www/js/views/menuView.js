@@ -769,9 +769,15 @@ async function enterGame() {
 
     // Do not reveal the game layer until the map view and its popup are ready.
     await navigate("map");
-    if (appState.resumeInterruptedCombatOnEnter) {
-      appState.resumeInterruptedCombatOnEnter = false;
+    if (appState.resumeInterruptedCombatOnEnter || appState.endInterruptedCombatOnEnter) {
       await navigate("battle");
+      if (appState.resumeInterruptedCombatOnEnter) {
+        appState.resumeInterruptedCombatOnEnter = false;
+      }
+      if (appState.endInterruptedCombatOnEnter) {
+        appState.endInterruptedCombatOnEnter = false;
+        await endInterruptedCombatWithoutPenalty();
+      }
     }
     game.classList.add("ready");
 
@@ -914,9 +920,15 @@ async function enterGame() {
     // Keep the boot loader visible until the complete navigation has finished.
     launcherTrace("map-navigation.start");
     await navigate("map");
-    if (appState.resumeInterruptedCombatOnEnter) {
-      appState.resumeInterruptedCombatOnEnter = false;
+    if (appState.resumeInterruptedCombatOnEnter || appState.endInterruptedCombatOnEnter) {
       await navigate("battle");
+      if (appState.resumeInterruptedCombatOnEnter) {
+        appState.resumeInterruptedCombatOnEnter = false;
+      }
+      if (appState.endInterruptedCombatOnEnter) {
+        appState.endInterruptedCombatOnEnter = false;
+        await endInterruptedCombatWithoutPenalty();
+      }
     }
     launcherTrace("map-navigation.complete");
 
