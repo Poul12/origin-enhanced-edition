@@ -1010,12 +1010,64 @@ function updateBlockState() {
 }
 
 function restoreCombat() {
- /* const enemy = exploreOptions[selectedSlotIndex].enemyData;
-  
-  startEnemyAutoAttack(enemy, selectedSlotIndex);*/
-  lockOtherActions(gameState.world.selectedSlotIndex);
+  const world = gameState.world;
+  const slotIndex = world.selectedSlotIndex;
+  const enemy = world.exploreOptions?.[slotIndex]?.enemyData;
+
+  if (!world.inCombat || !enemy || !Number.isInteger(slotIndex)) {
+    console.warn("Cannot restore combat: saved combat target is missing");
+    return false;
+  }
+
+  const enemySlot = document.querySelectorAll(".explore-slot")[slotIndex];
+  if (enemySlot) {
+    enemy.dom = {
+      slot: enemySlot,
+      healthBar: enemySlot.querySelector(".enemy-health-bar"),
+      healthFill: enemySlot.querySelector(".enemy-health-fill"),
+      healthText: enemySlot.querySelector(".enemy-health-text"),
+      cooldownFill: document.getElementById(`enemy-cooldown-fill-${slotIndex}`)
+    };
+  }
+  gameState.char.dom = { slot: document.getElementById("player-combat-slot") };
+
+  gameState.combat.isStart = true;
+  enterCombat();
+  setMenuDisabled(true);
+  hideOtherNonCombatElements(enemy);
   renderCombat();
-  //renderOptions();
+  renderPlayerCombatSlot(enemy);
+  lockCombatScroll();
+  lockOtherActions(slotIndex);
+  focusOnAttackDialogBox();
+  hideNavigateButtons();
+
+  if (gameState.combat.flags.isCritical) {
+    if (gameState.combat.flags.finisherResolved) {
+      if (gameState.combat.stats.currentHp > 0) {
+        exitCriticalState();
+      } else {
+        handlePlayerDeath();
+        return true;
+      }
+    } else {
+      stopEnemyAttack(slotIndex);
+      const savedState = enemy.attackState;
+      const remaining = savedState?.phase === "finisher-windup" &&
+        Number.isFinite(savedState.remaining) && savedState.remaining > 0
+          ? savedState.remaining
+          : CRITICAL_FINISHER_TIME;
+      startFinisherBar(remaining, enemy);
+      startEnemyFinisherWindup(enemy, slotIndex, remaining);
+    }
+    hideFleeButton();
+  } else {
+    restoreEnemyAttackTimeline(enemy, slotIndex);
+    setupFleeButton();
+    showFleeButton();
+  }
+
+  return true;
 }
 
 function addExp(amount) {
