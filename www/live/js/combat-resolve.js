@@ -1009,27 +1009,289 @@ async function winCombat() {
   
 }
 
+async function loseCombat() {
+  const world = gameState.world;
+  const combat = gameState.combat;
+
+  const enemy = world.exploreOptions[world.selectedSlotIndex].enemyData;
+    
+  const newHp = 1;
+  updatePlayerHp(newHp);
+    
+  const bar = document.getElementById("poise-mode");
+  bar.classList.add("hidden");
+  
+  world.exploreOptions[world.selectedSlotIndex].isAttacked = false;
+  
+  gameState.combat.isStart = false;
+  
+  renderOptions();
+  
+  //registerEnemyForRegen(enemy);
+  markEnemyForRegen(enemy);
+  
+  clearBleed(enemy);
+  
+  isExploring = true;
+  startEnemyUiRegenTick();
+  
+  syncStepEnemies(world.currentStepIndex);
+  
+  guardStacks = 0;
+  updateGuardUI(0);
+  
+  handleDeathDebuffAfterFight();
+  
+  if(combat.flags.isDebuff && combat.stats.energyFatigueStack < 5) combat.stats.energyFatigueStack++;
+  
+  //combatState.isDebuff = false;
+  finishCombatWithDebuff();
+  combat.flags.previewStats = false;
+  
+  enemy.poise = 100;
+  
+  resetArmorBreak(enemy);
+  resetPerfectBlockChain();
+  resetSpear(enemy);
+  resetSpearUI();
+  stopSpearControlUI();
+  //delete enemy.spear;
+  
+  resetBleed(enemy, true);
+  
+  stopBleedTimingUI();
+  
+  stopWhirlwind();  
+  
+  clearAllPlayerDots(enemy);
+  
+  gameState.combat.bleedTimingActive = false;
+  
+  gameState.combat.flags.isPerfectDmgBonus = false;
+  gameState.combat.perfectBonusDmgNextHit = false
+  
+  combat.stats.combo = 0;
+  combat.stats.nextHitMultiplier = 0;
+  combat.stats.nextHitPenetration = 0;
+  
+  gameState.combat.guardBonus.critBonus.isActive = false;
+  gameState.combat.guardBonus.critBonus.stacks = 0;
+  gameState.combat.guardBonus.defBonus.isActive = false;
+  gameState.combat.guardBonus.defBonus.stacks = 0;
+  
+  gameState.combat.exhaustedBonus.staminaBonus.bonusRegen = 0;
+  
+  gameState.combat.activeBonus.lastDefToDmg = 0;
+  gameState.combat.activeBonus.lastUsed = 0;
+  
+  gameState.combat.activeBonus.dmgSources = {
+    lowHp: 0,
+    afterBreak: 0,
+    defToDmg: 0,
+    guardStacks: 0,
+    controlStacks: 0,
+    armorBreak: 0,
+    exhausted: 0,
+    energy: 0,
+    bleed: 0,
+  };
+  
+  gameState.combat.activeBonus.defSources = {
+    exhausted: 0,
+    guard: 0,
+    perfectBlock: 0,
+    defensiveStance: 0,
+    perSecBlock: 0,
+    lowHp: 0,
+    armorBreak: 0,
+  };
+  
+  gameState.combat.activeBonus.critSources = {
+    exhausted: 0,
+    guardStacks: 0,
+    afterBreak: 0,
+    energy: 0,
+    bleed: 0,
+    controlStacks: 0,
+    missingHp: 0,
+    dodge: 0,
+    armorBreak: 0,
+  };
+ 
+  const perfectChainBlock = gameState.combat.perfectChainBlock;
+  perfectChainBlock.perfectWindow = 0;
+  perfectChainBlock.crit = 0;
+  perfectChainBlock.critDmg = 0;
+  
+  gameState.combat.openingStrike.windUpMultiplier = 1;
+  
+  gameState.combat.poiseBonus.dmgBonus.nextHit = false;
+  
+  gameState.combat.lowHpBonus.lowHpDmgActive = false;
+  gameState.combat.lowHpBonus.lowHpDefActive = false;
+  
+  //if(!gameState.combat.lowHpBonus.lowHpDmgActive) {
+    gameState.combat.activeBonus.dmg = 0;
+    clearAllDiffs(`dmg`);
+  //}
+  
+  //if(!gameState.combat.lowHpBonus.lowHpDefActive) {
+    gameState.combat.activeBonus.def = 0;
+    clearAllDiffs(`def`);
+  //}
+  
+  gameState.combat.activeBonus.def = 0;
+  gameState.combat.activeBonus.atkSpd = 0;
+  gameState.combat.activeBonus.crit = 0;
+  
+  gameState.combat.guardBonus.defBonus.accumulate = 0;
+  
+  gameState.combat.blockingBonus.lohBonus.isActive = false;
+  gameState.combat.blockingBonus.bleedBonus.isActive = false;
+  gameState.combat.blockingBonus.bleedBonus.wasAdded = false;
+  
+  gameState.combat.counterStrike.isActive = false;
+  gameState.combat.ironWill.isActive = false;
+  gameState.combat.provocation.isActive = false;
+  gameState.combat.lastBastion.isActive = false;
+  gameState.combat.lastBastion.nextAttack = 0;
+  gameState.combat.lastBastion.attackValue = 0;
+  
+  gameState.combat.playerMark.isActive = false;
+  gameState.combat.enemyAtkspdBuff.isActive = false;
+  
+  gameState.combat.armorBreakBonus.refreshBonus.isReady = false;
+  
+  gameState.combat.activeRingMode = ``;
+  
+  resetGuardRing();
+  
+  resetEnemyAI(enemy);
+  
+  updateStatusPlayerUI(enemy);
+  
+  hideFleeButton(); 
+  
+  const stats = document.querySelector(".enemy-stat-group");
+  stats.style.opacity = `0`;
+  
+  setMenuDisabled(false);
+  
+  await wait(950);
+  
+  restoreEnemyStatsLayout();
+
+  document.querySelectorAll(".explore-slot")
+    .forEach((slot, index) => {
+
+      if(index !== world.selectedSlotIndex) {
+        requestAnimationFrame(() => {
+          slot.classList.remove("faded");
+        });
+     }
+    });
+  
+  exitCombat();
+  
+  world.inCombat = false;
+  world.selectedSlotIndex = null;
+
+  await wait(550);
+  
+  renderOptions();
+  
+  unlockActions();
+  showNavigateButtons();
+  showOtherNonCombatElements(enemy);
+  //renderOptions();
+  
+  turnOffShieldMode();
+  
+  gameState.combat.activeBonus.defSources = {
+    exhausted: 0,
+    guard: 0,
+    perfectBlock: 0,
+    defensiveStance: 0,
+    perSecBlock: 0,
+    lowHp: 0,
+    armorBreak: 0,
+  };
+
+  gameState.combat.activeBonus.def = 0;
+  clearAllDiffs(`def`);
+  
+  renderLoots(world.selectedSlotIndex);
+  
+  //setDebuffPercentHp();
+  
+  unlockCombatScroll();
+  
+  saveGame();
+  
+}
+
+function calculateGoldLossOnFlee(player) {
+  const hpPercent = player.hp / player.maxHp;
+  //console.log("maxHp", player.maxHp);
+  
+ // console.log("hpPercent", hpPercent);
+  
+  // kara liniowo od 20% (przy pełnym HP) do 5% (przy 1% HP)
+  const maxPenalty = 0.20; // 20%
+  const minPenalty = 0.05; // 5%
+
+  let penalty = minPenalty + (maxPenalty - minPenalty) * hpPercent;
+  
+  //penalty -= player.agi * 0.0005; // mniejszy koszt ucieczki
+  
+  penalty *= (1 - player.agi * 0.001);
+  
+  return penalty;
+}
+
+function calculateFleeChance(player, enemy){
+  // Jeśli masz atrybuty szybkości – podepnij tu; na razie użyjemy różnicy poziomów
+  const lvlDiff = (player.level || 1) - (enemy.level || 1);
+
+  let chance = FLEE_CFG.BASE_CHANCE;
+  if (lvlDiff > 0) chance += lvlDiff * FLEE_CFG.LVL_DIFF_BONUS;
+  if (lvlDiff < 0) chance += Math.abs(lvlDiff) * (-FLEE_CFG.LVL_DIFF_PENALTY);
+
+   // 🔥 PITY SYSTEM
+  chance += gameState.combat.fleeFailStreak * FLEE_CFG.PITY_BONUS;
+  
+  chance += player.agi * 0.002; // 0.2% za punkt
+  
+  return clamp(chance, FLEE_CFG.MIN_CHANCE, FLEE_CFG.MAX_CHANCE);
+}
+
+async function attemptFlee() {
+  const world = gameState.world;
+  const combat = gameState.combat;
+
+  if (!world.inCombat || world.selectedSlotIndex === null) return;
+
+  const player = getPlayerStats();
+  const enemy = world.exploreOptions[world.selectedSlotIndex].enemyData;
+
+  // Szansa
+  const chance = calculateFleeChance(player, enemy);
+  const roll = Math.random();
+
+  if (roll <= chance) {
+    combat.fleeFailStreak = 0;
+    await onFleeSuccess(player, enemy, world.selectedSlotIndex);
+  } else {
+    combat.fleeFailStreak++;
+    await onFleeFail(player, enemy, world.selectedSlotIndex);
+  }
+}
+
 async function onFleeSuccess(player, enemy, slotIndex, msg = false, options = {}){
   // Koszt: złoto
   const world = gameState.world;
   const combat = gameState.combat;
   const noPenalty = options?.noPenalty === true;
-  if (noPenalty) {
-    const energyState = gameState.resources.energyState;
-    const recordedRefund = combat.interruptedCombatEnergyRefund;
-    const fallbackRefund = energyState.noEnergyUse
-      ? 0
-      : getEnergyCostForSlot(world.exploreOptions[slotIndex].type);
-    const energyRefund = Number.isFinite(recordedRefund)
-      ? recordedRefund
-      : fallbackRefund;
-    energyState.current = Math.min(
-      energyState.max,
-      energyState.current + Math.max(0, energyRefund)
-    );
-    delete combat.interruptedCombatEnergyRefund;
-  }
-
   const penaltyPercent = noPenalty ? 0 : calculateGoldLossOnFlee(player);
   let gold = parseInt(gameState.resources.gold, 10);
   const loss = noPenalty ? 0 : Math.floor(gold * penaltyPercent);
