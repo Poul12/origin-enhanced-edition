@@ -5,6 +5,10 @@
 
 Object.assign(LANG.en, {
   menu_continue: "CONTINUE",
+  interrupted_combat_title: "INTERRUPTED BATTLE",
+  interrupted_combat_message: "Your previous battle was interrupted. What would you like to do?",
+  interrupted_combat_resume: "RESUME BATTLE",
+  interrupted_combat_end: "END BATTLE
   menu_newgame: "NEW GAME",
   menu_gamemodes: "GAME MODES",
   menu_options: "OPTIONS",
@@ -403,6 +407,11 @@ Object.assign(LANG.en, {
 
 Object.assign(LANG.pl, {
   menu_continue: "KONTYNUUJ",
+  interrupted_combat_title: "PRZERWANA WALKA",
+  interrupted_combat_message: "Poprzednia walka została przerwana. Co chcesz zrobić?",
+  interrupted_combat_resume: "WZNÓW WALKĘ",
+  interrupted_combat_end: "ZAKOŃCZ WALKĘ",
+  interrupted_combat_stage_note: "Wybór będzie dostępny po ukończeniu obsługi odzyskiwania walki.",
   menu_newgame: "NOWA GRA",
   menu_gamemodes: "TRYBY GRY",
   menu_options: "OPCJE",
