@@ -1158,12 +1158,12 @@ function enterCriticalState() {
   startEnemyFinisherWindup(enemy, gameState.world.selectedSlotIndex);
 }
 
-function startEnemyFinisherWindup(enemy, slotIndex) {
+function startEnemyFinisherWindup(enemy, slotIndex, durationMs = CRITICAL_FINISHER_TIME) {
   const baseCooldown = calculateCooldown(enemy.atkSpd, enemy) * 1000;
   
   enemy.attackState = {
     phase: "finisher-windup",
-    remaining: CRITICAL_FINISHER_TIME,
+    remaining: durationMs,
    // total: CRITICAL_FINISHER_TIME
   };
 
@@ -1172,7 +1172,7 @@ function startEnemyFinisherWindup(enemy, slotIndex) {
   emitEnemyAttackWindup({
     enemy,
     slotIndex,
-    duration: CRITICAL_FINISHER_TIME
+    duration: durationMs
   });
   
   const timeoutId = setTimeout(() => {
@@ -1193,7 +1193,7 @@ function startEnemyFinisherWindup(enemy, slotIndex) {
     stopTimedBlockUI();
     stopBleedTimingUI();
     stopSpearControlUI();
-  }, CRITICAL_FINISHER_TIME);
+  }, durationMs);
 
   enemy.finisherTimeout = timeoutId;
 }
