@@ -1292,6 +1292,22 @@ async function onFleeSuccess(player, enemy, slotIndex, msg = false, options = {}
   const world = gameState.world;
   const combat = gameState.combat;
   const noPenalty = options?.noPenalty === true;
+  if (noPenalty) {
+    const energyState = gameState.resources.energyState;
+    const recordedRefund = combat.interruptedCombatEnergyRefund;
+    const fallbackRefund = energyState.noEnergyUse
+      ? 0
+      : getEnergyCostForSlot(world.exploreOptions[slotIndex].type);
+    const energyRefund = Number.isFinite(recordedRefund)
+      ? recordedRefund
+      : fallbackRefund;
+    energyState.current = Math.min(
+      energyState.max,
+      energyState.current + Math.max(0, energyRefund)
+    );
+    delete combat.interruptedCombatEnergyRefund;
+  }
+
   const penaltyPercent = noPenalty ? 0 : calculateGoldLossOnFlee(player);
   let gold = parseInt(gameState.resources.gold, 10);
   const loss = noPenalty ? 0 : Math.floor(gold * penaltyPercent);
