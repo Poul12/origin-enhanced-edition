@@ -1693,6 +1693,37 @@ function startBlock() {
   }, 1000);
 }
 
+
+function restoreDefensiveStanceRuntime() {
+  const combat = gameState.combat;
+  const playerBlock = combat.playerBlock;
+
+  if (!playerBlock?.active || playerBlock.mode !== "defensive") return false;
+
+  // Restore runtime-only state without replaying activation effects or reapplying bonuses.
+  isBlocking = true;
+  lockActions({ duration: 200, reason: "block", allow: [`attack`, `potion`, `block`] });
+  skillsOff();
+
+  const blockButton = document.getElementById("attack-left");
+  blockButton?.classList.add("turtle");
+
+  if (blockDrainInterval) clearInterval(blockDrainInterval);
+  blockDrainInterval = setInterval(() => {
+    const staminaState = gameState.resources.staminaState;
+    if (!isBlocking || staminaState.disabled) return;
+
+    if (gameState.char.combatAffixes[`def_per_sec_while_blocking`]) {
+      const defBonus = gameState.char.combatAffixes[`def_per_sec_while_blocking`].value;
+      combat.guardBonus.defBonus.accumulate += defBonus;
+      combat.activeBonus.defSources.perSecBlock = combat.guardBonus.defBonus.accumulate;
+      recalculateDefenseBonus();
+    }
+  }, 1000);
+
+  return true;
+}
+
 function stopBlock() {
   isBlocking = false;
 
