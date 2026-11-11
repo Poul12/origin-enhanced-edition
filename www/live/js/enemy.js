@@ -1915,7 +1915,6 @@ function performEnemyAttack(enemy, slotIndex, options = {}) {
           //showReward(`${t("stack3_reward")}`);
        }       
     }    
-    if (guardStacks > guardStacksBefore) saveGame();
         
        // Napór Presja Przewaga
    // Iskra Impuls Przeciążenie
@@ -1982,6 +1981,8 @@ function performEnemyAttack(enemy, slotIndex, options = {}) {
   if (gameState.char.hp <= 0 && !gameState.combat.flags.isCritical) {
     enterCriticalState();
   }
+
+  if (guardStacks > guardStacksBefore) saveGame();
       
 }
 
