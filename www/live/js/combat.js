@@ -1042,6 +1042,18 @@ function restoreCombat() {
   hideOtherNonCombatElements(enemy);
   renderCombat();
   renderPlayerCombatSlot(enemy);
+
+  restoreGuardStacks();
+  restoreDefensiveStanceRuntime();
+  restoreSkillCooldowns();
+
+  if (gameState.combat.activeRingMode === "spear") {
+    updateSpearRing(enemy);
+  } else if (gameState.combat.activeRingMode === "bleed") {
+    updateBleedRing(enemy);
+  } else if (["sword", "longsword", "axe", "mace"].includes(gameState.combat.activeRingMode)) {
+    updateGuardRing(gameState.combat.activeRingMode, gameState.combat.stats.combo || 0);
+  }
   lockCombatScroll();
   lockOtherActions(slotIndex);
   focusOnAttackDialogBox();
