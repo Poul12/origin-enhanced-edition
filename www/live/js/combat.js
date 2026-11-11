@@ -907,7 +907,9 @@ function handleAttack() {
 
   //playPlayerAnimation("attack");
   
+  const guardStacksBeforeAttack = guardStacks;
   attack(isDefShield);
+  if (guardStacksBeforeAttack > 0 && guardStacks === 0) saveGame();
   spawnEffect("basic", enemy.dom.slot);
   playHit(`enemy`);
   //console.error(`cooldownDuration in handle attack`, cooldownDuration, atkSpeed);
