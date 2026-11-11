@@ -8,7 +8,8 @@ Object.assign(LANG.en, {
   interrupted_combat_title: "INTERRUPTED BATTLE",
   interrupted_combat_message: "Your previous battle was interrupted. What would you like to do?",
   interrupted_combat_resume: "RESUME BATTLE",
-  interrupted_combat_end: "END BATTLE
+  interrupted_combat_end: "END BATTLE",
+  interrupted_combat_stage_note: "The choices will be enabled when combat recovery is complete.",
   menu_newgame: "NEW GAME",
   menu_gamemodes: "GAME MODES",
   menu_options: "OPTIONS",
