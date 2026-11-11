@@ -248,6 +248,11 @@ async function startCombat(i) {
     //saveState();
   }
   
+  const energyState = gameState.resources.energyState;
+  combat.interruptedCombatEnergyRefund = energyState.noEnergyUse
+    ? 0
+    : Math.min(energyState.current, cost);
+
   spendEnergy(world.exploreOptions[i].type);
   
   if(multiplier < 1) {
