@@ -209,6 +209,7 @@ function handleSkillClick(button) {
     
     if(guardStacks >= skill.guardCost) {
       guardStacks -= skill.guardCost;
+      gameState.combat.guardStacks = guardStacks;
       consumeGuardStacks(guardStacks);
       decreaseGuardStack();
       //addWeaponMasteryExp(`bulwark`, 5);
