@@ -663,6 +663,7 @@ function consumeGuardStacksOnAttack(damage) {
   gameState.combat.guardBonus.dmgBonus.stacks = 0;
   
   guardStacks = 0;
+  gameState.combat.guardStacks = 0;
   
   //console.error(`consumeGuard gameState.combat.activeBonus.def`, gameState.combat.activeBonus.def);
 
