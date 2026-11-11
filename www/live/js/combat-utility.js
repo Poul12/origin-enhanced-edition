@@ -702,6 +702,7 @@ function consumeGuardStacksOnAttack(damage) {
   //console.error(`consumeGuardStacksOnAttack block bonus`, bonus);
   
   consumeGuardStacks(guardStacks);
+  saveGame();
   
   return Math.floor(damage * bonus);
 }
