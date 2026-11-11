@@ -1857,9 +1857,10 @@ body.low-hp #low-hp-vignette {
 }
 
 .interrupted-combat-buttons button:disabled {
-  opacity: .48;
+  /* Keep the intended red/green action colors even while actions are locked. */
+  opacity: 1;
   cursor: not-allowed;
-  filter: grayscale(.5);
+  filter: none;
 }
 
 .interrupted-combat-stage-note {
