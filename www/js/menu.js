@@ -838,6 +838,30 @@ Object.assign(LANG.pl, {
 function showInterruptedCombatPrompt() {
   document.getElementById("interrupted-combat-popup")?.remove();
 
+  // This prompt uses its own small dictionary instead of the global t()
+  // function so it remains readable even if localization initialization fails.
+  const languageSource = (
+    localStorage.getItem("lang") ||
+    navigator.language ||
+    "en"
+  ).toLowerCase();
+  const recoveryLanguage = languageSource.startsWith("pl") ? "pl" : "en";
+  const recoveryTexts = recoveryLanguage === "pl"
+    ? {
+        title: "PRZERWANA WALKA",
+        message: "Poprzednia walka została przerwana. Co chcesz zrobić?",
+        resume: "WZNÓW WALKĘ",
+        end: "ZAKOŃCZ WALKĘ",
+        note: "Wybór będzie dostępny po ukończeniu obsługi odzyskiwania walki."
+      }
+    : {
+        title: "INTERRUPTED BATTLE",
+        message: "Your previous battle was interrupted. What would you like to do?",
+        resume: "RESUME BATTLE",
+        end: "END BATTLE",
+        note: "The choices will be enabled when combat recovery is complete."
+      };
+
   const popup = document.createElement("div");
   popup.id = "interrupted-combat-popup";
   popup.className = "popup interrupted-combat-popup";
@@ -848,13 +872,13 @@ function showInterruptedCombatPrompt() {
   popup.innerHTML = `
     <div class="confirm-content interrupted-combat-content">
       <div class="interrupted-combat-icon">⚔</div>
-      <h2 id="interrupted-combat-title">${t("interrupted_combat_title")}</h2>
-      <p>${t("interrupted_combat_message")}</p>
+      <h2 id="interrupted-combat-title">${recoveryTexts.title}</h2>
+      <p>${recoveryTexts.message}</p>
       <div class="custom-confirm-buttons interrupted-combat-buttons">
-        <button class="item-button" type="button" disabled>${t("interrupted_combat_resume")}</button>
-        <button class="item-button" type="button" disabled>${t("interrupted_combat_end")}</button>
+        <button class="item-button" type="button" disabled>${recoveryTexts.resume}</button>
+        <button class="item-button" type="button" disabled>${recoveryTexts.end}</button>
       </div>
-      <p class="interrupted-combat-stage-note">${t("interrupted_combat_stage_note")}</p>
+      <p class="interrupted-combat-stage-note">${recoveryTexts.note}</p>
     </div>
   `;
 
