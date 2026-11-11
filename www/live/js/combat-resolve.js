@@ -806,6 +806,7 @@ async function winCombat() {
   clearBleed(enemy);
   
   guardStacks = 0;
+  gameState.combat.guardStacks = 0;
   updateGuardUI(0);
   
   enemy.poise = 100;
@@ -1038,6 +1039,7 @@ async function loseCombat() {
   syncStepEnemies(world.currentStepIndex);
   
   guardStacks = 0;
+  gameState.combat.guardStacks = 0;
   updateGuardUI(0);
   
   handleDeathDebuffAfterFight();
@@ -1355,6 +1357,7 @@ async function onFleeSuccess(player, enemy, slotIndex, msg = false, options = {}
   stopBleedTimingUI();
   
   guardStacks = 0;
+  gameState.combat.guardStacks = 0;
   updateGuardUI(0);
   
   enemy.poise = 100;
@@ -1675,6 +1678,7 @@ async function flee(i) {
   resetEnemyAI(enemy);
   
   guardStacks = 0;
+  gameState.combat.guardStacks = 0;
   updateGuardUI(0);
   
   syncStepEnemies(world.currentStepIndex);
