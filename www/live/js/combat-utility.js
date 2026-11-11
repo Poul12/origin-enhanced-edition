@@ -1286,6 +1286,7 @@ function exitCriticalState() {
   //console.error(`exit critical state`);
   
   resumeAllSkillsCooldown();
+  restoreSkillCooldowns();
   resumePlayerAttack();
   
   applyEnemyRecoveryAfterFinisher(enemy, gameState.world.selectedSlotIndex);
