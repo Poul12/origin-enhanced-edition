@@ -1051,7 +1051,12 @@ function restoreCombat() {
         return true;
       }
     } else {
-      stopEnemyAttack(slotIndex);
+      // The previous page's timeout handles are stale; do not call stopEnemyAttack(),
+      // because it also clears saved slow/stun status values.
+      enemyAttackTimeline.isRunning = false;
+      enemyAttackTimeline.isPaused = false;
+      enemy.finisherTimeout = null;
+      enemy.recoveryTimeout = null;
       const savedState = enemy.attackState;
       const remaining = savedState?.phase === "finisher-windup" &&
         Number.isFinite(savedState.remaining) && savedState.remaining > 0
