@@ -1846,6 +1846,7 @@ function performEnemyAttack(enemy, slotIndex, options = {}) {
  
       if(guardStacks < DEFENSIVE_GUARD_STACK_MAX) {
          guardStacks++;
+         gameState.combat.guardStacks = guardStacks;
             
          addWeaponMasteryExp(`bulwark`, 3, `guard`);
             
