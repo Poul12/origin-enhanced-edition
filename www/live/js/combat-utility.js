@@ -1117,6 +1117,14 @@ function updateActionLockUI() {
 
 function enterCriticalState() {
   const combat = gameState.combat;
+  window.RuntimeDiagnostics?.startRecoveryTrace({
+    mode: gameState.world?.mode || null,
+    inCombat: gameState.world?.inCombat === true,
+    selectedSlotIndex: gameState.world?.selectedSlotIndex ?? null,
+    style: getCurrentWeaponStyle(),
+    blockMode: combat.playerBlock?.mode || null,
+    isCriticalBefore: combat.flags?.isCritical === true
+  });
   const enemy = gameState.world.exploreOptions[gameState.world.selectedSlotIndex].enemyData;
   const playerBlock = combat.playerBlock;
   const player = getPlayerStats();
@@ -1124,6 +1132,13 @@ function enterCriticalState() {
 
   combat.flags.isCritical = true;
   combat.flags.finisherResolved = false;
+  window.RuntimeDiagnostics?.recordRecovery("critical.flags.set", {
+    mode: gameState.world?.mode || null,
+    inCombat: gameState.world?.inCombat === true,
+    selectedSlotIndex: gameState.world?.selectedSlotIndex ?? null,
+    isCritical: combat.flags.isCritical,
+    finisherResolved: combat.flags.finisherResolved
+  });
   gameState.combat.flags.isBlocked = false;
   
   playerBlock.cooldownUntil = 0;
