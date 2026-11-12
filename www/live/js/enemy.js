@@ -1782,6 +1782,7 @@ function performEnemyAttack(enemy, slotIndex, options = {}) {
   //console.error(`enter perform attack`, options.multiplier);
   const expeditionLevelStats = gameState.expedition.modes[gameState.world.expeditionMode].level;
   const playerBlock = gameState.combat.playerBlock;
+  const guardStacksBefore = guardStacks;
  // const slotName = document.getElementById("slot-name");
   const player = getPlayerStats();
   
@@ -1840,7 +1841,6 @@ function performEnemyAttack(enemy, slotIndex, options = {}) {
        playHit(`player`); 
     }
         
-    const guardStacksBefore = guardStacks;
 
     if (playerBlock.mode === "defensive" && playerBlock.active) {
       const gainedDef = gameState.char.combatAffixes[`def_per_guard_stack`]?.value;
