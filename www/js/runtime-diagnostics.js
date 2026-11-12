@@ -10,6 +10,17 @@
   const MAX_EVENTS = 100;
   const MAX_ERRORS = 40;
   const MAX_TEXT_LENGTH = 1200;
+  const RECOVERY_TRACE_KEY = "origin.recoveryTrace.v1";
+  const MAX_RECOVERY_EVENTS = 100;
+
+  let recoveryTrace = [];
+  try {
+    const savedTrace = localStorage.getItem(RECOVERY_TRACE_KEY);
+    const parsedTrace = savedTrace ? JSON.parse(savedTrace) : [];
+    if (Array.isArray(parsedTrace)) recoveryTrace = parsedTrace.slice(-MAX_RECOVERY_EVENTS);
+  } catch {
+    recoveryTrace = [];
+  }
 
   const state = {
     startedAt: new Date().toISOString(),
@@ -99,6 +110,31 @@
     } catch {
       // Ignore invalid or unavailable previous session data.
     }
+  }
+
+  function persistRecoveryTrace() {
+    try {
+      localStorage.setItem(RECOVERY_TRACE_KEY, JSON.stringify(recoveryTrace.slice(-MAX_RECOVERY_EVENTS)));
+    } catch {
+      // Recovery diagnostics must never interrupt gameplay.
+    }
+  }
+
+  function recordRecovery(type, details = {}) {
+    recoveryTrace.push({
+      at: now(),
+      type: limitText(type, 100),
+      details: details || {}
+    });
+    if (recoveryTrace.length > MAX_RECOVERY_EVENTS) {
+      recoveryTrace.splice(0, recoveryTrace.length - MAX_RECOVERY_EVENTS);
+    }
+    persistRecoveryTrace();
+  }
+
+  function startRecoveryTrace(details = {}) {
+    recoveryTrace = [];
+    recordRecovery("critical.enter", details);
   }
 
   function record(type, details) {
@@ -261,6 +297,7 @@
         }
       },
       counters: Object.assign({}, state.counters),
+      recoveryTrace: recoveryTrace.slice(),
       timing: {
         timeOrigin: Math.round(performance.timeOrigin || 0),
         navigation: (() => {
@@ -343,6 +380,8 @@
 
   window.RuntimeDiagnostics = {
     record,
+    recordRecovery,
+    startRecoveryTrace,
     captureError,
     buildReport,
     downloadReport
@@ -362,6 +401,7 @@
   });
   window.addEventListener("pagehide", event => {
     record("document.pagehide", { persisted: !!event.persisted });
+    if (recoveryTrace.length) recordRecovery("document.pagehide", { persisted: !!event.persisted });
   });
   window.addEventListener("pageshow", event => {
     record("document.pageshow", {
