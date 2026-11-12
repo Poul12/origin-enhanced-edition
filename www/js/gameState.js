@@ -846,12 +846,23 @@ function initializeGameState(mode = "story") {
   if (mode === "adventure") key = "save_adventure";
 
   const save = localStorage.getItem(key);
+  window.RuntimeDiagnostics?.recordRecovery("save.load.start", {
+    requestedMode: mode,
+    key,
+    saveExists: !!save,
+    lastMode: localStorage.getItem("last_mode") || null
+  });
   appState.recoveryNeeded = false;
 
   if (!save) {
     gameState = createNewGameState();
     gameState.world.mode = mode;
     appState.gameTime = 0;
+    window.RuntimeDiagnostics?.recordRecovery("save.load.empty", {
+      requestedMode: mode,
+      loadedMode: gameState.world.mode,
+      inCombat: gameState.world.inCombat
+    });
     return;
   }
 
@@ -863,6 +874,11 @@ function initializeGameState(mode = "story") {
     appState.recoveryNeeded = true;
     gameState.world.mode = mode;
     appState.gameTime = 0;
+    window.RuntimeDiagnostics?.recordRecovery("save.load.invalid", {
+      requestedMode: mode,
+      key,
+      recoveryNeeded: appState.recoveryNeeded
+    });
     return;
   }
 
@@ -886,6 +902,16 @@ function initializeGameState(mode = "story") {
   const offlineMs = Math.max(0, now - savedAtReal);
 
   appState.gameTime = savedGameTime + offlineMs;
+  window.RuntimeDiagnostics?.recordRecovery("save.load.complete", {
+    requestedMode: mode,
+    key,
+    loadedMode: gameState.world.mode,
+    inCombat: gameState.world.inCombat === true,
+    selectedSlotIndex: gameState.world.selectedSlotIndex ?? null,
+    isCritical: gameState.combat?.flags?.isCritical === true,
+    finisherResolved: gameState.combat?.flags?.finisherResolved === true,
+    recoveryNeeded: appState.recoveryNeeded
+  });
 }
 
 /*function initializeGameState(mode = "story") {
@@ -971,6 +997,19 @@ function saveGame() {
   if (mode === "sandbox") return;
 
   const key = getSaveKey();
+  const recoveryState = {
+    mode,
+    key,
+    inCombat: gameState.world?.inCombat === true,
+    selectedSlotIndex: gameState.world?.selectedSlotIndex ?? null,
+    isCritical: gameState.combat?.flags?.isCritical === true,
+    finisherResolved: gameState.combat?.flags?.finisherResolved === true,
+    actionLockUntil: gameState.combat?.actionLock?.until ?? null,
+    actionLockReason: gameState.combat?.actionLock?.reason ?? null
+  };
+  if (recoveryState.isCritical || recoveryState.inCombat) {
+    window.RuntimeDiagnostics?.recordRecovery("save.write.start", recoveryState);
+  }
 
   const payload = {
     gameState,
@@ -982,6 +1021,9 @@ function saveGame() {
 
   localStorage.setItem(key, JSON.stringify(payload));
 
+  if (recoveryState.isCritical || recoveryState.inCombat) {
+    window.RuntimeDiagnostics?.recordRecovery("save.write.complete", recoveryState);
+  }
   saveLastMode();
   updateSaveState();
 }
