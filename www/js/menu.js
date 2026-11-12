@@ -838,6 +838,12 @@ Object.assign(LANG.pl, {
 });
 
 function showInterruptedCombatPrompt() {
+  window.RuntimeDiagnostics?.recordRecovery("recovery.prompt.shown", {
+    mode: gameState?.world?.mode || null,
+    inCombat: gameState?.world?.inCombat === true,
+    selectedSlotIndex: gameState?.world?.selectedSlotIndex ?? null,
+    isCritical: gameState?.combat?.flags?.isCritical === true
+  });
   document.getElementById("interrupted-combat-popup")?.remove();
 
   const languageSource = (
@@ -929,8 +935,19 @@ function showInterruptedCombatPrompt() {
 }
 
 function continueGame(mode = `story`) {
-  
+  window.RuntimeDiagnostics?.recordRecovery("continue.start", {
+    requestedMode: mode,
+    lastMode: getLastMode()
+  });
   initializeGameState(mode);
+  window.RuntimeDiagnostics?.recordRecovery("continue.loaded", {
+    requestedMode: mode,
+    loadedMode: gameState?.world?.mode || null,
+    inCombat: gameState?.world?.inCombat === true,
+    selectedSlotIndex: gameState?.world?.selectedSlotIndex ?? null,
+    isCritical: gameState?.combat?.flags?.isCritical === true,
+    recoveryNeeded: appState.recoveryNeeded
+  });
 
   if (appState.recoveryNeeded) {
     console.warn("Cannot continue game: save recovery is required");
