@@ -479,7 +479,7 @@
     if (new URLSearchParams(window.location.search).get("diagnostics") === "1") {
       const debugButton = document.createElement("button");
       debugButton.type = "button";
-      debugButton.textContent = "EXPORT LOG";
+      debugButton.textContent = "RAPORT";
       debugButton.setAttribute("aria-label", "Export runtime diagnostics");
       debugButton.style.cssText = [
         "position:fixed",
