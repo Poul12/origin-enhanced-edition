@@ -769,7 +769,7 @@ async function enterGame() {
 
     // Do not reveal the game layer until the map view and its popup are ready.
     await navigate("map");
-    if (appState.resumeInterruptedCombatOnEnter || appState.endInterruptedCombatOnEnter) {
+    if (appState.resolveInterruptedCriticalDeathOnEnter || appState.resumeInterruptedCombatOnEnter || appState.endInterruptedCombatOnEnter) {
       await navigate("battle");
       if (appState.resolveInterruptedCriticalDeathOnEnter) {
         appState.resolveInterruptedCriticalDeathOnEnter = false;
@@ -928,7 +928,7 @@ async function enterGame() {
     // Keep the boot loader visible until the complete navigation has finished.
     launcherTrace("map-navigation.start");
     await navigate("map");
-    if (appState.resumeInterruptedCombatOnEnter || appState.endInterruptedCombatOnEnter) {
+    if (appState.resolveInterruptedCriticalDeathOnEnter || appState.resumeInterruptedCombatOnEnter || appState.endInterruptedCombatOnEnter) {
       await navigate("battle");
       if (appState.resolveInterruptedCriticalDeathOnEnter) {
         appState.resolveInterruptedCriticalDeathOnEnter = false;
