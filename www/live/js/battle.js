@@ -113,7 +113,11 @@ function loadState() {
     restoreAttackCooldownAfterLoad();
     restoreSkillCooldowns();
   
-    if (world.inCombat && world.selectedSlotIndex !== null) {
+    if (
+      world.inCombat &&
+      world.selectedSlotIndex !== null &&
+      !appState.resolveInterruptedCriticalDeathOnEnter
+    ) {
       restoreCombat();
     }
 
