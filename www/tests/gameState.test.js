@@ -225,7 +225,7 @@ test("does not subtract game time when the device clock moved backwards", () => 
   assert.equal(harness.api.getAppState().recoveryNeeded, false);
 });
 
-test("adds valid elapsed real time to saved game time", () => {
+test("adds valid elapsed real time to saved game time outside combat", () => {
   const harness = createGameHarness({}, 12000);
 
   harness.storage.set("save_story", JSON.stringify({
@@ -235,6 +235,25 @@ test("adds valid elapsed real time to saved game time", () => {
   harness.api.initializeGameState("story");
 
   assert.equal(harness.api.getAppState().gameTime, 6000);
+});
+
+test("does not add offline time when restoring an interrupted combat", () => {
+  const harness = createGameHarness({}, 12000);
+  const savedState = harness.api.createNewGameState();
+  savedState.world.inCombat = true;
+  savedState.combat.skills.skillCooldowns.testSkill = 19000;
+
+  harness.storage.set("save_story", JSON.stringify({
+    gameState: savedState,
+    meta: { gameTime: 4000, savedAtReal: 10000 }
+  }));
+  harness.api.initializeGameState("story");
+
+  assert.equal(harness.api.getAppState().gameTime, 4000);
+  assert.equal(
+    harness.api.getGameState().combat.skills.skillCooldowns.testSkill,
+    19000
+  );
 });
 
 test("writes each supported mode to its own save key and updates save metadata", () => {
