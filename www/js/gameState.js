@@ -900,8 +900,9 @@ function initializeGameState(mode = "story") {
       : now;
 
   const offlineMs = Math.max(0, now - savedAtReal);
+  const offlineMsApplied = gameState.world.inCombat === true ? 0 : offlineMs;
 
-  appState.gameTime = savedGameTime + offlineMs;
+  appState.gameTime = savedGameTime + offlineMsApplied;
   window.RuntimeDiagnostics?.recordRecovery("save.load.complete", {
     requestedMode: mode,
     key,
@@ -910,6 +911,8 @@ function initializeGameState(mode = "story") {
     selectedSlotIndex: gameState.world.selectedSlotIndex ?? null,
     isCritical: gameState.combat?.flags?.isCritical === true,
     finisherResolved: gameState.combat?.flags?.finisherResolved === true,
+    offlineMs,
+    offlineMsApplied,
     recoveryNeeded: appState.recoveryNeeded
   });
 }
@@ -1077,6 +1080,7 @@ let appState = {
   startNewCampaign: false,
   
   isPaused: false,
+  visibilityPaused: false,
   
   mode: "boot" // "boot" | "game" | "pause"
 };
