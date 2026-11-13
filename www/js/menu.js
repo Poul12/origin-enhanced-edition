@@ -954,7 +954,11 @@ function continueGame(mode = `story`) {
     return false;
   }
 
-  if (gameState.world?.inCombat === true && gameState.combat?.flags?.isCritical === true) {
+  if (
+    gameState.world?.inCombat === true &&
+    gameState.combat?.flags?.isCritical === true &&
+    gameState.combat?.flags?.finisherResolved !== true
+  ) {
     appState.resolveInterruptedCriticalDeathOnEnter = true;
     window.RuntimeDiagnostics?.recordRecovery("critical.interrupted.death.queued", {
       mode: gameState.world?.mode || mode,
