@@ -771,6 +771,14 @@ async function enterGame() {
     await navigate("map");
     if (appState.resumeInterruptedCombatOnEnter || appState.endInterruptedCombatOnEnter) {
       await navigate("battle");
+      if (appState.resolveInterruptedCriticalDeathOnEnter) {
+        appState.resolveInterruptedCriticalDeathOnEnter = false;
+        window.RuntimeDiagnostics?.recordRecovery("critical.interrupted.death.resolve", {
+          mode: gameState.world?.mode || null,
+          selectedSlotIndex: gameState.world?.selectedSlotIndex ?? null
+        });
+        handlePlayerDeath();
+      }
       if (appState.resumeInterruptedCombatOnEnter) {
         appState.resumeInterruptedCombatOnEnter = false;
       }
@@ -922,6 +930,14 @@ async function enterGame() {
     await navigate("map");
     if (appState.resumeInterruptedCombatOnEnter || appState.endInterruptedCombatOnEnter) {
       await navigate("battle");
+      if (appState.resolveInterruptedCriticalDeathOnEnter) {
+        appState.resolveInterruptedCriticalDeathOnEnter = false;
+        window.RuntimeDiagnostics?.recordRecovery("critical.interrupted.death.resolve", {
+          mode: gameState.world?.mode || null,
+          selectedSlotIndex: gameState.world?.selectedSlotIndex ?? null
+        });
+        handlePlayerDeath();
+      }
       if (appState.resumeInterruptedCombatOnEnter) {
         appState.resumeInterruptedCombatOnEnter = false;
       }
