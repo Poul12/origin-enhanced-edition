@@ -536,20 +536,37 @@ function finishSkillCooldown(skillId, fill, top, button, counter) {
   if (counter) counter.remove();
   cancelAnimationFrame(skillCooldownState[skillId]?.rafId);
   delete skillCooldownState[skillId];
+  if (gameState?.combat?.skills?.skillCooldowns) {
+    delete gameState.combat.skills.skillCooldowns[skillId];
+  }
 }
 
 function pauseAllSkillsCooldown() {
- // console.log("⏸️ Pauzuję wszystkie cooldowny");
+  const now = getGameTime();
+
   for (const id in skillCooldownState) {
     const state = skillCooldownState[id];
     if (!state || state.isPaused) continue;
+
+    // Uwzględnij czas od ostatniej klatki, zanim zatrzymamy RAF.
+    const elapsed = Math.max(0, now - state.lastFrameTime);
+    state.remainingMs = Math.max(0, state.remainingMs - elapsed);
+    state.lastFrameTime = now;
+
+    const cooldowns = gameState?.combat?.skills?.skillCooldowns;
+    if (cooldowns) {
+      if (state.remainingMs > 0) cooldowns[id] = now + state.remainingMs;
+      else delete cooldowns[id];
+    }
+
     cancelAnimationFrame(state.rafId);
+    state.rafId = null;
     state.isPaused = true;
+    updateSkillCooldownVisual(id);
   }
 }
 
 function resumeAllSkillsCooldown() {
- // console.log("▶️ Wznawiam wszystkie cooldowny");
   for (const id in skillCooldownState) {
     const state = skillCooldownState[id];
     if (!state || !state.isPaused) continue;
@@ -560,8 +577,13 @@ function resumeAllSkillsCooldown() {
     const counter = button?.querySelector(".cooldown-counter");
     if (!fill || !top || !button || !counter) continue;
 
+    if (state.remainingMs <= 0) {
+      finishSkillCooldown(id, fill, top, button, counter);
+      continue;
+    }
+
     state.isPaused = false;
-    state.lastFrameTime = getGameTime(); // ważne! reset punktu odniesienia
+    state.lastFrameTime = getGameTime();
     animateSkillCooldown(id, fill, top, button, counter);
   }
 }
@@ -598,13 +620,23 @@ function reduceSkillCooldown(skillId, reductionPercent) {
 
   if (!state) return;
 
-  const reduction = Math.max(0, Math.min(reductionPercent, 100)) / 100;
+  const now = getGameTime();
+  if (!state.isPaused) {
+    const elapsed = Math.max(0, now - state.lastFrameTime);
+    state.remainingMs = Math.max(0, state.remainingMs - elapsed);
+    state.lastFrameTime = now;
+  }
 
+  const reduction = Math.max(0, Math.min(reductionPercent, 100)) / 100;
   state.remainingMs *= (1 - reduction);
 
-  //console.log(`state.remainingMs`, state.remainingMs);
-        
-  // natychmiastowa aktualizacja UI
+  const cooldowns = gameState?.combat?.skills?.skillCooldowns;
+  if (cooldowns) {
+    if (state.remainingMs > 0) cooldowns[skillId] = now + state.remainingMs;
+    else delete cooldowns[skillId];
+  }
+
+  // Natychmiastowa aktualizacja UI.
   updateSkillCooldownVisual(skillId);
 
   // jeśli cooldown właśnie się skończył
