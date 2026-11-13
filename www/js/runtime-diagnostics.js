@@ -485,6 +485,7 @@
         "position:fixed",
         "right:12px",
         "bottom:12px",
+        "transform:translateX(-80%)",
         "z-index:2147483000",
         "padding:0",
         "border:0",
