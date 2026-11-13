@@ -11,6 +11,78 @@ function appTrace(stage, details = {}) {
   window.RuntimeDiagnostics?.record("app." + stage, details);
 }
 
+function installCombatVisibilityPause() {
+  if (window.__originCombatVisibilityPauseInstalled) return;
+  window.__originCombatVisibilityPauseInstalled = true;
+
+  const pauseForInterruption = source => {
+    if (
+      gameState?.world?.inCombat !== true ||
+      gameState?.combat?.flags?.isCritical === true ||
+      appState.isPaused ||
+      appState.visibilityPaused
+    ) return;
+
+    appState.visibilityPaused = true;
+    if (typeof pauseAllSkillsCooldown === "function") {
+      pauseAllSkillsCooldown();
+    }
+    pauseGame();
+
+    try {
+      saveGame();
+    } catch (error) {
+      window.RuntimeDiagnostics?.captureError(error, "combat-visibility-save");
+    }
+
+    window.RuntimeDiagnostics?.record("combat.visibility.paused", {
+      source,
+      mode: gameState.world.mode,
+      selectedSlotIndex: gameState.world.selectedSlotIndex ?? null
+    });
+  };
+
+  const resumeAfterInterruption = source => {
+    if (!appState.visibilityPaused) return;
+
+    appState.visibilityPaused = false;
+    resumeCombat();
+    if (typeof resumeAllSkillsCooldown === "function") {
+      resumeAllSkillsCooldown();
+    }
+
+    try {
+      saveGame();
+    } catch (error) {
+      window.RuntimeDiagnostics?.captureError(error, "combat-visibility-resume-save");
+    }
+
+    window.RuntimeDiagnostics?.record("combat.visibility.resumed", {
+      source,
+      mode: gameState?.world?.mode || null,
+      inCombat: gameState?.world?.inCombat === true
+    });
+  };
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "hidden") {
+      pauseForInterruption("visibilitychange");
+    } else {
+      resumeAfterInterruption("visibilitychange");
+    }
+  });
+
+  window.addEventListener("pagehide", () => {
+    pauseForInterruption("pagehide");
+  });
+
+  window.addEventListener("pageshow", () => {
+    if (document.visibilityState !== "hidden") {
+      resumeAfterInterruption("pageshow");
+    }
+  });
+}
+
 function startStartupWatchdog() {
   let overlay = null;
   const timer = window.setTimeout(() => {
@@ -67,6 +139,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   appTrace("analytics.initialized");
   
   initializeGameState();
+  installCombatVisibilityPause();
   appTrace("game-state.initialized");
 
   // Language must be ready before resumeAfterReload can display recovery UI.
