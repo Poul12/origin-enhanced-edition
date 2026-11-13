@@ -486,14 +486,16 @@
         "right:12px",
         "bottom:12px",
         "z-index:2147483000",
-        "padding:10px 12px",
-        "border:1px solid rgba(255,255,255,.35)",
-        "border-radius:6px",
-        "background:#17131d",
-        "color:#fff",
-        "font:600 12px sans-serif",
-        "letter-spacing:.06em",
-        "box-shadow:0 2px 10px rgba(0,0,0,.45)"
+        "padding:0",
+        "border:0",
+        "border-radius:0",
+        "background:transparent",
+        "color:rgba(255,255,255,.72)",
+        "font:500 10px sans-serif",
+        "letter-spacing:.04em",
+        "text-decoration:underline",
+        "box-shadow:none",
+        "line-height:1.2"
       ].join(";");
 
       debugButton.addEventListener("click", exportReport);
