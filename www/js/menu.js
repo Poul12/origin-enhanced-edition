@@ -954,6 +954,24 @@ function continueGame(mode = `story`) {
     return false;
   }
 
+  if (gameState.world?.inCombat === true && gameState.combat?.flags?.isCritical === true) {
+    appState.resolveInterruptedCriticalDeathOnEnter = true;
+    window.RuntimeDiagnostics?.recordRecovery("critical.interrupted.death.queued", {
+      mode: gameState.world?.mode || mode,
+      selectedSlotIndex: gameState.world?.selectedSlotIndex ?? null,
+      isCritical: true,
+      finisherResolved: gameState.combat?.flags?.finisherResolved === true
+    });
+    console.warn("Interrupted Critical State detected; resolving as player death instead of Recovery");
+
+    const loadedMode = gameState.world?.mode || mode;
+    if (loadedMode === "expedition") setExpeditionUI();
+    else setStoryUI();
+
+    bootGame();
+    return false;
+  }
+
   if (gameState.world?.inCombat === true) {
     console.warn("Interrupted combat detected; waiting for the player's recovery decision");
     showInterruptedCombatPrompt();
