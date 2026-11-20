@@ -1660,10 +1660,13 @@ function stopBleedTimingUI() {
 
 function resumeBleedUI() {
   if (!bleedTimingActive) return;
-  
-  const bar = document.getElementById("timing-mode");
 
-  if (bar.classList.contains("hidden")) return;
+  const bar = document.getElementById("timing-mode");
+  if (!bar || bar.classList.contains("hidden")) return;
+
+  // Cancel a callback that may still be queued from just before the tab was hidden.
+  if (bleedAnimationFrame) cancelAnimationFrame(bleedAnimationFrame);
+  bleedAnimationFrame = null;
 
   const player = getPlayerStats();
   showBleedTimingUI(player);
@@ -1980,15 +1983,14 @@ function stopSpearControlUI() {
 function resumeSpearUI() {
   if (!spearTimingActive) return;
 
-  //if (spearAnimationFrame) return; // już działa
-
   const bar = document.getElementById("timing-mode");
+  if (!bar || bar.classList.contains("hidden")) return;
 
-  if (bar.classList.contains("hidden")) return;
+  // Cancel a callback that may still be queued from just before the tab was hidden.
+  if (spearAnimationFrame) cancelAnimationFrame(spearAnimationFrame);
+  spearAnimationFrame = null;
 
   const player = getPlayerStats();
-  //spearAnimationFrame = requestAnimationFrame(animate);
-  //stopSpearControlUI();
   startSpearControlUI(player);
 }
 
