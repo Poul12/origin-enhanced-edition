@@ -121,10 +121,12 @@ function getGameTime() {
 
 function pauseGame() {
   appState.isPaused = true;
+  if (gameState?.globalTime) gameState.globalTime.isPaused = true;
 }
 
 function resumeCombat() {
   appState.isPaused = false;
+  if (gameState?.globalTime) gameState.globalTime.isPaused = false;
   lastTime = 0;
 }
 
