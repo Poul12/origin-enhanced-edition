@@ -1053,6 +1053,10 @@ function restoreCombat() {
   renderCombat();
   renderPlayerCombatSlot(enemy);
 
+  if (!gameState.combat.flags.isCritical && typeof restorePlayerDots === "function") {
+    restorePlayerDots(enemy);
+  }
+
   restoreGuardStacks();
   restoreDefensiveStanceRuntime();
   if (!gameState.combat.flags.isCritical) restoreSkillCooldowns();
