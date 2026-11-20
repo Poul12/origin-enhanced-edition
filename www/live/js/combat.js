@@ -1026,6 +1026,13 @@ function restoreCombat() {
     return false;
   }
 
+  // Recovery is an explicit player decision to resume the interrupted battle.
+  // The saved global-time pause must be cleared before combat UI loops restart.
+  if (appState.resumeInterruptedCombatOnEnter === true) {
+    appState.resumeInterruptedCombatOnEnter = false;
+    resumeCombat();
+  }
+
   const selectedSlotSelector = `.explore-slot[data-index="${slotIndex}"]`;
   const hadRenderedSelectedSlot = !!document.querySelector(selectedSlotSelector);
 
