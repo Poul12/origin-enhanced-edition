@@ -23,9 +23,22 @@ function installCombatVisibilityPause() {
       appState.visibilityPaused
     ) return;
 
+    const slotIndex = gameState.world.selectedSlotIndex;
+    const enemy = gameState.world.exploreOptions?.[slotIndex]?.enemyData;
+
     appState.visibilityPaused = true;
+    appState.visibilityPauseStaminaDisabled =
+      gameState.resources?.staminaState?.disabled === true;
+
+    if (enemy && typeof pauseEnemyAttack === "function") {
+      pauseEnemyAttack(enemy, slotIndex);
+    }
     if (typeof pauseAllSkillsCooldown === "function") {
       pauseAllSkillsCooldown();
+    }
+    if (typeof dotIsPaused !== "undefined") dotIsPaused = true;
+    if (gameState.resources?.staminaState) {
+      gameState.resources.staminaState.disabled = true;
     }
     pauseGame();
 
@@ -45,11 +58,26 @@ function installCombatVisibilityPause() {
   const resumeAfterInterruption = source => {
     if (!appState.visibilityPaused) return;
 
-    appState.visibilityPaused = false;
-    resumeCombat();
+    const slotIndex = gameState?.world?.selectedSlotIndex;
+    const enemy = gameState?.world?.exploreOptions?.[slotIndex]?.enemyData;
+
+    if (enemy && typeof resumeEnemyAttack === "function") {
+      resumeEnemyAttack(enemy, slotIndex);
+    }
     if (typeof resumeAllSkillsCooldown === "function") {
       resumeAllSkillsCooldown();
     }
+    resumeCombat();
+    if (typeof resumeTimedBlockUI === "function") resumeTimedBlockUI();
+    if (typeof resumeBleedUI === "function") resumeBleedUI();
+    if (typeof resumeSpearUI === "function") resumeSpearUI();
+    if (typeof dotIsPaused !== "undefined") dotIsPaused = false;
+    if (gameState?.resources?.staminaState) {
+      gameState.resources.staminaState.disabled =
+        appState.visibilityPauseStaminaDisabled === true;
+    }
+    delete appState.visibilityPauseStaminaDisabled;
+    appState.visibilityPaused = false;
 
     try {
       saveGame();
