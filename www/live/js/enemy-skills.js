@@ -371,12 +371,16 @@ function applyPlayerDot(type, enemy, damage, durationMs) {
 }
 
 let dotIsPaused = false;
+const playerDotIntervals = new Map();
+
 function startPlayerDot(type, enemy) {
   const dot = gameState.combat.playerDots[type];
 
-  if (!dot || dot.interval) return;
+  if (!dot || playerDotIntervals.has(type)) return;
 
-  dot.interval = setInterval(() => {
+  // Interval handles are runtime-only and must never be serialized into a save.
+  dot.interval = null;
+  const intervalId = setInterval(() => {
 
     if(dotIsPaused) return;
     
@@ -417,6 +421,38 @@ function startPlayerDot(type, enemy) {
     }
 
   }, 1000);
+
+  playerDotIntervals.set(type, intervalId);
+}
+
+function restorePlayerDots(enemy) {
+  const dots = gameState?.combat?.playerDots;
+  if (!dots || !enemy) return;
+
+  dotIsPaused = false;
+  const now = getGameTime();
+
+  Object.entries(dots).forEach(([type, dot]) => {
+    if (!dot) return;
+
+    const activeInterval = playerDotIntervals.get(type);
+    if (activeInterval) clearInterval(activeInterval);
+    playerDotIntervals.delete(type);
+
+    // Older saves may contain a stale numeric interval ID from the previous page.
+    dot.interval = null;
+    dot.stacks = Array.isArray(dot.stacks)
+      ? dot.stacks.filter(stack =>
+          Number.isFinite(stack?.expiresAt) && stack.expiresAt > now
+        )
+      : [];
+
+    if (dot.stacks.length > 0) {
+      startPlayerDot(type, enemy);
+    } else {
+      updateStatusPlayerUI(enemy, type);
+    }
+  });
 }
 
 function dealPlayerDotDamage(type, enemy, damage) {
@@ -452,10 +488,10 @@ function clearPlayerDot(type, enemy) {
 
   if (!dot) return;
 
-  if (dot.interval) {
-    clearInterval(dot.interval);
-    dot.interval = null;
-  }
+  const intervalId = playerDotIntervals.get(type);
+  if (intervalId) clearInterval(intervalId);
+  playerDotIntervals.delete(type);
+  dot.interval = null;
 
   dot.stacks = [];
   dot.nextTickAt = 0;
