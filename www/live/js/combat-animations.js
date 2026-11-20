@@ -793,10 +793,14 @@ function stopTimedBlockUI() {
 
 function resumeTimedBlockUI() {
   if (!perfectBlockTimingActive) return;
-  
+
+  // The active RAF loop keeps itself alive while global combat time is paused.
+  // Reuse that loop instead of creating a second animation on resume.
+  if (perfectBlockAnimationFrame) return;
+
   const bar = document.getElementById("timing-mode");
 
-  if (bar.classList.contains("hidden")) return;
+  if (!bar || bar.classList.contains("hidden")) return;
 
   const player = getPlayerStats();
   showTimedBlockUI(player);
