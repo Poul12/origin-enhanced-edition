@@ -111,8 +111,7 @@ function loadState() {
     restoreActionLock();
     updateActionLockUI();
     restoreAttackCooldownAfterLoad();
-    restoreSkillCooldowns();
-  
+
     if (
       world.inCombat &&
       world.selectedSlotIndex !== null &&
