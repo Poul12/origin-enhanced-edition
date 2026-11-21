@@ -909,6 +909,8 @@ function showInterruptedCombatPrompt() {
     else setStoryUI();
 
     appState.resumeInterruptedCombatOnEnter = true;
+    // Freeze game time before bootGame starts the engine and loads the battle.
+    pauseGame();
     playSound("open-slot", 0.4);
     bootGame();
   });
