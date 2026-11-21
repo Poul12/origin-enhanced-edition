@@ -335,7 +335,7 @@ function clearPlayerBleed(enemy) {
     });
   }
   
-  if (!dot.interval) {
+  if (!playerDotIntervals.has(type)) {
     startPlayerDot(type, enemy);
   }
 
@@ -500,8 +500,23 @@ function clearPlayerDot(type, enemy) {
 }
 
 function clearAllPlayerDots(enemy) {
-  Object.keys(gameState.combat.playerDots).forEach(type => {
-    clearPlayerDot(type, enemy);
-  });
+  const dots = gameState?.combat?.playerDots;
+  if (!dots) return;
 
+  // Always release the runtime timers and pause state, including on flee/victory.
+  dotIsPaused = false;
+
+  Object.keys(dots).forEach(type => {
+    const dot = dots[type];
+    const intervalId = playerDotIntervals.get(type);
+    if (intervalId) clearInterval(intervalId);
+    playerDotIntervals.delete(type);
+
+    if (!dot) return;
+    dot.interval = null;
+    dot.stacks = [];
+    dot.nextTickAt = 0;
+
+    if (enemy) updateStatusPlayerUI(enemy, type);
+  });
 }
