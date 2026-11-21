@@ -120,6 +120,13 @@ function loadState() {
       restoreCombat();
     }
 
+    // Fallback: if Recovery could not enter restoreCombat (for example, a missing
+    // selected slot), release the clock freeze instead of trapping the game paused.
+    if (appState.resumeInterruptedCombatOnEnter === true) {
+      appState.resumeInterruptedCombatOnEnter = false;
+      resumeCombat();
+    }
+
     //console.error("After load playerBlock.cooldownPaused:", combat.playerBlock.cooldownPaused);
 }
 
