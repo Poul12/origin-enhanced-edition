@@ -1194,6 +1194,8 @@ function setupFleeButton() {
     `${t("flee_cost1")} <span style="color:red;"> ${loss}${t("flee_cost2")}</span>${t("flee_cost3")}<span style="color:#0096FF;">${t("flee_cost4")}</span> \n ${t("flee_cost5")}`,
     () => { 
       attemptFlee();
+      // If the flee attempt fails, DOT timers must resume with the rest of combat.
+      dotIsPaused = false;
       resumeAllSkillsCooldown();
       resumeCombat();
       gameState.resources.staminaState.disabled = false; 
