@@ -2306,7 +2306,17 @@ function showOtherNonCombatElements(enemy) {
 
 function exitCombat() {
   const char = gameState.char;
-  
+  const world = gameState.world;
+  const slotIndex = world?.selectedSlotIndex;
+  const enemy = Number.isInteger(slotIndex)
+    ? world.exploreOptions?.[slotIndex]?.enemyData
+    : null;
+
+  // Combat DOT timers are runtime-only; stop them before leaving this battle.
+  if (typeof clearAllPlayerDots === "function") {
+    clearAllPlayerDots(enemy);
+  }
+
   char.inCombat = false;
   char.lastRegenTs = Date.now();
   char.regenAllowedAt = Date.now() + 3000;
