@@ -1023,14 +1023,12 @@ function restoreCombat() {
 
   if (!world.inCombat || !enemy || !Number.isInteger(slotIndex)) {
     console.warn("Cannot restore combat: saved combat target is missing");
+    // Do not leave the game clock frozen if the saved battle cannot be restored.
+    if (appState.resumeInterruptedCombatOnEnter === true) {
+      appState.resumeInterruptedCombatOnEnter = false;
+      resumeCombat();
+    }
     return false;
-  }
-
-  // Recovery is an explicit player decision to resume the interrupted battle.
-  // The saved global-time pause must be cleared before combat UI loops restart.
-  if (appState.resumeInterruptedCombatOnEnter === true) {
-    appState.resumeInterruptedCombatOnEnter = false;
-    resumeCombat();
   }
 
   const selectedSlotSelector = `.explore-slot[data-index="${slotIndex}"]`;
@@ -1108,6 +1106,12 @@ function restoreCombat() {
     restoreEnemyAttackTimeline(enemy, slotIndex);
     setupFleeButton();
     showFleeButton();
+  }
+
+  // Resume only after the combat state and its cooldowns have been restored.
+  if (appState.resumeInterruptedCombatOnEnter === true) {
+    appState.resumeInterruptedCombatOnEnter = false;
+    resumeCombat();
   }
 
   return true;
