@@ -1051,6 +1051,13 @@ function restoreCombat() {
   }
   gameState.char.dom = { slot: document.getElementById("player-combat-slot") };
 
+  if (
+    appState.resumeInterruptedCombatOnEnter === true &&
+    typeof restoreVisibilityPauseStaminaState === "function"
+  ) {
+    restoreVisibilityPauseStaminaState();
+  }
+
   gameState.combat.isStart = true;
   enterCombat();
   setMenuDisabled(true);
