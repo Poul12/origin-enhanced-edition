@@ -11,6 +11,28 @@ function appTrace(stage, details = {}) {
   window.RuntimeDiagnostics?.record("app." + stage, details);
 }
 
+function restoreVisibilityPauseStaminaState() {
+  const staminaState = gameState?.resources?.staminaState;
+  if (!staminaState || staminaState.visibilityPausePending !== true) return;
+
+  const wasDisabled = staminaState.visibilityPauseDisabledBefore === true;
+  const wasStaminaBreak = staminaState.visibilityPauseBreakWasActive === true;
+  const breakStillActive =
+    Number(staminaState.breakExpiresAt) > Date.now();
+
+  staminaState.disabled = wasStaminaBreak
+    ? breakStillActive
+    : wasDisabled;
+
+  staminaState.visibilityPausePending = false;
+  staminaState.visibilityPauseDisabledBefore = false;
+  staminaState.visibilityPauseBreakWasActive = false;
+
+  if (typeof restoreStaminaBreakState === "function") {
+    restoreStaminaBreakState();
+  }
+}
+
 function installCombatVisibilityPause() {
   if (window.__originCombatVisibilityPauseInstalled) return;
   window.__originCombatVisibilityPauseInstalled = true;
@@ -27,8 +49,17 @@ function installCombatVisibilityPause() {
     const enemy = gameState.world.exploreOptions?.[slotIndex]?.enemyData;
 
     appState.visibilityPaused = true;
-    appState.visibilityPauseStaminaDisabled =
-      gameState.resources?.staminaState?.disabled === true;
+    const staminaState = gameState.resources?.staminaState;
+    if (staminaState) {
+      if (staminaState.visibilityPausePending !== true) {
+        staminaState.visibilityPauseDisabledBefore = staminaState.disabled === true;
+        staminaState.visibilityPauseBreakWasActive =
+          Number(staminaState.breakExpiresAt) > Date.now();
+        staminaState.visibilityPausePending = true;
+      }
+      appState.visibilityPauseStaminaDisabled =
+        staminaState.visibilityPauseDisabledBefore === true;
+    }
 
     if (enemy && typeof pauseEnemyAttack === "function") {
       pauseEnemyAttack(enemy, slotIndex);
@@ -72,10 +103,7 @@ function installCombatVisibilityPause() {
     if (typeof resumeBleedUI === "function") resumeBleedUI();
     if (typeof resumeSpearUI === "function") resumeSpearUI();
     if (typeof dotIsPaused !== "undefined") dotIsPaused = false;
-    if (gameState?.resources?.staminaState) {
-      gameState.resources.staminaState.disabled =
-        appState.visibilityPauseStaminaDisabled === true;
-    }
+    restoreVisibilityPauseStaminaState();
     delete appState.visibilityPauseStaminaDisabled;
     appState.visibilityPaused = false;
 
@@ -167,6 +195,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   appTrace("analytics.initialized");
   
   initializeGameState();
+  if (typeof restoreStaminaBreakState === "function") {
+    restoreStaminaBreakState();
+  }
   installCombatVisibilityPause();
   appTrace("game-state.initialized");
 
