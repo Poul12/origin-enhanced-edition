@@ -569,9 +569,13 @@ function getBaseResourceState() {
       blockDrainPerSecond: 15,
       fatigue: "",
       breakDurationMs: 1500,
+      breakExpiresAt: 0,
   
       inCombat: false,
-      disabled: false
+      disabled: false,
+      visibilityPausePending: false,
+      visibilityPauseDisabledBefore: false,
+      visibilityPauseBreakWasActive: false
     },
  
     firecampState: {
