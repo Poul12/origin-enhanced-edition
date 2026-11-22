@@ -924,6 +924,11 @@ function showInterruptedCombatPrompt() {
     if (mode === "expedition") setExpeditionUI();
     else setStoryUI();
 
+    // Clear the persisted visibility-pause marker for either recovery choice.
+    // Ending the interrupted fight must not leave stamina disabled by pagehide.
+    if (typeof restoreVisibilityPauseStaminaState === "function") {
+      restoreVisibilityPauseStaminaState();
+    }
     appState.endInterruptedCombatOnEnter = true;
     closePrompt();
     playSound("open-slot", 0.4);
