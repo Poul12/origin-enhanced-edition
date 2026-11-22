@@ -402,16 +402,53 @@ function gainStamina(amount) {
     );
 }
 
+let staminaBreakTimeout = null;
+
+function restoreStaminaBreakState() {
+  const staminaState = gameState?.resources?.staminaState;
+  if (!staminaState) return;
+
+  const expiresAt = Number(staminaState.breakExpiresAt) || 0;
+  const remaining = expiresAt - Date.now();
+
+  if (staminaBreakTimeout !== null) {
+    clearTimeout(staminaBreakTimeout);
+    staminaBreakTimeout = null;
+  }
+
+  if (expiresAt > 0 && remaining <= 0) {
+    staminaState.breakExpiresAt = 0;
+    if (staminaState.visibilityPausePending !== true) {
+      staminaState.disabled = false;
+    }
+    return;
+  }
+
+  if (remaining > 0) {
+    staminaState.disabled = true;
+    staminaBreakTimeout = setTimeout(() => {
+      if ((Number(staminaState.breakExpiresAt) || 0) > Date.now()) return;
+      staminaState.breakExpiresAt = 0;
+      if (staminaState.visibilityPausePending !== true) {
+        staminaState.disabled = false;
+      }
+      staminaBreakTimeout = null;
+      try { saveGame(); } catch (error) {
+        console.warn("Could not save expired stamina break", error);
+      }
+    }, remaining);
+  }
+}
+
 function triggerStaminaBreak() {
   const staminaState = gameState.resources.staminaState;
 
   staminaState.disabled = true;
   staminaState.lastSpendTs = performance.now();
+  staminaState.breakExpiresAt = Date.now() + staminaState.breakDurationMs;
 
-  setTimeout(() => {
-    staminaState.disabled = false;
-    //console.error(`staminaState.disabled turn to false`, staminaState.disabled);
-  }, staminaState.breakDurationMs);
+  restoreStaminaBreakState();
+  saveGame();
 }
 
 function spendStamina(amount) {
