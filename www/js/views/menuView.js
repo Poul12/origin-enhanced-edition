@@ -750,7 +750,11 @@ async function enterGame() {
 
   document.getElementById("global-logo").classList.add("hidden");
 
-  appState.isPaused = false;
+  // Recovery must keep the game clock frozen until restoreCombat has
+  // rebuilt the battle and its cooldown timers.
+  if (appState.resumeInterruptedCombatOnEnter !== true) {
+    appState.isPaused = false;
+  }
 
   unlockScroll();
 
