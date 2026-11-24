@@ -105,10 +105,7 @@ function breakPoise(enemy, player) {
 
   
   
-  setTimeout(() => {
-    enemy.poiseBroken = false;
-    enemy.poise = enemy.maxPoise * 0.5; // wraca z połową
-  }, 2000);
+  enemy.poiseBreakExpiresAt = getGameTime() + 2000;
 }
 
 function hammerOnHit(enemy, player) {
@@ -1382,8 +1379,8 @@ function getDodgeWithBonus(baseDodge, bonusDodge) {
 
   const critBonus = gameState.combat.critBonus;
   
-  if(getGameTime() > critBonus.dodgeBonus.expiresAt) {
-    critBonus.dodgeBonus.isActive = true;
+  if (!critBonus.dodgeBonus.isActive || getGameTime() >= critBonus.dodgeBonus.expiresAt) {
+    critBonus.dodgeBonus.isActive = false;
     critBonus.dodgeBonus.expiresAt = 0;
     return baseDodge;
   }
@@ -1396,8 +1393,8 @@ function getReducedStaminaCost(baseCost, reducedCost) {
 
   const dodgeBonus = gameState.combat.dodgeBonus;
   
-  if(getGameTime() > dodgeBonus.staminaBonus.expiresAt) {
-    dodgeBonus.staminaBonus.isActive = true;
+  if (!dodgeBonus.staminaBonus.isActive || getGameTime() >= dodgeBonus.staminaBonus.expiresAt) {
+    dodgeBonus.staminaBonus.isActive = false;
     dodgeBonus.staminaBonus.expiresAt = 0;
     return baseCost;
   }
@@ -1411,8 +1408,8 @@ function getReducedDamageAfterBreak(baseDmg, reducedDmg) {
 
   const poiseBonus = gameState.combat.poiseBonus;
   
-  if(getGameTime() > poiseBonus.dmgTakenBonus.expiresAt) {
-    poiseBonus.dmgTakenBonus.isActive = true;
+  if (!poiseBonus.dmgTakenBonus.isActive || getGameTime() >= poiseBonus.dmgTakenBonus.expiresAt) {
+    poiseBonus.dmgTakenBonus.isActive = false;
     poiseBonus.dmgTakenBonus.expiresAt = 0;
     return baseDmg;
   }
