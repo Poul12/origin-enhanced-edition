@@ -2374,40 +2374,25 @@ function applyArmorBreak(enemy, value, duration) {
 }
 
 function applyEnemyStun(enemy, multiplier, durationMs, slotIndex) {
-  //const now = Date.now();
-  const now = performance.now();
+  if (!enemy) return;
+  const status = enemy.status || (enemy.status = {});
+  const now = getGameTime();
+  const currentExpiry = Number(status.stunExpiresAt) || 0;
+  const isAnotherStun = currentExpiry > now;
 
-  const enemySlot = document.getElementById(`enemy-slot-${slotIndex}`);
-  //console.log("durationMs STUN", durationMs);
-  let isAnotherStun = false;
-  
-  if (enemy?.status.stunEnd && enemy?.status.stunEnd > now) {
-    enemy.status.stunEnd += durationMs;
-    isAnotherStun = true;
-  } else {
-    enemy.status.stunEnd = now + durationMs;
-  }
-  
-  updateStatusEnemyUI(enemy);
-  
-  if(!enemy.poiseBroken) {
-    tryInterruptEnemy(enemy, `stun`);
-  }
-  
-  //enemy.status.stunRemaining = durationMs;
-  enemy.status.stunRemaining = enemy.status.stunEnd - now;
-  //enemy.status.stunEnd = Date.now() + durationMs;
+  status.stunExpiresAt = (isAnotherStun ? currentExpiry : now) + Math.max(0, Number(durationMs) || 0);
+  status.stunEnd = null;
+  status.stunRemaining = Math.max(0, status.stunExpiresAt - now);
 
-  if(!isAnotherStun) {
-    // 🔑 Zapamiętaj prędkość przed stunem (np. 0.5 jeśli był slow)
-    enemy.status.speedBeforeStun = enemy.status.currentSpeedMultiplier ?? 1;
-    enemy.status.stun = multiplier * 100;
-
-    // 🔑 Symulacja pauzy – ustaw prędkość praktycznie na 0
+  if (!isAnotherStun) {
+    status.speedBeforeStun = status.currentSpeedMultiplier ?? 1;
+    status.stun = multiplier * 100;
     setEnemyAttackSpeed(enemy, multiplier, slotIndex);
-  } 
-  //stunAnimation(enemySlot, enemy, durationMs);
-  playStunVFX(enemy.dom.slot, durationMs);
+  }
+
+  updateStatusEnemyUI(enemy);
+  if (!enemy.poiseBroken) tryInterruptEnemy(enemy, "stun");
+  if (enemy.dom?.slot) playStunVFX(enemy.dom.slot, durationMs);
 }
 
 function stunAnimation(enemySlot, enemy, stunMs) {
@@ -2504,25 +2489,27 @@ function playStunVFX(enemySlot, duration) {
 }*/
 
 function clearEnemyStun(enemy, slotIndex) {
-  enemy.status.stun = 0;
-  enemy.status.stunRemaining = 0;
-  enemy.status.stunEnd = null;
-  
-  enemy.status.stunned = false;
-  enemy.status.multiplier = 0;
-  
-  const restoredSpeed = enemy.status.speedBeforeStun ?? 1;
-  enemy.status.speedBeforeStun = null;
+  if (!enemy?.status) return;
+  const status = enemy.status;
+  status.stun = 0;
+  status.stunRemaining = 0;
+  status.stunEnd = null;
+  status.stunExpiresAt = 0;
+  status.stunned = false;
+  status.isStunned = false;
+  status.multiplier = 0;
+
+  const restoredSpeed = status.slow ? status.slow / 100 : 1;
+  status.speedBeforeStun = null;
 
   if (enemy.attackState?.phase !== "windup") {
     setEnemyAttackSpeed(enemy, restoredSpeed, slotIndex);
   } else {
-    enemy.status.currentSpeedMultiplier = restoredSpeed;
+    status.currentSpeedMultiplier = restoredSpeed;
     changeSpeedAnimation(enemy, restoredSpeed);
   }
 
   updateStatusEnemyUI(enemy);
-  
   if (enemy.animations?.stun?.cancel) {
     enemy.animations.stun.cancel();
     enemy.animations.stun = null;
@@ -2537,23 +2524,23 @@ function clearEnemyStun(enemy, slotIndex) {
 
 
 function applyEnemySlow(enemy, multiplier, durationMs, slotIndex) {
-  const enemySlot = document.getElementById(`enemy-slot-${slotIndex}`);
+  if (!enemy) return;
+  const status = enemy.status || (enemy.status = {});
+  const now = getGameTime();
 
-  enemy.status.slow = multiplier * 100;
-  enemy.status.slowRemaining = durationMs;
-  //enemy.status.slowEnd = Date.now() + durationMs;
-  enemy.status.slowEnd = performance.now() + durationMs;
-  
-  if (enemy.status.stun) {
-    enemy.status.speedBeforeStun = multiplier;
+  status.slow = multiplier * 100;
+  status.slowExpiresAt = now + Math.max(0, Number(durationMs) || 0);
+  status.slowRemaining = Math.max(0, status.slowExpiresAt - now);
+  status.slowEnd = null;
+
+  if (status.stun) {
+    status.speedBeforeStun = multiplier;
   } else {
     setEnemyAttackSpeed(enemy, multiplier, slotIndex);
   }
 
   updateStatusEnemyUI(enemy);
-  
-  //slowAnimation(enemySlot, enemy, durationMs);
-  playSlowVFX(enemy.dom.slot, durationMs);
+  if (enemy.dom?.slot) playSlowVFX(enemy.dom.slot, durationMs);
 }
 
 function slowAnimation(enemySlot, enemy, slowMs) {
@@ -2630,21 +2617,24 @@ function playSlowVFX(enemySlot, duration) {
 }*/
 
 function clearEnemySlow(enemy, slotIndex) {
-  enemy.status.slow = 0;
-  enemy.status.slowRemaining = 0;
-  enemy.status.slowEnd = null;
-  
-  if (!enemy.status.stun) {
-    if (enemy.attackState?.phase !== "windup") {
-      setEnemyAttackSpeed(enemy, 1, slotIndex);
-    } else {
-      enemy.status.currentSpeedMultiplier = 1;
-      changeSpeedAnimation(enemy, 1);
-    }
+  if (!enemy?.status) return;
+  const status = enemy.status;
+  status.slow = 0;
+  status.slowRemaining = 0;
+  status.slowEnd = null;
+  status.slowExpiresAt = 0;
+
+  if (status.stun) {
+    status.speedBeforeStun = 1;
+  } else if (enemy.attackState?.phase !== "windup") {
+    setEnemyAttackSpeed(enemy, 1, slotIndex);
+  } else {
+    status.currentSpeedMultiplier = 1;
+    changeSpeedAnimation(enemy, 1);
   }
 
+  status.isSlowed = false;
   updateStatusEnemyUI(enemy);
-  
   if (enemy.animations?.slow?.cancel) {
     enemy.animations.slow.cancel();
     enemy.animations.slow = null;
