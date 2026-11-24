@@ -137,12 +137,13 @@ function restoreEnemyAttackTimeline(enemy, slotIndex) {
 
 function updateEnemyAttack(delta) {
   const timeline = enemyAttackTimeline;
+  const slotIndex = gameState.world.selectedSlotIndex;
+  const enemy = Number.isInteger(slotIndex)
+    ? gameState.world.exploreOptions[slotIndex]?.enemyData
+    : null;
 
-  if (!timeline.isRunning || timeline.isPaused) return;
-
-  const enemy = gameState.world.exploreOptions[gameState.world.selectedSlotIndex]?.enemyData;
-
-  if (!enemy?.attackState) return;
+  if (enemy) updateEnemyStatusTimers(enemy, slotIndex);
+  if (!timeline.isRunning || timeline.isPaused || !enemy?.attackState) return;
 
   const state = enemy.attackState;
 
@@ -1375,7 +1376,7 @@ function weightedPick(weights) {
 }
 
 function rollEnemyIntent(enemy) {
-  const now = performance.now();
+  const now = getGameTime();
 
   // ---------------------------------
   // BAZOWE WAGI
@@ -1654,8 +1655,11 @@ function tryInterruptEnemy(enemy, source) {
 
   if (enemy.attackState) {
     enemy.attackState.phase = "cooldown";
-    enemy.attackState.remaining =
-      enemy.attackState.baseCooldown * 0.6;
+    const minimumRecovery = (Number(enemy.attackState.baseCooldown) || 0) * 0.6;
+    enemy.attackState.remaining = Math.max(
+      Number(enemy.attackState.remaining) || 0,
+      minimumRecovery
+    );
   }
 
   let duration = 1000;     
@@ -1730,23 +1734,49 @@ function intentDealsAttack(intent) {
 }
 
 function applyVulnerable(enemy, duration) {
-  if (enemy.vulnerableTimeout) {
-    clearTimeout(enemy.vulnerableTimeout);
-    enemy.vulnerableTimeout = null;
+  if (!enemy) return;
+  enemy.vulnerable = true;
+  enemy.vulnerableExpiresAt = getGameTime() + Math.max(0, Number(duration) || 0);
+  enemy.vulnerableTimeout = null;
+  updateStatusEnemyUI(enemy);
+}
+
+function updateEnemyStatusTimers(enemy, slotIndex) {
+  if (!enemy) return;
+  const now = getGameTime();
+  const status = enemy.status || (enemy.status = {});
+
+  if (enemy.vulnerable) {
+    if (!Number.isFinite(enemy.vulnerableExpiresAt) || now >= enemy.vulnerableExpiresAt) {
+      enemy.vulnerable = false;
+      enemy.vulnerableExpiresAt = 0;
+      updateStatusEnemyUI(enemy);
+    }
   }
 
-  enemy.vulnerable = true;
-  updateStatusEnemyUI(enemy);
+  if (status.stun) {
+    if (!Number.isFinite(status.stunExpiresAt) || now >= status.stunExpiresAt) {
+      clearEnemyStun(enemy, slotIndex);
+    } else {
+      status.stunRemaining = Math.max(0, status.stunExpiresAt - now);
+    }
+  }
 
-  const timeoutId = setTimeout(() => {
-    if (enemy.vulnerableTimeout !== timeoutId) return;
+  if (status.slow) {
+    if (!Number.isFinite(status.slowExpiresAt) || now >= status.slowExpiresAt) {
+      clearEnemySlow(enemy, slotIndex);
+    } else {
+      status.slowRemaining = Math.max(0, status.slowExpiresAt - now);
+    }
+  }
 
-    enemy.vulnerableTimeout = null;
-    enemy.vulnerable = false;
-    updateStatusEnemyUI(enemy);
-  }, duration);
-
-  enemy.vulnerableTimeout = timeoutId;
+  if (enemy.poiseBroken) {
+    if (!Number.isFinite(enemy.poiseBreakExpiresAt) || now >= enemy.poiseBreakExpiresAt) {
+      enemy.poiseBroken = false;
+      enemy.poiseBreakExpiresAt = 0;
+      enemy.poise = (Number(enemy.maxPoise) || 100) * 0.5;
+    }
+  }
 }
 
 /*function showEnemyIntentUI(enemy) {
@@ -1765,6 +1795,7 @@ function applyVulnerable(enemy, duration) {
 }*/
 
 function resetEnemyAI(enemy) {
+  if (!enemy) return;
   if (enemy.vulnerableTimeout) {
     clearTimeout(enemy.vulnerableTimeout);
     enemy.vulnerableTimeout = null;
@@ -1773,9 +1804,30 @@ function resetEnemyAI(enemy) {
   enemy.intent = null;
   enemy.canBeInterrupted = false;
   enemy.vulnerable = false;
+  enemy.vulnerableExpiresAt = 0;
+  enemy.poiseBroken = false;
+  enemy.poiseBreakExpiresAt = 0;
+  enemy.wasInterruptedRecently = false;
   enemy.isCharged = false;
   enemy.isCharging = false;
   enemy.isGuarding = false;
+
+  const status = enemy.status;
+  if (status) {
+    status.slow = 0;
+    status.slowRemaining = 0;
+    status.slowEnd = null;
+    status.slowExpiresAt = 0;
+    status.stun = 0;
+    status.stunRemaining = 0;
+    status.stunEnd = null;
+    status.stunExpiresAt = 0;
+    status.speedBeforeStun = null;
+    status.currentSpeedMultiplier = 1;
+    status.stunned = false;
+    status.isStunned = false;
+    status.isSlowed = false;
+  }
 }
 
 function performEnemyAttack(enemy, slotIndex, options = {}) {  
