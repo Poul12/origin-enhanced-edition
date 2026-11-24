@@ -17,7 +17,7 @@ function executeEnemySkill(enemy, skillId) {
   }
 
   // bezpieczeństwo
-  if (runtimeSkill.expiresAt > performance.now()) {
+  if (runtimeSkill.expiresAt > getGameTime()) {
     return false;
   }
 
@@ -28,7 +28,8 @@ function executeEnemySkill(enemy, skillId) {
 
   // cooldown
   runtimeSkill.expiresAt =
-    performance.now() + skill.cooldown * 1000;
+    getGameTime() + skill.cooldown * 1000;
+  runtimeSkill.cooldownClock = "gameTime";
 
   return true;
 }
@@ -206,12 +207,8 @@ function applyEnemySkillEffect(skillId, player, enemy, slotIndex) {
 
 
 function isEnemySkillReady(enemy, skillId) {
-  const runtimeSkill = enemy.skills?.find(
-    skill => skill.id === skillId
-  );
-
-  return runtimeSkill &&
-         runtimeSkill.expiresAt <= Date.now();
+  const runtimeSkill = enemy.skillState?.find(skill => skill.id === skillId);
+  return !!runtimeSkill && runtimeSkill.expiresAt <= getGameTime();
 }
 
 
