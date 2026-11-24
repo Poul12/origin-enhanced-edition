@@ -1595,7 +1595,7 @@ async function onFleeFail(player, enemy, slotIndex){
 
   resumeEnemyAttack(enemy, slotIndex); 
   
-  if (!enemy.status.isStunned && !enemy.status.isSlowed) {
+  if (!enemy.status?.stun && !enemy.status?.slow) {
 
     // 🧠 AGI – szansa na unik kontrataku
     const avoidChance = player.agi * 0.002;
