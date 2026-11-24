@@ -194,6 +194,7 @@ async function startCombat(i) {
   world.selectedSlotIndex = i;
   world.exploreOptions[i].isAttacked = true;
   const enemy = world.exploreOptions[world.selectedSlotIndex].enemyData;
+  if (typeof resetEnemyAI === "function") resetEnemyAI(enemy);
   //console.log("enemy ", enemy.name);
   setMenuDisabled(true); // zablokuj menu
   
@@ -1029,6 +1030,38 @@ function restoreCombat() {
       resumeCombat();
     }
     return false;
+  }
+
+  // Migrate legacy runtime clocks: performance.now() deadlines cannot survive a reload.
+  if (enemy.status) {
+    if (enemy.status.slow && !Number.isFinite(enemy.status.slowExpiresAt)) {
+      enemy.status.slow = 0;
+      enemy.status.slowRemaining = 0;
+      enemy.status.slowEnd = null;
+      enemy.status.currentSpeedMultiplier = 1;
+    }
+    if (enemy.status.stun && !Number.isFinite(enemy.status.stunExpiresAt)) {
+      enemy.status.stun = 0;
+      enemy.status.stunRemaining = 0;
+      enemy.status.stunEnd = null;
+      enemy.status.speedBeforeStun = null;
+      enemy.status.currentSpeedMultiplier = enemy.status.slow
+        ? enemy.status.slow / 100
+        : 1;
+    }
+  }
+  if (enemy.vulnerable && !Number.isFinite(enemy.vulnerableExpiresAt)) {
+    enemy.vulnerable = false;
+  }
+  if (enemy.poiseBroken && !Number.isFinite(enemy.poiseBreakExpiresAt)) {
+    enemy.poiseBroken = false;
+    enemy.poise = (Number(enemy.maxPoise) || 100) * 0.5;
+  }
+  if (Array.isArray(enemy.skillState)) {
+    enemy.skillState.forEach(skill => {
+      if (skill.cooldownClock !== "gameTime") skill.expiresAt = 0;
+      skill.cooldownClock = "gameTime";
+    });
   }
 
   const selectedSlotSelector = `.explore-slot[data-index="${slotIndex}"]`;
