@@ -74,7 +74,7 @@ test("legacy performance.now status deadlines are discarded safely", () => {
 });
 
 test("enemy skill cooldown creation and readiness use the same gameTime clock", () => {
-  const readyMatch = enemySkillsSource.match(/function isEnemySkillReady\\(enemy, skillId\\) \\{[\\s\\S]*?\\n\\}/);
+  const readyMatch = enemySkillsSource.match(/function isEnemySkillReady\(enemy, skillId\) \{[\s\S]*?\n\}/);
   assert.ok(readyMatch, "missing isEnemySkillReady function");
   const ready = readyMatch[0];
   const context = { getGameTime: () => 1000 };
