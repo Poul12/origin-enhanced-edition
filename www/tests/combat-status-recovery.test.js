@@ -73,28 +73,18 @@ test("legacy performance.now status deadlines are discarded safely", () => {
 });
 
 test("enemy skill cooldown creation and readiness use the same gameTime clock", () => {
-  const executeStart = enemySkillsSource.indexOf("function executeEnemySkill(");
-  const executeEnd = enemySkillsSource.indexOf("\\nfunction getEnemySkillEffectsAtLevel", executeStart);
-  assert.notEqual(executeStart, -1);
-  assert.notEqual(executeEnd, -1);
-  const execute = enemySkillsSource.slice(executeStart, executeEnd);
   const ready = functionSource(enemySkillsSource, "isEnemySkillReady");
-  const context = {
-    getGameTime: () => 1000,
-    ENEMY_SKILLS: { test: { cooldown: 3 } },
-    gameState: { world: { selectedSlotIndex: 0 } },
-    getPlayerStats: () => ({}),
-    applyEnemySkillEffect: () => {}
-  };
-  vm.runInNewContext(execute + "\n" + ready + "\nthis.execute = executeEnemySkill; this.ready = isEnemySkillReady;", context);
+  const context = { getGameTime: () => 1000 };
+  vm.runInNewContext(ready + "\nthis.ready = isEnemySkillReady;", context);
 
-  const enemy = { skillState: [{ id: "test", expiresAt: 0 }] };
-  assert.equal(context.execute(enemy, "test"), true);
-  assert.equal(enemy.skillState[0].expiresAt, 4000);
-  assert.equal(enemy.skillState[0].cooldownClock, "gameTime");
+  assert.match(enemySkillsSource, /runtimeSkill\\.expiresAt =\\s*getGameTime\\(\\) \\+ skill\\.cooldown \\* 1000/);
+  assert.match(enemySkillsSource, /runtimeSkill\\.cooldownClock = "gameTime"/);
+
+  const enemy = { skillState: [{ id: "test", expiresAt: 4000 }] };
   assert.equal(context.ready(enemy, "test"), false);
+  context.getGameTime = () => 4000;
+  assert.equal(context.ready(enemy, "test"), true);
 });
-
 test("restoreCombat migrates old runtime-clock deadlines and cooldowns", () => {
   const restore = functionSource(combatSource, "restoreCombat");
   assert.match(restore, /slowExpiresAt/);
