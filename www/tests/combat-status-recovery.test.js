@@ -8,6 +8,7 @@ const enemySource = fs.readFileSync(path.join(__dirname, "../live/js/enemy.js"),
 const skillSource = fs.readFileSync(path.join(__dirname, "../live/js/skills-combat.js"), "utf8");
 const enemySkillsSource = fs.readFileSync(path.join(__dirname, "../live/js/enemy-skills.js"), "utf8");
 const combatSource = fs.readFileSync(path.join(__dirname, "../live/js/combat.js"), "utf8");
+const menuViewSource = fs.readFileSync(path.join(__dirname, "../js/views/menuView.js"), "utf8");
 
 function functionSource(source, name) {
   const start = source.indexOf(`function ${name}(`);
