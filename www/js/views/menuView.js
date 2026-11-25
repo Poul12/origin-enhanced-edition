@@ -411,9 +411,6 @@ async function withViewLoader(task, delay = 120) {
     if (loaderVisible) {
       window.RuntimeDiagnostics?.record("view-loader.hide.start", {});
       hideViewLoader();
-      // A loader may finish after restoreCombat has locked navigation.
-      // Keep the menu locked for the entire active combat session.
-      setMenuDisabled(gameState?.world?.inCombat === true);
       window.RuntimeDiagnostics?.record("view-loader.hide.complete", {
         durationMs: Math.round(performance.now() - startedAt)
       });
@@ -422,6 +419,10 @@ async function withViewLoader(task, delay = 120) {
         durationMs: Math.round(performance.now() - startedAt)
       });
     }
+
+    // The loader must not override combat navigation state, whether it was
+    // displayed or not. Recovery may set the lock while the view is rendering.
+    setMenuDisabled(gameState?.world?.inCombat === true);
   }
 }
 
