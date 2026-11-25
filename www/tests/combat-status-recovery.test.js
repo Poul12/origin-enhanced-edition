@@ -104,9 +104,9 @@ test("stun and slow are assigned gameTime deadlines, not performance.now deadlin
   const applyStun = functionSource(skillSource, "applyEnemyStun");
   const applySlow = functionSource(skillSource, "applyEnemySlow");
   assert.ok(applyStun.includes("const now = getGameTime()"));
-  assert.match(applyStun, /stunExpiresAt = .*\\bnow\\b/);
+  assert.match(applyStun, /stunExpiresAt = .*now/);
   assert.ok(applySlow.includes("const now = getGameTime()"));
-  assert.match(applySlow, /slowExpiresAt = .*\\bnow\\b/);
+  assert.match(applySlow, /slowExpiresAt = .*now/);
   assert.ok(!applyStun.includes("performance.now()"));
   assert.ok(!applySlow.includes("performance.now()"));
 });
