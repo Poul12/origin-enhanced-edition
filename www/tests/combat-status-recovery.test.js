@@ -110,3 +110,19 @@ test("stun and slow are assigned gameTime deadlines, not performance.now deadlin
   assert.ok(!applyStun.includes("performance.now()"));
   assert.ok(!applySlow.includes("performance.now()"));
 });
+
+test("defensive stance does not become active when stamina state blocks activation", () => {
+  const startBlock = functionSource(combatSource, "startBlock");
+  const activate = functionSource(combatSource, "activateDefensiveStance");
+  assert.match(startBlock, /if \(staminaState\.disabled\) return false/);
+  assert.match(startBlock, /return true/);
+  assert.match(activate, /if \(!startBlock\(\)\) return false/);
+  assert.ok(activate.indexOf("if (!startBlock()) return false") < activate.indexOf("playerBlock.active = true"));
+  assert.ok(activate.indexOf("playerBlock.active = true") < activate.indexOf("skillsOff()"));
+});
+
+test("view loader preserves the combat menu lock even when no loader was displayed", () => {
+  const loader = functionSource(menuViewSource, "withViewLoader");
+  assert.match(loader, /setMenuDisabled\(gameState\?\.world\?\.inCombat === true\)/);
+  assert.ok(loader.lastIndexOf("setMenuDisabled(gameState?.world?.inCombat === true)") > loader.indexOf("finally"));
+});
