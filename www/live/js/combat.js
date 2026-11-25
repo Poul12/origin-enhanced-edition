@@ -1173,7 +1173,9 @@ function restoreCombat() {
   }
   lockCombatScroll();
   lockOtherActions(slotIndex);
-  focusOnAttackDialogBox();
+  // Recovery restores an existing combat; do not run the initial-combat
+  // scrollIntoView animation against a freshly rebuilt battle layout.
+  focusOnAttackDialogBox({ scroll: false });
   hideNavigateButtons();
 
   if (gameState.combat.flags.isCritical) {
