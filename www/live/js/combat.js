@@ -1017,6 +1017,64 @@ function updateBlockState() {
   
 }
 
+
+function recordCombatRecoveryLayout() {
+  if (!window.RuntimeDiagnostics?.record) return;
+
+  const selectors = {
+    layout: "#layout",
+    statsBar: ".stats-bar",
+    combatHud: ".combat-hud",
+    bottomMenu: ".bottom-menu",
+    appWrapper: "#app-wrapper",
+    app: "#app",
+    battleView: "#battle-view",
+    locationTitle: ".location-name-container",
+    explorationProgress: "#progress-container",
+    combatCenter: ".combat-center",
+    hpOrb: ".orb-container.left",
+    staminaOrb: ".orb-container.right"
+  };
+
+  const elements = {};
+  for (const [key, selector] of Object.entries(selectors)) {
+    const element = document.querySelector(selector);
+    if (!element) {
+      elements[key] = null;
+      continue;
+    }
+
+    const rect = element.getBoundingClientRect();
+    const style = getComputedStyle(element);
+    elements[key] = {
+      top: Math.round(rect.top * 100) / 100,
+      bottom: Math.round(rect.bottom * 100) / 100,
+      height: Math.round(rect.height * 100) / 100,
+      display: style.display,
+      position: style.position,
+      transform: style.transform,
+      opacity: style.opacity,
+      zIndex: style.zIndex
+    };
+  }
+
+  const rootStyle = getComputedStyle(document.documentElement);
+  window.RuntimeDiagnostics.record("combat.recovery.layout", {
+    scrollY: window.scrollY,
+    innerHeight: window.innerHeight,
+    visualViewportHeight: window.visualViewport?.height ?? null,
+    visualViewportOffsetTop: window.visualViewport?.offsetTop ?? null,
+    bodyClasses: document.body.className,
+    layoutVars: {
+      statsHeight: rootStyle.getPropertyValue("--stats-h").trim(),
+      combatHeight: rootStyle.getPropertyValue("--combat-h").trim(),
+      bottomHeight: rootStyle.getPropertyValue("--bottom-h").trim(),
+      expHeight: rootStyle.getPropertyValue("--exp-h").trim()
+    },
+    elements
+  });
+}
+
 function restoreCombat() {
   const world = gameState.world;
   const slotIndex = world.selectedSlotIndex;
@@ -1153,6 +1211,9 @@ function restoreCombat() {
     appState.resumeInterruptedCombatOnEnter = false;
     resumeCombat();
   }
+
+  // Capture geometry after the new battle DOM and renderOptions RAF transforms settle.
+  requestAnimationFrame(() => requestAnimationFrame(recordCombatRecoveryLayout));
 
   return true;
 }
