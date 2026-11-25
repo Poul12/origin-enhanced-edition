@@ -1311,8 +1311,11 @@ function focusOnDialogBox(){
   document.getElementById("dialog-box").scrollIntoView({ behavior: "smooth" });
 }
 
-function focusOnAttackDialogBox(){
-  document.getElementById("attack-dialog-box").scrollIntoView({ behavior: "smooth" });
+function focusOnAttackDialogBox({ scroll = true } = {}){
+  const dialog = document.getElementById("attack-dialog-box");
+  if (!dialog || !scroll) return;
+
+  dialog.scrollIntoView({ behavior: "smooth" });
   //console.log(`focus on dlg`);
   //const container = document.getElementById("attack-dialog-box");
   //smoothScrollToElement(container);
