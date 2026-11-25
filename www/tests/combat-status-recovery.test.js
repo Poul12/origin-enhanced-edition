@@ -129,3 +129,10 @@ test("view loader preserves the combat menu lock even when no loader was display
   assert.match(loader, /setMenuDisabled\(gameState\?\.world\?\.inCombat === true\)/);
   assert.ok(loader.lastIndexOf("setMenuDisabled(gameState?.world?.inCombat === true)") > loader.indexOf("finally"));
 });
+
+test("combat recovery does not scroll the rebuilt battle view to the attack dialog", () => {
+  const restoreStart = combatSource.indexOf("function restoreCombat()");
+  assert.notEqual(restoreStart, -1);
+  const restore = combatSource.slice(restoreStart);
+  assert.match(restore, /focusOnAttackDialogBox\(\{\s*scroll:\s*false\s*\}\)/);
+});
