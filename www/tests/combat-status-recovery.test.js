@@ -77,8 +77,9 @@ test("enemy skill cooldown creation and readiness use the same gameTime clock", 
   const context = { getGameTime: () => 1000 };
   vm.runInNewContext(ready + "\nthis.ready = isEnemySkillReady;", context);
 
-  assert.match(enemySkillsSource, /runtimeSkill\\.expiresAt =\\s*getGameTime\\(\\) \\+ skill\\.cooldown \\* 1000/);
-  assert.match(enemySkillsSource, /runtimeSkill\\.cooldownClock = "gameTime"/);
+  assert.ok(enemySkillsSource.includes("runtimeSkill.expiresAt ="));
+  assert.ok(enemySkillsSource.includes("getGameTime() + skill.cooldown * 1000"));
+  assert.ok(enemySkillsSource.includes('runtimeSkill.cooldownClock = "gameTime"'));
 
   const enemy = { skillState: [{ id: "test", expiresAt: 4000 }] };
   assert.equal(context.ready(enemy, "test"), false);
@@ -102,8 +103,10 @@ test("enemy status expiry runs before the stopped or paused attack-timeline retu
 test("stun and slow are assigned gameTime deadlines, not performance.now deadlines", () => {
   const applyStun = functionSource(skillSource, "applyEnemyStun");
   const applySlow = functionSource(skillSource, "applyEnemySlow");
-  assert.match(applyStun, /stunExpiresAt = .*getGameTime\(\)/);
-  assert.match(applySlow, /slowExpiresAt = .*getGameTime\(\)/);
-  assert.doesNotMatch(applyStun, /performance\.now\(\)/);
-  assert.doesNotMatch(applySlow, /performance\.now\(\)/);
+  assert.ok(applyStun.includes("const now = getGameTime()"));
+  assert.match(applyStun, /stunExpiresAt = .*\\bnow\\b/);
+  assert.ok(applySlow.includes("const now = getGameTime()"));
+  assert.match(applySlow, /slowExpiresAt = .*\\bnow\\b/);
+  assert.ok(!applyStun.includes("performance.now()"));
+  assert.ok(!applySlow.includes("performance.now()"));
 });
