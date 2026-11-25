@@ -1718,10 +1718,10 @@ function applyCritDamage(baseDamage, player, noCrit = false) {
 
 function startBlock() {
   let staminaState = gameState.resources.staminaState;
-  
+
 //  console.error("startBlock staminaState.disabled", staminaState.disabled);
 
-  if (staminaState.disabled) return;
+  if (staminaState.disabled) return false;
 
   isBlocking = true;
 
@@ -1770,6 +1770,8 @@ function startBlock() {
     staminaState.lastSpendTs = performance.now();*/
     //saveStamina();
   }, 1000);
+
+  return true;
 }
 
 
@@ -1910,11 +1912,13 @@ function activateDefensiveStance() {
   showPercentDebuff(`dmg`, minusValue * 100); 
   
   resetGuardRing();
-  
-  startBlock();
-  
+
+  // Do not persist a half-activated stance when stamina is temporarily disabled.
+  if (!startBlock()) return false;
+
   playerBlock.active = true;
   playerBlock.mode = "defensive";
+  skillsOff();
 
   //playerBlock.damageReduction = rollDefensiveReduction();
   
