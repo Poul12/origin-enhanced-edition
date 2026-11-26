@@ -750,6 +750,7 @@ async function enterGame() {
   //console.error(`window.liveRuntimeReady0`, window.liveRuntimeReady);
   
   const firstEnter = !appState.hasEnteredGameBefore;
+  const refreshHUDAfterCombatRecovery = appState.resumeInterruptedCombatOnEnter === true;
 
   document.getElementById("global-logo").classList.add("hidden");
 
@@ -767,8 +768,6 @@ async function enterGame() {
 
   if (!firstEnter) {
     //console.error("firstEnter");
-
-    const refreshHUDAfterCombatRecovery = appState.resumeInterruptedCombatOnEnter === true;
 
     meta.style.display = "none";
     game.style.display = "block";
@@ -966,6 +965,13 @@ async function enterGame() {
 
     hideGameLoader();
     game.classList.add("ready");
+
+    // Recovery may enter through the full first-entry path after an app reload.
+    // initMapView skips HUD measurement while the game clock is paused.
+    if (refreshHUDAfterCombatRecovery) {
+      await nextFrame();
+      updateHUDLayout();
+    }
 
     appState.hasEnteredGameBefore = true;
     launcherTrace("enter.complete", { durationMs: Math.round(performance.now() - launcherStartedAt) });
