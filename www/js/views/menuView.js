@@ -768,6 +768,8 @@ async function enterGame() {
   if (!firstEnter) {
     //console.error("firstEnter");
 
+    const refreshHUDAfterCombatRecovery = appState.resumeInterruptedCombatOnEnter === true;
+
     meta.style.display = "none";
     game.style.display = "block";
     game.classList.remove("ready");
@@ -795,6 +797,13 @@ async function enterGame() {
       }
     }
     game.classList.add("ready");
+
+    // initMapView may skip HUD measurement while Recovery keeps the game paused.
+    // Recalculate only after restoreCombat has resumed and the battle DOM is ready.
+    if (refreshHUDAfterCombatRecovery) {
+      await nextFrame();
+      updateHUDLayout();
+    }
 
     return;
   }
