@@ -802,6 +802,9 @@ async function enterGame() {
     if (refreshHUDAfterCombatRecovery) {
       await nextFrame();
       updateHUDLayout();
+      // Keep manual combat scrolling locked, but perform the one-time
+      // programmatic focus after the restored HUD geometry is measured.
+      focusOnAttackDialogBox();
     }
 
     return;
@@ -971,6 +974,9 @@ async function enterGame() {
     if (refreshHUDAfterCombatRecovery) {
       await nextFrame();
       updateHUDLayout();
+      // Keep manual combat scrolling locked, but perform the one-time
+      // programmatic focus after the restored HUD geometry is measured.
+      focusOnAttackDialogBox();
     }
 
     appState.hasEnteredGameBefore = true;
