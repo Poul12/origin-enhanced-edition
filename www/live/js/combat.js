@@ -2445,9 +2445,13 @@ function exitCombat() {
   cancelCombatTimer("player-status:stun");
   cancelCombatTimer("player-status:slow");
   if (typeof playerAttackCooldown !== "undefined") {
+    if (playerAttackCooldown.isStunActive && typeof resumePlayerAttack === "function") {
+      resumePlayerAttack();
+    }
     playerAttackCooldown.isStunActive = false;
     if (playerAttackCooldown.slow) playerAttackCooldown.slow.active = false;
   }
+  document.getElementById("player-cooldown-fill")?.classList.remove("stun", "slow");
 
   char.inCombat = false;
   char.lastRegenTs = Date.now();

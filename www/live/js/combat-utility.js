@@ -1128,7 +1128,10 @@ function lockActions({ duration, reason, allow = [] }) {
     actionLock.until = Date.now() + duration;
 
     cancelCombatTimer("action-lock");
-    actionLockTimeout = scheduleCombatTimer("action-lock", unlockCriticalActions, duration);
+    actionLockTimeout = scheduleCombatTimer("action-lock", unlockCriticalActions, duration, {
+      onPause: remaining => { actionLock.until = Date.now() + remaining; },
+      onResume: remaining => { actionLock.until = Date.now() + remaining; }
+    });
   } else {
     actionLock.until = Infinity;
   }
@@ -1149,7 +1152,10 @@ function restoreActionLock() {
   if (remaining <= 0) {
     unlockCriticalActions();
   } else {
-    actionLockTimeout = scheduleCombatTimer("action-lock", unlockCriticalActions, remaining);
+    actionLockTimeout = scheduleCombatTimer("action-lock", unlockCriticalActions, remaining, {
+      onPause: value => { actionLock.until = Date.now() + value; },
+      onResume: value => { actionLock.until = Date.now() + value; }
+    });
   }
   
 }

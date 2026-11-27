@@ -136,3 +136,91 @@ test("combat recovery does not scroll the rebuilt battle view to the attack dial
   const restore = combatSource.slice(restoreStart);
   assert.match(restore, /focusOnAttackDialogBox\(\{\s*scroll:\s*false\s*\}\)/);
 });
+
+
+test("combat timer manager preserves remaining time across visibility pause", () => {
+  const utility = fs.readFileSync(path.join(__dirname, "../live/js/combat-utility.js"), "utf8");
+  const start = utility.indexOf("const combatTimers = new Map();");
+  const end = utility.indexOf("\nlet actionLockTimeout = null;", start);
+  assert.notEqual(start, -1, "missing combat timer manager");
+  assert.notEqual(end, -1, "missing end of combat timer manager");
+  const manager = utility.slice(start, end);
+  let now = 1000;
+  let nextId = 0;
+  const timers = new Map();
+  const context = {
+    Date: { now: () => now },
+    setTimeout: (callback, delay) => {
+      const id = ++nextId;
+      timers.set(id, { callback, at: now + delay });
+      return id;
+    },
+    clearTimeout: id => timers.delete(id),
+    gameState: { combat: { actionLock: { locked: false, until: 0 } } }
+  };
+  context.advance = ms => {
+    now += ms;
+    let due;
+    do {
+      due = [...timers.entries()].filter(([, timer]) => timer.at <= now);
+      if (due.length) {
+        for (const [id, timer] of due) {
+          timers.delete(id);
+          timer.callback();
+        }
+      }
+    } while (due.length);
+  };
+  vm.runInNewContext(manager, context);
+  let fired = 0;
+  context.scheduleCombatTimer("pause-test", () => fired++, 1000);
+  context.advance(350);
+  context.pauseCombatTimers();
+  context.advance(5000);
+  assert.equal(fired, 0);
+  context.resumeCombatTimers();
+  context.advance(649);
+  assert.equal(fired, 0);
+  context.advance(1);
+  assert.equal(fired, 1);
+});
+
+test("combat timer manager replaces same-key timers and clears only encounter scope", () => {
+  const utility = fs.readFileSync(path.join(__dirname, "../live/js/combat-utility.js"), "utf8");
+  const start = utility.indexOf("const combatTimers = new Map();");
+  const end = utility.indexOf("\nlet actionLockTimeout = null;", start);
+  const manager = utility.slice(start, end);
+  let now = 0;
+  let nextId = 0;
+  const timers = new Map();
+  const context = {
+    Date: { now: () => now },
+    setTimeout: (callback, delay) => {
+      const id = ++nextId;
+      timers.set(id, { callback, at: now + delay });
+      return id;
+    },
+    clearTimeout: id => timers.delete(id),
+    gameState: { combat: { actionLock: { locked: false, until: 0 } } }
+  };
+  context.advance = ms => {
+    now += ms;
+    const due = [...timers.entries()].filter(([, timer]) => timer.at <= now);
+    for (const [id, timer] of due) {
+      timers.delete(id);
+      timer.callback();
+    }
+  };
+  vm.runInNewContext(manager, context);
+  let oldFired = 0;
+  let newFired = 0;
+  let persistentFired = 0;
+  context.scheduleCombatTimer("replace", () => oldFired++, 100);
+  context.scheduleCombatTimer("replace", () => newFired++, 200);
+  context.scheduleCombatTimer("persistent", () => persistentFired++, 200, { scope: "persistent" });
+  context.clearCombatTimers();
+  context.advance(250);
+  assert.equal(oldFired, 0);
+  assert.equal(newFired, 0);
+  assert.equal(persistentFired, 1);
+});
