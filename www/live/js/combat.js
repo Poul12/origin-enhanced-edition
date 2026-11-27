@@ -2425,9 +2425,28 @@ function exitCombat() {
     ? world.exploreOptions?.[slotIndex]?.enemyData
     : null;
 
-  // Combat DOT timers are runtime-only; stop them before leaving this battle.
-  if (typeof clearAllPlayerDots === "function") {
-    clearAllPlayerDots(enemy);
+  // End all timers and delayed callbacks owned by the finished encounter.
+  if (typeof clearSkillEffectTimeouts === "function") clearSkillEffectTimeouts();
+  if (typeof clearCombatTimers === "function") clearCombatTimers();
+  if (typeof clearAllPlayerDots === "function") clearAllPlayerDots(enemy);
+
+  const combat = gameState.combat;
+  if (combat.playerMark) {
+    combat.playerMark.isActive = false;
+    combat.playerMark.dmgTaken = 0;
+    combat.playerMark.atkspd = 0;
+  }
+  for (const key of ["enemyAtkspdBuff", "enemyDmgReduction", "enemyDmgBuff"]) {
+    if (combat[key]) {
+      combat[key].isActive = false;
+      combat[key].value = 0;
+    }
+  }
+  cancelCombatTimer("player-status:stun");
+  cancelCombatTimer("player-status:slow");
+  if (typeof playerAttackCooldown !== "undefined") {
+    playerAttackCooldown.isStunActive = false;
+    if (playerAttackCooldown.slow) playerAttackCooldown.slow.active = false;
   }
 
   char.inCombat = false;

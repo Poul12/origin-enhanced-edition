@@ -1100,12 +1100,14 @@ function addTemporaryBuff({ stat, value, durationSec, source = "unknown" }) {
   // jeśli buff na ten stat już istnieje – nadpisz
   removeBuff(stat);
 
-  gameState.combat.activeBuffs[stat] = {
-    value,
-    expiresAt,
-    source,
-    timeoutId: setTimeout(() => removeBuff(stat), durationMs)
-  };
+  const timerKey = `player-buff:${stat}`;
+  const buff = { value, expiresAt, source, timerKey };
+  gameState.combat.activeBuffs[stat] = buff;
+  scheduleCombatTimer(timerKey, () => removeBuff(stat), durationMs, {
+    scope: "persistent",
+    onPause: remaining => { buff.expiresAt = Date.now() + remaining; },
+    onResume: remaining => { buff.expiresAt = Date.now() + remaining; }
+  });
 
   applyBuff(stat, value);
 
@@ -1138,7 +1140,8 @@ function removeBuff(stat) {
   const buff = gameState.combat.activeBuffs[stat];
   if (!buff) return;
 
-  clearTimeout(buff.timeoutId);
+  if (buff.timerKey) cancelCombatTimer(buff.timerKey);
+  else if (buff.timeoutId) clearTimeout(buff.timeoutId);
   
   // cofnięcie efektu
   switch (stat) {
@@ -1190,12 +1193,14 @@ function restoreBuffsAfterReload() {
 
     const remainingMs = expiresAt - now;
 
-    gameState.combat.activeBuffs[stat] = {
-      value,
-      expiresAt,
-      source,
-      timeoutId: setTimeout(() => removeBuff(stat), remainingMs)
-    };
+    const timerKey = `player-buff:${stat}`;
+    const buff = { value, expiresAt, source, timerKey };
+    gameState.combat.activeBuffs[stat] = buff;
+    scheduleCombatTimer(timerKey, () => removeBuff(stat), remainingMs, {
+      scope: "persistent",
+      onPause: remaining => { buff.expiresAt = Date.now() + remaining; },
+      onResume: remaining => { buff.expiresAt = Date.now() + remaining; }
+    });
 
     applyBuff(stat, value);
   }
@@ -1219,9 +1224,13 @@ function startWhirlwind(player, enemy, bleedDamage, bleedDuration, actualValue) 
   const duration = 3000;
   const interval = 600;
   
-  whirlwindState.attackInterval = setInterval(() => {
+  const targetIsCurrent = () =>
+    gameState.world.inCombat &&
+    gameState.world.exploreOptions?.[gameState.world.selectedSlotIndex]?.enemyData === enemy;
 
-    if (!whirlwindState.isActive || !gameState.world.inCombat) {
+  whirlwindState.attackInterval = scheduleCombatInterval("whirlwind:attack", () => {
+
+    if (!whirlwindState.isActive || !targetIsCurrent()) {
       stopWhirlwind();
       return;
     }
@@ -1244,7 +1253,7 @@ function startWhirlwind(player, enemy, bleedDamage, bleedDuration, actualValue) 
   playWhirlwindPlayerAnimation(duration);
   playWhirlwindVFX(player.dom.slot, duration);
   
-  whirlwindState.bleedInterval = setInterval(() => {
+  whirlwindState.bleedInterval = scheduleCombatInterval("whirlwind:bleed", () => {
 
     if (!whirlwindState.isActive || !gameState.world.inCombat) {
       stopWhirlwind();
@@ -1255,7 +1264,7 @@ function startWhirlwind(player, enemy, bleedDamage, bleedDuration, actualValue) 
 
   }, interval);
   
-  whirlwindState.timeout = setTimeout(() => {
+  whirlwindState.timeout = scheduleCombatTimer("whirlwind:end", () => {
     stopWhirlwind();
   }, duration);
 }
@@ -1264,17 +1273,17 @@ function stopWhirlwind() {
   whirlwindState.isActive = false;
 
   if (whirlwindState.attackInterval !== null) {
-    clearInterval(whirlwindState.attackInterval);
+    cancelCombatTimer(whirlwindState.attackInterval);
     whirlwindState.attackInterval = null;
   }
 
   if (whirlwindState.bleedInterval !== null) {
-    clearInterval(whirlwindState.bleedInterval);
+    cancelCombatTimer(whirlwindState.bleedInterval);
     whirlwindState.bleedInterval = null;
   }
 
   if (whirlwindState.timeout !== null) {
-    clearTimeout(whirlwindState.timeout);
+    cancelCombatTimer(whirlwindState.timeout);
     whirlwindState.timeout = null;
   }
 }
@@ -1282,17 +1291,34 @@ function stopWhirlwind() {
 const skillEffectTimeouts = new Map();
 
 function scheduleSkillEffectTimeout(key, callback, durationMs) {
+  const timerKey = `skill-effect:${key}`;
   const previousTimeout = skillEffectTimeouts.get(key);
-  if (previousTimeout) clearTimeout(previousTimeout);
-
-  const timeoutId = setTimeout(() => {
-    if (skillEffectTimeouts.get(key) !== timeoutId) return;
+  if (previousTimeout) cancelCombatTimer(previousTimeout);
+  const timeoutId = scheduleCombatTimer(timerKey, () => {
+    if (skillEffectTimeouts.get(key) !== timerKey) return;
     skillEffectTimeouts.delete(key);
     callback();
   }, durationMs);
-
   skillEffectTimeouts.set(key, timeoutId);
   return timeoutId;
+}
+
+function clearSkillEffectTimeouts() {
+  for (const timerKey of skillEffectTimeouts.values()) cancelCombatTimer(timerKey);
+  skillEffectTimeouts.clear();
+}
+
+function isCurrentCombatSkillTarget(enemy) {
+  return gameState?.world?.inCombat === true &&
+    gameState.world.exploreOptions?.[gameState.world.selectedSlotIndex]?.enemyData === enemy;
+}
+
+function scheduleDelayedSkillAction(skillId, enemy, callback, delayMs) {
+  const timerKey = nextCombatTimerKey(`skill-action:${skillId}`);
+  return scheduleCombatTimer(timerKey, () => {
+    if (!isCurrentCombatSkillTarget(enemy)) return;
+    callback();
+  }, delayMs);
 }
 
 function useSkill(skillId, player, enemy) {
@@ -1349,9 +1375,9 @@ function useSkill(skillId, player, enemy) {
       
         if (skillId === "slash" || skillId === "jump") {
           
-          setTimeout(() => {
+          scheduleDelayedSkillAction(skillId, enemy, () => {
            // console.error(`enter timeout double attack`); 
-            if (enemy.currentHp > 0 && gameState.world.inCombat) {
+            if (enemy.currentHp > 0) {
               performAttack(
                 player,
                 enemy,
@@ -1641,7 +1667,7 @@ function useSkill(skillId, player, enemy) {
           ? calculateEffectValue(durationArmorTime, player, enemy)
           : 5;
    
-        setTimeout(() => {
+        scheduleDelayedSkillAction(skillId, enemy, () => {
           
           let armorBreakPenetration = actualValue * (1 + player.str * 0.002);
            
@@ -2092,7 +2118,7 @@ function useSkill(skillId, player, enemy) {
             ? calculateEffectValue(durationEffect, player, enemy)
             : 5;
           
-          setTimeout(() => {
+          scheduleDelayedSkillAction(skillId, enemy, () => {
             //console.log("slow duration", slowDuration);
             enemy.status.slow = actualValue;
             enemy.status.slowDuration = slowDuration;

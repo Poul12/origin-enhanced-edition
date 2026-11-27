@@ -121,7 +121,7 @@ function applyEnemySkillEffect(skillId, player, enemy, slotIndex) {
              
             updateStatusPlayerUI(enemy);
       
-            setTimeout(() => {
+            scheduleCombatTimer(`enemy-skill:mark:${slotIndex}`, () => {
               gameState.combat.playerMark.isActive = false;
               gameState.combat.playerMark.dmgTaken = 0;
               gameState.combat.playerMark.atkspd = 0;
@@ -135,7 +135,7 @@ function applyEnemySkillEffect(skillId, player, enemy, slotIndex) {
             gameState.combat.enemyDmgReduction.value = actualValue;
             updateStatusEnemyUI(enemy);
             
-            setTimeout(() => {
+            scheduleCombatTimer(`enemy-skill:damage-reduction:${slotIndex}`, () => {
               gameState.combat.enemyDmgReduction.isActive = false;
               gameState.combat.enemyDmgReduction.value = 0;
               updateStatusEnemyUI(enemy);
@@ -177,7 +177,7 @@ function applyEnemySkillEffect(skillId, player, enemy, slotIndex) {
              
             updateStatusEnemyUI(enemy);
       
-            setTimeout(() => {
+            scheduleCombatTimer(`enemy-skill:attack-speed:${slotIndex}`, () => {
               gameState.combat.enemyAtkspdBuff.isActive = false;
               gameState.combat.enemyAtkspdBuff.value = 0;
               updateStatusEnemyUI(enemy);
@@ -192,7 +192,7 @@ function applyEnemySkillEffect(skillId, player, enemy, slotIndex) {
       
             updateStatusEnemyUI(enemy);
       
-            setTimeout(() => {
+            scheduleCombatTimer(`enemy-skill:damage-buff:${slotIndex}`, () => {
               gameState.combat.enemyDmgBuff.isActive = false;
               gameState.combat.enemyDmgBuff.value = 0;
               updateStatusEnemyUI(enemy);

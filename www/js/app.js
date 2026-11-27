@@ -68,6 +68,7 @@ function installCombatVisibilityPause() {
       pauseAllSkillsCooldown();
     }
     if (typeof dotIsPaused !== "undefined") dotIsPaused = true;
+    if (typeof pauseCombatTimers === "function") pauseCombatTimers();
     if (gameState.resources?.staminaState) {
       gameState.resources.staminaState.disabled = true;
     }
@@ -99,6 +100,7 @@ function installCombatVisibilityPause() {
       resumeAllSkillsCooldown();
     }
     resumeCombat();
+    if (typeof resumeCombatTimers === "function") resumeCombatTimers();
     if (typeof resumeTimedBlockUI === "function") resumeTimedBlockUI();
     if (typeof resumeBleedUI === "function") resumeBleedUI();
     if (typeof resumeSpearUI === "function") resumeSpearUI();

@@ -1225,7 +1225,7 @@ function stunPlayer(enemy, durationMs) {
 
   fill.classList.add("stun");
   
-  setTimeout(() => {
+  scheduleCombatTimer("player-status:stun", () => {
     resumePlayerAttack();
     playerAttackCooldown.isStunActive = false;
     updateStatusPlayerUI(enemy);
@@ -1285,7 +1285,7 @@ function slowPlayer(enemy, percent, durationMs) {
   
   playerAttackCooldown.slow.expiresAt = now + durationMs;
   
-  setTimeout(() => {
+  scheduleCombatTimer("player-status:slow", () => {
     playerAttackCooldown.slow.active = false;
     updateStatusPlayerUI(enemy); 
     fill.classList.remove('slow');

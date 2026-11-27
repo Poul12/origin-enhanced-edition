@@ -1007,6 +1007,115 @@ function getArmorWithStacks(baseArmor, stackBonus) {
   return baseArmor * (1 + s.stacks * stackBonus);
 }
 
+
+const combatTimers = new Map();
+let combatTimersPaused = false;
+let combatTimerSequence = 0;
+
+function scheduleCombatTimer(key, callback, delayMs, options = {}) {
+  const normalizedKey = String(key);
+  cancelCombatTimer(normalizedKey);
+  const record = {
+    key: normalizedKey, callback,
+    remainingMs: Math.max(0, Number(delayMs) || 0),
+    intervalMs: 0,
+    scope: options.scope === "persistent" ? "persistent" : "combat",
+    onPause: typeof options.onPause === "function" ? options.onPause : null,
+    onResume: typeof options.onResume === "function" ? options.onResume : null,
+    timerId: null, startedAt: 0
+  };
+  combatTimers.set(normalizedKey, record);
+  armCombatTimer(record);
+  return normalizedKey;
+}
+
+function scheduleCombatInterval(key, callback, intervalMs, options = {}) {
+  const normalizedKey = String(key);
+  cancelCombatTimer(normalizedKey);
+  const interval = Math.max(1, Number(intervalMs) || 1);
+  const record = {
+    key: normalizedKey, callback, remainingMs: interval, intervalMs: interval,
+    scope: options.scope === "persistent" ? "persistent" : "combat",
+    onPause: null, onResume: null, timerId: null, startedAt: 0
+  };
+  combatTimers.set(normalizedKey, record);
+  armCombatTimer(record);
+  return normalizedKey;
+}
+
+function armCombatTimer(record) {
+  if (combatTimersPaused || combatTimers.get(record.key) !== record) return;
+  record.startedAt = Date.now();
+  record.timerId = setTimeout(() => {
+    if (combatTimers.get(record.key) !== record) return;
+    record.timerId = null;
+    record.remainingMs = 0;
+    if (record.intervalMs > 0) {
+      record.callback();
+      if (combatTimers.get(record.key) !== record || combatTimersPaused) return;
+      record.remainingMs = record.intervalMs;
+      armCombatTimer(record);
+      return;
+    }
+    combatTimers.delete(record.key);
+    record.callback();
+  }, record.remainingMs);
+}
+
+function cancelCombatTimer(key) {
+  const record = combatTimers.get(String(key));
+  if (!record) return false;
+  if (record.timerId !== null) clearTimeout(record.timerId);
+  combatTimers.delete(String(key));
+  return true;
+}
+
+function getCombatTimerRemaining(key) {
+  const record = combatTimers.get(String(key));
+  if (!record) return null;
+  if (record.timerId === null || combatTimersPaused) return record.remainingMs;
+  return Math.max(0, record.remainingMs - (Date.now() - record.startedAt));
+}
+
+function pauseCombatTimers() {
+  if (combatTimersPaused) return;
+  combatTimersPaused = true;
+  for (const record of combatTimers.values()) {
+    if (record.timerId !== null) {
+      record.remainingMs = Math.max(0, record.remainingMs - (Date.now() - record.startedAt));
+      clearTimeout(record.timerId);
+      record.timerId = null;
+    }
+    record.onPause?.(record.remainingMs);
+  }
+}
+
+function resumeCombatTimers() {
+  if (!combatTimersPaused) return;
+  combatTimersPaused = false;
+  for (const record of combatTimers.values()) {
+    record.onResume?.(record.remainingMs);
+    armCombatTimer(record);
+  }
+  const remaining = getCombatTimerRemaining("action-lock");
+  if (remaining !== null && gameState?.combat?.actionLock?.locked) {
+    gameState.combat.actionLock.until = Date.now() + remaining;
+  }
+}
+
+function clearCombatTimers() {
+  for (const [key, record] of combatTimers) {
+    if (record.scope !== "combat") continue;
+    if (record.timerId !== null) clearTimeout(record.timerId);
+    combatTimers.delete(key);
+  }
+}
+
+function nextCombatTimerKey(prefix = "combat") {
+  combatTimerSequence += 1;
+  return `${prefix}:${combatTimerSequence}`;
+}
+
 let actionLockTimeout = null;
 
 function lockActions({ duration, reason, allow = [] }) {
@@ -1018,9 +1127,8 @@ function lockActions({ duration, reason, allow = [] }) {
   if (duration !== Infinity) {
     actionLock.until = Date.now() + duration;
 
-    if (actionLockTimeout) clearTimeout(actionLockTimeout);
-
-    actionLockTimeout = setTimeout(unlockCriticalActions, duration);
+    cancelCombatTimer("action-lock");
+    actionLockTimeout = scheduleCombatTimer("action-lock", unlockCriticalActions, duration);
   } else {
     actionLock.until = Infinity;
   }
@@ -1041,7 +1149,7 @@ function restoreActionLock() {
   if (remaining <= 0) {
     unlockCriticalActions();
   } else {
-    actionLockTimeout = setTimeout(unlockCriticalActions, remaining);
+    actionLockTimeout = scheduleCombatTimer("action-lock", unlockCriticalActions, remaining);
   }
   
 }
@@ -1054,10 +1162,8 @@ function unlockCriticalActions() {
   actionLock.until = 0;
   actionLock.allowedActions = [];
 
-  if (actionLockTimeout) {
-    clearTimeout(actionLockTimeout);
-    actionLockTimeout = null;
-  }
+  cancelCombatTimer("action-lock");
+  actionLockTimeout = null;
 
   saveGame();
   updateActionLockUI();
