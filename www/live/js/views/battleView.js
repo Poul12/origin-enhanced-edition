@@ -669,6 +669,7 @@ function initBattleView() {
   //shopMenuBtn = document.getElementById('shop-menu-btn');
   //console.log("battle init");
 
+  updateBypassEnemyCheckTestButton();
   loadPlayerSkills();
   
   const container = document.getElementById("explore-options");
