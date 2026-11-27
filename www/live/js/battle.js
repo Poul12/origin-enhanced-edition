@@ -48,10 +48,17 @@ function updateBypassEnemyCheckTestButton() {
 
 function toggleBypassEnemyCheckTestMode() {
   const world = gameState.world;
-  world.bypassEnemyCheck = world.bypassEnemyCheck !== true;
+  const enabled = world.bypassEnemyCheck !== true;
+
+  // Non-enumerable property keeps routine JSON saves from persisting test mode.
+  Object.defineProperty(world, "bypassEnemyCheck", {
+    value: enabled,
+    writable: true,
+    configurable: true,
+    enumerable: false
+  });
 
   updateBypassEnemyCheckTestButton();
-  // Celowo nie zapisujemy tego przełącznika: tryb testowy ma być tymczasowy.
 }
 
 const slotTypeWeights = [
@@ -66,8 +73,13 @@ const slotTypeWeights = [
 function loadState() {
   const world = gameState.world;
 
-  // Testowy bypass nie może być odtwarzany z zapisu.
-  world.bypassEnemyCheck = false;
+  // Testowy bypass ma zawsze startować wyłączony i nie trafiać do JSON save.
+  Object.defineProperty(world, "bypassEnemyCheck", {
+    value: false,
+    writable: true,
+    configurable: true,
+    enumerable: false
+  });
   updateBypassEnemyCheckTestButton();
 
   restoreBuffsAfterReload();
