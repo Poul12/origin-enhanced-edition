@@ -217,10 +217,14 @@ test("combat timer manager replaces same-key timers and clears only encounter sc
   let persistentFired = 0;
   context.scheduleCombatTimer("replace", () => oldFired++, 100);
   context.scheduleCombatTimer("replace", () => newFired++, 200);
+  context.advance(200);
+  assert.equal(oldFired, 0);
+  assert.equal(newFired, 1);
+
+  context.scheduleCombatTimer("encounter", () => oldFired++, 200);
   context.scheduleCombatTimer("persistent", () => persistentFired++, 200, { scope: "persistent" });
   context.clearCombatTimers();
   context.advance(250);
   assert.equal(oldFired, 0);
-  assert.equal(newFired, 0);
   assert.equal(persistentFired, 1);
 });
