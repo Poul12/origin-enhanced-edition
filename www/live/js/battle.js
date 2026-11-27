@@ -33,6 +33,27 @@ function updateEnergyTestButton() {
     : "Tryb testowy energii: wyłączony";
 }
 
+function updateBypassEnemyCheckTestButton() {
+  const world = gameState.world;
+  const btn = document.getElementById("bypass-enemy-test-btn");
+  if (!btn) return;
+
+  const enabled = world.bypassEnemyCheck === true;
+  btn.style.backgroundColor = enabled ? "limegreen" : "#7a2525";
+  btn.textContent = enabled ? "T✓" : "T";
+  btn.title = enabled
+    ? "Tryb testowy progresji: aktywny (pomija przeciwników i wymagania questowe)"
+    : "Tryb testowy progresji: wyłączony";
+}
+
+function toggleBypassEnemyCheckTestMode() {
+  const world = gameState.world;
+  world.bypassEnemyCheck = world.bypassEnemyCheck !== true;
+
+  updateBypassEnemyCheckTestButton();
+  // Celowo nie zapisujemy tego przełącznika: tryb testowy ma być tymczasowy.
+}
+
 const slotTypeWeights = [
   { type: "enemy",   weight: 86 },
   { type: "chest",   weight: 7 },
@@ -44,6 +65,10 @@ const slotTypeWeights = [
 
 function loadState() {
   const world = gameState.world;
+
+  // Testowy bypass nie może być odtwarzany z zapisu.
+  world.bypassEnemyCheck = false;
+  updateBypassEnemyCheckTestButton();
 
   restoreBuffsAfterReload();
   restoreFirecampState();
