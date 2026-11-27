@@ -40,6 +40,14 @@ function getBattleTemplate() {
       </button>
   
     </div>
+
+    <div class="test-mode-controls" style="display:flex;justify-content:center;gap:6px;margin-top:4px;">
+      <button id="bypass-enemy-test-btn" type="button"
+        onclick="toggleBypassEnemyCheckTestMode()"
+        style="padding:3px 8px;border:1px solid #6b6257;border-radius:4px;background:#7a2525;color:#fff;font-size:11px;font-weight:bold;">
+        T
+      </button>
+    </div>
   
       <div id="enemy-combat-feedback">
   
