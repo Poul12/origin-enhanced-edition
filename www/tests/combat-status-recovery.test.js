@@ -153,7 +153,7 @@ test("pause menu pauses persistent combat timers and resumes only timers it paus
     pauseCombatTimers() { this.pauseCount++; return true; },
     resumeCombatTimers() { this.resumeCount++; }
   };
-  vm.runInNewContext(openPause + "\\n" + resume + "\\nthis.openPause = openPauseMenu; this.resume = resumeGame;", context);
+  vm.runInNewContext(openPause + "\n" + resume + "\\nthis.openPause = openPauseMenu; this.resume = resumeGame;", context);
   context.openPause();
   assert.equal(context.pauseCount, 1);
   assert.equal(context.appState.pauseMenuOwnsCombatTimers, true);
