@@ -1078,7 +1078,7 @@ function getCombatTimerRemaining(key) {
 }
 
 function pauseCombatTimers() {
-  if (combatTimersPaused) return;
+  if (combatTimersPaused) return false;
   combatTimersPaused = true;
   for (const record of combatTimers.values()) {
     if (record.timerId !== null) {
@@ -1088,6 +1088,7 @@ function pauseCombatTimers() {
     }
     record.onPause?.(record.remainingMs);
   }
+  return true;
 }
 
 function resumeCombatTimers() {

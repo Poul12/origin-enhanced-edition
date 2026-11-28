@@ -529,7 +529,13 @@ function showCustomConfirm(message, onYes, onNo) {
     return;
   }
   
+  let combatTimersPausedByConfirm = false;
   if (gameState.world.inCombat) {
+    const isCritical = gameState.combat?.flags?.isCritical === true;
+    if (!isCritical && typeof pauseCombatTimers === "function") {
+      combatTimersPausedByConfirm = pauseCombatTimers() === true;
+    }
+
     const enemy = gameState.world.exploreOptions[gameState.world.selectedSlotIndex].enemyData;
     pauseEnemyAttack(enemy, gameState.world.selectedSlotIndex);
    // console.error("PAUZA");
@@ -565,12 +571,24 @@ function showCustomConfirm(message, onYes, onNo) {
   
   function yesHandler() {
     cleanup();
-    if (onYes) onYes();
+    try {
+      if (onYes) onYes();
+    } finally {
+      if (combatTimersPausedByConfirm && typeof resumeCombatTimers === "function") {
+        resumeCombatTimers();
+      }
+    }
   }
 
   function noHandler() {
     cleanup();
-    if (onNo) onNo();
+    try {
+      if (onNo) onNo();
+    } finally {
+      if (combatTimersPausedByConfirm && typeof resumeCombatTimers === "function") {
+        resumeCombatTimers();
+      }
+    }
   }
 
   btnYes.addEventListener("click", yesHandler);

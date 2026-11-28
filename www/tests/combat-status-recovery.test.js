@@ -9,6 +9,7 @@ const skillSource = fs.readFileSync(path.join(__dirname, "../live/js/skills-comb
 const enemySkillsSource = fs.readFileSync(path.join(__dirname, "../live/js/enemy-skills.js"), "utf8");
 const combatSource = fs.readFileSync(path.join(__dirname, "../live/js/combat.js"), "utf8");
 const menuViewSource = fs.readFileSync(path.join(__dirname, "../js/views/menuView.js"), "utf8");
+const sharedSource = fs.readFileSync(path.join(__dirname, "../js/shared.js"), "utf8");
 
 function functionSource(source, name) {
   const start = source.indexOf(`function ${name}(`);
@@ -138,6 +139,14 @@ test("combat recovery does not scroll the rebuilt battle view to the attack dial
 });
 
 
+test("combat confirmation pauses real-time combat timers and resumes only its own pause", () => {
+  const confirm = functionSource(sharedSource, "showCustomConfirm");
+  assert.match(confirm, /isCritical = gameState\.combat\?\.flags\?\.isCritical === true/);
+  assert.match(confirm, /combatTimersPausedByConfirm = pauseCombatTimers\(\) === true/);
+  assert.equal((confirm.match(/resumeCombatTimers\(\)/g) || []).length, 2);
+  assert.match(confirm, /finally/);
+});
+
 test("combat timer manager preserves remaining time across visibility pause", () => {
   const utility = fs.readFileSync(path.join(__dirname, "../live/js/combat-utility.js"), "utf8");
   const start = utility.indexOf("const combatTimers = new Map();");
@@ -175,9 +184,12 @@ test("combat timer manager preserves remaining time across visibility pause", ()
   let fired = 0;
   context.scheduleCombatTimer("pause-test", () => fired++, 1000);
   context.advance(350);
-  context.pauseCombatTimers();
+  assert.equal(context.pauseCombatTimers(), true);
+  assert.equal(context.pauseCombatTimers(), false, "nested pause must not claim ownership");
   context.advance(5000);
   assert.equal(fired, 0);
+  context.resumeCombatTimers();
+  assert.equal(context.pauseCombatTimers(), true, "pause ownership must be released after resume");
   context.resumeCombatTimers();
   context.advance(649);
   assert.equal(fired, 0);
