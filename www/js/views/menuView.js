@@ -1085,6 +1085,14 @@ function showCriticalRuntimeError(message) {
 }
 
 function openPauseMenu() {
+  appState.pauseMenuOwnsCombatTimers = false;
+  if (
+    gameState?.combat?.flags?.isCritical !== true &&
+    typeof pauseCombatTimers === "function"
+  ) {
+    appState.pauseMenuOwnsCombatTimers = pauseCombatTimers() === true;
+  }
+
   window.scrollTo(0, 0);
     
   playSound(`menu-tab`, 1, 1, 0.65);
@@ -1107,6 +1115,12 @@ function resumeGame() {
   //window.addEventListener("load", updateHUDLayoutHandler);
 
   appState.isPaused = false;
+  if (appState.pauseMenuOwnsCombatTimers === true) {
+    appState.pauseMenuOwnsCombatTimers = false;
+    if (typeof resumeCombatTimers === "function") resumeCombatTimers();
+  } else {
+    appState.pauseMenuOwnsCombatTimers = false;
+  }
   updateHUDLayout();
     
   //initializeGameState();

@@ -139,6 +139,35 @@ test("combat recovery does not scroll the rebuilt battle view to the attack dial
 });
 
 
+test("pause menu pauses persistent combat timers and resumes only timers it paused", () => {
+  const openPause = functionSource(menuViewSource, "openPauseMenu");
+  const resume = functionSource(menuViewSource, "resumeGame");
+  const context = {
+    appState: {},
+    gameState: { world: { mode: "story" }, combat: { flags: { isCritical: false } } },
+    window: { scrollTo: () => {} },
+    playSound: () => {}, stopGameEngine: () => {}, enterMenu: () => {},
+    setMiniLogo: () => {}, renderPauseMenuView: () => {},
+    updateHUDLayout: () => {}, startGameEngine: () => {}, enterGame: () => {},
+    pauseCount: 0, resumeCount: 0,
+    pauseCombatTimers() { this.pauseCount++; return true; },
+    resumeCombatTimers() { this.resumeCount++; }
+  };
+  vm.runInNewContext(openPause + "\\n" + resume + "\\nthis.openPause = openPauseMenu; this.resume = resumeGame;", context);
+  context.openPause();
+  assert.equal(context.pauseCount, 1);
+  assert.equal(context.appState.pauseMenuOwnsCombatTimers, true);
+  context.resume();
+  assert.equal(context.resumeCount, 1);
+  assert.equal(context.appState.pauseMenuOwnsCombatTimers, false);
+
+  context.gameState.combat.flags.isCritical = true;
+  context.openPause();
+  assert.equal(context.pauseCount, 1, "Critical State must not pause combat timers");
+  context.resume();
+  assert.equal(context.resumeCount, 1, "pause menu must not resume timers it did not pause");
+});
+
 test("combat confirmation pauses real-time combat timers and resumes only its own pause", () => {
   const confirm = functionSource(sharedSource, "showCustomConfirm");
   assert.match(confirm, /isCritical = gameState\.combat\?\.flags\?\.isCritical === true/);
